@@ -1,5 +1,7 @@
 import Utils from './utils';
 import ToggleTab from './toggleTab';
+import ExecCmdButton from './execCmdButton';
+
 
 const snipText = () => {
   const defaultTextarea = document.querySelector('textarea.snip-text');
@@ -44,9 +46,11 @@ const snipText = () => {
       snipTextBody.append(snipTextArea);
       snipTextBody.append(snipPreviewArea);
 
+      const exec = ExecCmdButton();
+
       window.addEventListener('load', () => {
         Utils.containerStyles(args[0]);
-        Utils.execCmd('.buttons');
+        exec.execCmd('.buttons');
         ToggleTab.toggle('snipText-tabnav-tabs');
       });
 
@@ -54,7 +58,7 @@ const snipText = () => {
       buttonContainer.className = 'snipText-button-container';
 
       snipMarkDown.append(buttonContainer);
-      Utils.editButtons(args[0]);
+      Utils.displayButtons(args[0]);
       snipMarkDown.append(snipTextBody);
     }
   };

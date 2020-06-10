@@ -1,3 +1,18 @@
+import { library, icon } from '@fortawesome/fontawesome-svg-core';
+import {
+  faBold, faUnderline, faItalic,
+  faStrikethrough, faHeading, faQuoteLeft,
+  faCode, faLink, faListUl,
+  faListOl, faCheckSquare, faQuestionCircle,
+} from '@fortawesome/free-solid-svg-icons';
+
+library.add(
+  faBold, faUnderline, faItalic,
+  faStrikethrough, faHeading, faQuoteLeft,
+  faCode, faLink, faListUl,
+  faListOl, faCheckSquare, faQuestionCircle,
+);
+
 const Utils = (() => {
   const extendDefaults = (properties) => {
     const defaults = {
@@ -38,6 +53,45 @@ const Utils = (() => {
       if (className !== 'snip-write') { concatClassName += `${className} `; }
     });
     return concatClassName.trim();
+  };
+
+  const displayButtons = (properties) => {
+    const docFrag = document.querySelector('.snipText-button-container');
+
+    let content = '';
+    content += `<div class="snipText-tabnav-tabs" id="snipText-tabnav-tabs" style="margin: 0 10px">
+                  <span class="btn-nav tabnav write-tab-nav active" id="snip-write-tab">Write</span>
+                  <span class="btn-nav tabnav preview-tab-nav" id="snip-preview-tab">Preview</span>
+                </div>`;
+
+    const mainButtons = extendDefaults(properties).buttons;
+    content += '<div>';
+    mainButtons.split('|').forEach((button, index) => {
+      const iconName = button.trim();
+      const prefix = 'fas';
+
+      const isIcon = icon({ prefix, iconName });
+
+      if (isIcon !== undefined) {
+        const iconFont = isIcon.html;
+        let buttonContent;
+        if (iconName === 'question-circle') {
+          buttonContent = `<a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" title="help">${iconFont}</a>`;
+          content += '&nbsp;&nbsp;&nbsp;';
+        } else {
+          buttonContent = `<button class="buttons button-${iconName}" id="${iconName}" title="${iconName}">${iconFont}</button>`;
+        }
+
+
+        if (index % 3 === 0 && index !== 0) {
+          content += '&nbsp;&nbsp;&nbsp;&nbsp';
+        }
+        content += buttonContent;
+      }
+    });
+    content += '<div>';
+    docFrag.innerHTML = content;
+    return docFrag;
   };
 
   const containerStyles = (properties) => {
@@ -114,7 +168,20 @@ const Utils = (() => {
     });
   };
 
-  return { extendDefaults, concatClassName, containerStyles };
+  const expandHeight = (value, textAreaHeight) => {
+    const numberOfLineBreaks = (value.match(/\n/g) || []).length;
+    const newHeight = textAreaHeight + (numberOfLineBreaks) * 20 + 15;
+    return newHeight;
+  };
+
+
+  return {
+    extendDefaults,
+    concatClassName,
+    displayButtons,
+    containerStyles,
+    expandHeight,
+  };
 })();
 
 export default Utils;
