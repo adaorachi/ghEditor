@@ -88,7 +88,7 @@ const Utils = (() => {
       borderBottom: 'none',
     };
 
-    const iframeStyles = {
+    const snipTextStyles = {
       outline: 'none',
       border: textareaBorder,
       borderTop: 'none',
@@ -99,11 +99,11 @@ const Utils = (() => {
     const buttonContainer = document.querySelector('.snipText-button-container');
     Object.assign(buttonContainer.style, buttonContainerStyles);
 
-    const iframeContainer = document.querySelector('.snipTextBody');
-    Object.assign(iframeContainer.style, iframeStyles);
+    const snipTextContainer = document.querySelector('.snipTextBody');
+    Object.assign(snipTextContainer.style, snipTextStyles);
 
-    const iframeBody = document.querySelector('.snipTextBody');
-    Object.assign(iframeBody.style, defaultFrameStyles);
+    const snipTextBody = document.querySelector('.snipTextBody');
+    Object.assign(snipTextBody.style, defaultFrameStyles);
 
     const tabNavBtn = document.querySelector('.snipText-tabnav-tabs .tabnav');
     Object.assign(tabNavBtn.style, navTabs);

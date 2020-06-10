@@ -1,4 +1,5 @@
 import Utils from './utils';
+import ToggleTab from './toggleTab';
 
 const snipText = () => {
   const defaultTextarea = document.querySelector('textarea.snip-text');
@@ -46,7 +47,7 @@ const snipText = () => {
       window.addEventListener('load', () => {
         Utils.containerStyles(args[0]);
         Utils.execCmd('.buttons');
-        Utils.toggleNav('snipText-tabnav-tabs');
+        ToggleTab.toggle('snipText-tabnav-tabs');
       });
 
       const buttonContainer = document.createElement('div');
