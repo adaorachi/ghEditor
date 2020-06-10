@@ -43,7 +43,18 @@ const snipText = () => {
       snipTextBody.append(snipTextArea);
       snipTextBody.append(snipPreviewArea);
 
+      window.addEventListener('load', () => {
+        Utils.containerStyles(args[0]);
+        Utils.execCmd('.buttons');
+        Utils.toggleNav('snipText-tabnav-tabs');
+      });
 
+      const buttonContainer = document.createElement('div');
+      buttonContainer.className = 'snipText-button-container';
+
+      snipMarkDown.append(buttonContainer);
+      Utils.editButtons(args[0]);
+      snipMarkDown.append(snipTextBody);
     }
   };
 
