@@ -31,8 +31,16 @@ const Utils = (() => {
     return defaults;
   };
 
+  const concatClassName = (textarea) => {
+    const classNames = textarea.classList;
+    let concatClassName = '';
+    classNames.forEach((className) => {
+      if (className !== 'snip-write') { concatClassName += `${className} `; }
+    });
+    return concatClassName.trim();
+  };
 
-  return { extendDefaults };
+  return { extendDefaults, concatClassName };
 })();
 
 export default Utils;
