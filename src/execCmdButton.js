@@ -4,6 +4,7 @@ import Utils from './utils';
 const ExecCmdButton = () => {
   const execCmd = (button) => {
     const textarea = document.getElementById('snip-write');
+    const previewarea = document.getElementById('snip-preview');
     const textAreaHeight = document.getElementById('snip-write').clientHeight;
     let text;
     textarea.addEventListener('input', (e) => {
@@ -12,6 +13,7 @@ const ExecCmdButton = () => {
       document.getElementById('snip-preview').innerHTML = text;
 
       textarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
+      previewarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
     });
     const allButtons = document.querySelectorAll(button);
     allButtons.forEach((button) => {
@@ -85,9 +87,9 @@ const ExecCmdButton = () => {
         let selected = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
         let start = textarea.selectionStart;
         let end = textarea.selectionEnd;
-        const selection2 = textarea.value.slice(textarea.selectionStart - range[0], textarea.selectionEnd + range[1]);
+        const selection2 = textarea.value.slice(start - range[0], end + range[1]);
         if (selected.match(snipReg)) {
-          selected = selected.replace(snipReg, (_, p1, p2, p3) => ((id === 'link') ? p1.replace(/\[/, '') : p2));
+          selected = selected.replace(snipReg, (_, p1, p2) => ((id === 'link') ? p1.replace(/\[/, '') : p2));
         } else if (selection2.match(snipReg)) {
           start = textarea.selectionStart - range[0];
           end = textarea.selectionEnd + range[1];
@@ -110,7 +112,7 @@ const ExecCmdButton = () => {
     });
   };
 
-  return { editButtons, execCmd };
+  return { execCmd };
 };
 
 export default ExecCmdButton;

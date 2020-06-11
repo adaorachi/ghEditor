@@ -13,10 +13,10 @@ const ToggleTab = (() => {
     });
 
     const navTabs = {
-      padding: '0 10px 10px',
+      padding: '0 10px 5px',
       backgroundColor: '#fff',
       border: '1px solid #ccc',
-      borderBottom: 'none',
+      borderBottom: '1px solid #fff',
     };
 
     const tabNavBtn = document.querySelector('.snipText-tabnav-tabs .active');

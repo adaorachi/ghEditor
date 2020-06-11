@@ -123,6 +123,7 @@ const Utils = (() => {
       backgroundColor: `${options.buttonBgColor}`,
       borderRadius: `${radius} ${radius} 0 0`,
       border: textareaBorder,
+      borderBottom: 'none',
       display: 'flex',
       justifyContent: 'space-between',
       fontFamily: 'inherit',
@@ -135,11 +136,16 @@ const Utils = (() => {
       color: options.buttonColor,
     };
 
-    const navTabs = {
-      padding: '0 10px 10px',
+    const currentNavTabs = {
+      padding: '0 10px 5px',
       backgroundColor: '#fff',
       border: '1px solid #ccc',
-      borderBottom: 'none',
+      borderBottom: '1px solid #fff',
+    };
+
+    const allTabStyles = {
+      padding: '0 10px 5px',
+      cursor: 'pointer',
     };
 
     const snipTextStyles = {
@@ -153,16 +159,21 @@ const Utils = (() => {
     const buttonContainer = document.querySelector('.snipText-button-container');
     Object.assign(buttonContainer.style, buttonContainerStyles);
 
-    const snipTextContainer = document.querySelector('.snipTextBody');
+    const snipTextContainer = document.querySelector('.snip-text-mark-down .snipTextBody');
     Object.assign(snipTextContainer.style, snipTextStyles);
 
-    const snipTextBody = document.querySelector('.snipTextBody');
+    const snipTextBody = document.querySelector('.snip-text-mark-down .snipTextBody');
     Object.assign(snipTextBody.style, defaultFrameStyles);
 
-    const tabNavBtn = document.querySelector('.snipText-tabnav-tabs .tabnav');
-    Object.assign(tabNavBtn.style, navTabs);
+    const tabNavBtn = document.querySelector('.snip-text-mark-down .tabnav');
+    Object.assign(tabNavBtn.style, currentNavTabs);
 
-    const allButtons = document.querySelectorAll('.buttons');
+    const allTabNav = document.querySelectorAll('.snip-text-mark-down .snip-tab-content');
+    allTabNav.forEach((tab) => {
+      Object.assign(tab.style, allTabStyles);
+    });
+
+    const allButtons = document.querySelectorAll('.snip-text-mark-down .buttons');
     allButtons.forEach((button) => {
       Object.assign(button.style, buttonStyles);
     });
@@ -174,6 +185,13 @@ const Utils = (() => {
     return newHeight;
   };
 
+  const textBody = (elem, border = false, display = false) => {
+    elem.style.height = '100%';
+    elem.style.width = '100%';
+    if (border) { elem.style.border = 'none'; elem.style.outine = 'none'; }
+    if (display) { elem.style.display = 'none'; }
+  };
+
 
   return {
     extendDefaults,
@@ -181,6 +199,7 @@ const Utils = (() => {
     displayButtons,
     containerStyles,
     expandHeight,
+    textBody,
   };
 })();
 

@@ -2,9 +2,10 @@ import Utils from './utils';
 import ToggleTab from './toggleTab';
 import ExecCmdButton from './execCmdButton';
 
+import styles from './styles.css';
 
 const snipText = () => {
-  const defaultTextarea = document.querySelector('textarea.snip-text');
+  const defaultTextarea = document.querySelector('textarea.snip-markdown');
 
   const markDown = (...args) => {
     let options = {};
@@ -27,29 +28,23 @@ const snipText = () => {
 
       const defaultTextClassName = Utils.concatClassName(defaultTextarea);
       snipTextBody.className = 'snipTextBody';
-      snipTextBody.style.height = 'auto';
-      snipTextBody.style.width = '100%';
+      Utils.textBody(snipTextBody);
 
       snipTextArea.id = 'snip-write';
-      snipTextArea.className = `snip-write snip-tab-content tab-content active ${defaultTextClassName}`;
-      snipTextArea.style.height = '100%';
-      snipTextArea.style.width = '100%';
-      snipTextArea.style.border = 'none';
+      snipTextArea.className = `meme snip-write snip-tab-content tab-content active ${defaultTextClassName}`;
+      Utils.textBody(snipTextArea, true, false);
 
       snipPreviewArea.id = 'snip-preview';
       snipPreviewArea.className = `snip-preview snip-tab-content tab-content ${defaultTextClassName}`;
-      snipPreviewArea.style.height = 'auto';
-      snipPreviewArea.style.width = '100%';
-      snipPreviewArea.style.display = 'none';
-
+      Utils.textBody(snipPreviewArea, true, true);
 
       snipTextBody.append(snipTextArea);
       snipTextBody.append(snipPreviewArea);
 
-      const exec = ExecCmdButton();
-
       window.addEventListener('load', () => {
+        snipPreviewArea.style.minHeight = `${snipTextArea.clientHeight}px`;
         Utils.containerStyles(args[0]);
+        const exec = ExecCmdButton();
         exec.execCmd('.buttons');
         ToggleTab.toggle('snipText-tabnav-tabs');
       });
@@ -67,3 +62,16 @@ const snipText = () => {
 };
 
 export default snipText;
+
+
+const opt = {
+  // className: 'fade-and',
+  // width: '30%',
+  // height: 'auto',
+  buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square|question-circle|jnsda',
+  // buttonBgColor: '#eee'
+  // frameStyles: { color: 'red', borderRadius: '10px' },
+};
+
+const sniptext = snipText();
+sniptext.markDown(opt);
