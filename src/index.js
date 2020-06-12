@@ -38,6 +38,9 @@ const snipText = () => {
       const snipTextArea = document.createElement('textarea');
       const snipPreviewArea = document.createElement('div');
 
+      const displayEmoji = document.createElement('div');
+      displayEmoji.className = 'filter-emoji-area show-emoji';
+
       const defaultTextClassName = Utils.concatClassName(defaultTextarea);
       snipTextBody.className = 'snip-text-body';
       snipTextBody.id = 'snip-text-body';
@@ -50,6 +53,7 @@ const snipText = () => {
       snipPreviewArea.className = `snip-preview snip-tab-content tab-content ${defaultTextClassName}`;
 
       snipTextBody.append(snipTextArea);
+      snipTextBody.append(displayEmoji);
       snipTextBody.append(snipPreviewArea);
 
       window.addEventListener('load', () => {

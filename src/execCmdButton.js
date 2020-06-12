@@ -1,9 +1,10 @@
 import marked from 'marked';
 import Utils from './utils';
 import * as emoji from './emoji.json';
+import Emojis from './emojis';
 
 const ExecCmdButton = () => {
-  const outputSnippet = (text) => {
+  const replaceSnippet = (text) => {
     text = text.replace(/(<p>)([\S\s]*?)(<\/p>)/g, (_, p1, p2, p3) => p1 + p2.replace(/\n/g, '<br>') + p3);
     text = text.replace(/(<li>)(<input[^>]*>)([\S\s]*?)(<\/li>)/g, (_, p1, p2, p3, p4) => p1.replace(p1, '<li class="task-list-item">') + p2 + p3 + p4);
 
@@ -11,24 +12,82 @@ const ExecCmdButton = () => {
     document.querySelector('.snip-markdown').innerHTML = text;
   };
 
-  const execCmd = (button) => {
-    const textarea = document.getElementById('snip-write');
-    const textAreaHeight = document.getElementById('snip-write').clientHeight;
-    let text;
-    textarea.addEventListener('input', (e) => {
-      const v = document.getElementById('snip-write').value;
-      const regex = /:[a-z]+/g;
-      const n = v.replace(regex, (match) => {
-        if (emoji[match] !== undefined) {
+  const fillInputOnKeyCode = (currentFocus, e) => {
+    const locListItems = document.querySelectorAll('.emoji-suggester .display-emoji');
+    // const e = theArgs[0];
+    // const locationSearch = theArgs[1];
+    // const locList = theArgs[2];
+    if (e.keyCode === 40) {
+      arguments[0] += 1;
+      if (arguments[0] >= locListItems.length) {
+        arguments[0] = 0;
+      }
+    } else if (e.keyCode === 38) {
+      arguments[0] -= 1;
+      if (arguments[0] <= 0) {
+        arguments[0] = 0;
+      }
+    }
+    // else if (e.keyCode === 13) {
+    //   const listText = document.getElementById(`city-${arguments[0]}`).innerText;
+    //   locationSearch.value = listText;
+    //   locList.classList.add('slide-effect');
+    //   document.getElementById('auto-complete-text').style.display = 'none';
+    //   document.getElementById('search-btn').click();
+    // } else {
+    //   arguments[0] = 0;
+    // }
+    document.querySelector(`emoji-${arguments[0]}`).style.backgroundColor = 'red';
+    // eslint-disable-next-line prefer-destructuring
+    currentFocus = arguments[0];
+    return currentFocus;
+  };
+
+
+  const displayEmoji = (textarea) => {
+    let currentFocus = 0;
+    textarea.addEventListener('keyup', (e) => {
+      const textareaValue = textarea.value;
+      const regex = /(:)([a-z0-9+-_]*)/g;
+      const emojiMatch = regex.test(textareaValue);
+      // console.log(e.target.value)
+      if (emojiMatch && e.keyCode !== 32) {
+        document.querySelector('.filter-emoji-area').classList.remove('show-emoji');
+        const match = textareaValue.match(regex)[0];
+        const emojis = Emojis();
+        const filtered = emojis.filterEmojiIcons(match);
+        document.querySelector('.filter-emoji-area').innerHTML = filtered;
+
+        // currentFocus = fillInputOnKeyCode(currentFocus, e);
+      } else {
+        document.querySelector('.filter-emoji-area').classList.add('show-emoji');
+      }
+
+      const matchEmoji = textareaValue.replace(regex, (match) => {
+        if (emoji[match] !== undefined && e.keyCode === 32) {
           return emoji[match];
         }
         return match;
       });
 
-      document.getElementById('snip-write').value = n;
+      document.getElementById('snip-write').value = matchEmoji;
+      const text = marked(document.getElementById('snip-write').value);
+      replaceSnippet(text);
 
+    });
+  };
+
+  const execCmd = (button) => {
+    const textarea = document.getElementById('snip-write');
+    const textAreaHeight = document.getElementById('snip-write').clientHeight;
+    let text;
+    textarea.addEventListener('input', (e) => {
+      displayEmoji(textarea);
       text = marked(e.target.value);
-      outputSnippet(text);
+
+      replaceSnippet(text);
+      console.log(textarea.value)
+      console.log(displayEmoji(textarea))
 
       textarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
     });
@@ -95,7 +154,8 @@ const ExecCmdButton = () => {
             snipSym = '';
             range = [1, 4];
             break;
-
+          default:
+            break;
         }
 
         const selectMode = (textarea.selectionStart === textarea.selectionEnd) ? 'end' : 'preserve';
@@ -122,7 +182,7 @@ const ExecCmdButton = () => {
 
         text = marked(textarea.value);
 
-        outputSnippet(text);
+        replaceSnippet(text);
 
         e.preventDefault();
       });

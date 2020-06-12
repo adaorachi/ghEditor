@@ -6,6 +6,7 @@ import {
   faListOl, faCheckSquare, faQuestionCircle,
   faSmileBeam,
 } from '@fortawesome/free-solid-svg-icons';
+import Emojis from './emojis';
 
 library.add(
   faBold, faUnderline, faItalic,
@@ -104,6 +105,20 @@ const Utils = (() => {
     return docFrag;
   };
 
+  const toggleEmojiArea = () => {
+    const emojiBut = document.querySelector('.snip-emoji-button');
+
+    const emojiArea = document.createElement('div');
+    emojiArea.className = 'snip-emoji-area';
+    emojiBut.append(emojiArea);
+
+    const emojis = Emojis();
+    emojiArea.innerHTML = emojis.getEmojiIcons();
+
+    emojiBut.addEventListener('click', () => {
+      emojiArea.classList.toggle('show-emoji');
+    });
+  };
 
   const containerStyles = (properties) => {
     const textArea = document.querySelector('textarea#snip-write');
