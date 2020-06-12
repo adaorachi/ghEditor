@@ -1,38 +1,11 @@
 const ToggleTab = (() => {
-  const hideAndDisplayNavTab = (ele, arrayList) => {
-    const array = document.querySelectorAll(arrayList);
-    Array.from(array).forEach((item) => {
-      if (item.id === ele) {
-        item.classList.add('active');
-        // item.style.display = 'block'
-      } else {
-        // item.style.display = 'none'
-        item.classList.remove('active');
-        item.removeAttribute('style');
-      }
-    });
-
-    const navTabs = {
-      padding: '0 10px 5px',
-      backgroundColor: '#fff',
-      border: '1px solid #ccc',
-      borderBottom: '1px solid #fff',
-    };
-
-    const tabNavBtn = document.querySelector('.snipText-tabnav-tabs .active');
-    Object.assign(tabNavBtn.style, navTabs);
-  };
-
   const hideAndDisplayNav = (ele, arrayList) => {
     const array = document.querySelectorAll(arrayList);
     Array.from(array).forEach((item) => {
       if (item.id === ele) {
-        // item.classList.add('active');
-        item.style.display = 'block';
+        item.classList.add('active');
       } else {
-        item.style.display = 'none';
-        // item.classList.remove('active');
-        // item.removeAttribute('style')
+        item.classList.remove('active');
       }
     });
   };
@@ -45,7 +18,17 @@ const ToggleTab = (() => {
         const { id } = e.target;
         const eleTab = id.split('-').slice(0, 2).join('-');
         hideAndDisplayNav(eleTab, `.${parentId} .snip-tab-content.tab-content`);
-        hideAndDisplayNavTab(id, `.${parentId} .btn-nav.tabnav`);
+        hideAndDisplayNav(id, `.${parentId} .btn-nav.tabnav`);
+
+        if (id === 'snip-write-tab') {
+          document.getElementById(eleTab).focus();
+          document.querySelector('.snipText-button-container').classList.remove('remove');
+        } else if (id === 'snip-preview-tab') {
+          document.querySelector('.snipText-button-container').classList.add('remove');
+          if (document.getElementById('snip-write').value === '') {
+            document.getElementById('snip-preview').innerHTML = '<p class="placeholder">Nothing to preview<p>';
+          }
+        }
       }
     });
   };

@@ -1,3 +1,204 @@
-.meme {
-  background-color: black;
+#snip-text-body h1 {
+  font-size: 1.75rem;
+}
+
+#snip-text-body h2 {
+  font-size: 1.3rem;
+}
+
+#snip-text-body h3 {
+  font-size: 1.1rem;
+}
+
+#snip-text-body h4 {
+  font-size: 1rem;
+}
+
+#snip-text-body h5 {
+  font-size: 0.875rem;
+}
+
+#snip-text-body h6 {
+  font-size: 0.8rem;
+}
+
+#snip-text-body h1,
+#snip-text-body h2 {
+  padding-bottom: .3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+/* h1,h2,h3,h4,h5,h6, p {
+  padding-top: 0;
+} */
+
+#snip-text-body code,
+#snip-text-body pre {
+  font-size: 85%;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+
+#snip-text-body pre code {
+  padding: 0;
+  border-radius: none;
+}
+
+#snip-text-body code {
+  padding: .2em .4em;
+  margin: 0;
+}
+
+#snip-text-body pre {
+  padding: 16px;
+  overflow: auto;
+  line-height: 1.45;
+}
+
+#snip-text-body blockquote {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: .25em solid #dfe2e5;
+}
+
+#snip-text-body ul {
+  padding-left: 2em;
+}
+
+#snip-text-body .task-list-item {
+  list-style-type: none;
+}
+
+#snip-text-body .task-list-item input {
+  margin: 0 .2em .25em -1.6em;
+}
+
+#snip-text-body, 
+.snip-tab-content.tab-content {
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.snip-tab-content.tab-content {
+  display: none;
+}
+
+.snip-tab-content.tab-content.active {
+  display: block;
+}
+
+#snip-text-body {
+  border-radius: 0 0 0.25rem 0.25rem;
+  border: 1px solid #ced4da;
+  padding: 6px;
+}
+
+#snip-write {
+  background-color: #fafbfc;
+  border: 1px solid #d1d5da;
+}
+
+#snip-write::placeholder,
+#snip-preview .placeholder {
+ font-size: 90%;
+ color: #ccc;
+}
+
+#snip-text-tabnav-tabs {
+  padding: 8px 0 0;
+  margin: 0 10px;
+  margin-bottom: -1px;
+}
+
+#snip-text-tabnav-tabs .btn-nav {
+  border: 1px solid #f6f8fa;
+  outline: none;
+  background-color: transparent;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+#snip-text-tabnav-tabs .btn-nav.active {
+  background-color: #fff;
+  border-color: #d1d5da;
+  border-bottom: #fff;
+  border-radius: 3px 3px 0 0;
+  height: 100%;
+  padding: 8px 12px;
+}
+
+.snip-text-header {
+  border: 1px solid #d1d5da;
+  border-bottom: none;
+  background-color: #f6f8fa;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 0.25rem 0.25rem 0 0;
+  font-family: inherit;
+  position: relative;
+}
+
+.snip-text-header::before,
+.snip-text-header::after {
+  position: absolute;
+  top: 11px;
+  right: 100%;
+  left: -16px;
+  display: block;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  content: " ";
+  border-color: transparent;
+  border-style: solid solid outset;
+}
+
+.snip-text-header::before {
+  border-width: 8px;
+  border-right-color: #d1d5da;
+}
+
+.snip-text-header::after {
+  margin-top: 1px;
+  margin-left: 2px;
+  border-width: 7px;
+  border-right-color: #f6f8fa;
+}
+
+.snipText-button-container {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.snipText-button-container .buttons {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: #555;
+}
+
+.snipText-button-container.remove {
+  display: none;
+}
+
+.snip-emoji-button {
+  position: relative;
+}
+
+.snip-emoji-area {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  background: red;
+  right: 50%;
+  top: 0;
+  transform: translate(50px, 30px);
+}
+
+.snip-emoji-area.show-emoji {
+  display: none;
 }

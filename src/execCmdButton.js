@@ -1,19 +1,36 @@
 import marked from 'marked';
 import Utils from './utils';
+import * as emoji from './emoji.json';
 
 const ExecCmdButton = () => {
+  const outputSnippet = (text) => {
+    text = text.replace(/(<p>)([\S\s]*?)(<\/p>)/g, (_, p1, p2, p3) => p1 + p2.replace(/\n/g, '<br>') + p3);
+    text = text.replace(/(<li>)(<input[^>]*>)([\S\s]*?)(<\/li>)/g, (_, p1, p2, p3, p4) => p1.replace(p1, '<li class="task-list-item">') + p2 + p3 + p4);
+
+    document.getElementById('snip-preview').innerHTML = text;
+    document.querySelector('.snip-markdown').innerHTML = text;
+  };
+
   const execCmd = (button) => {
     const textarea = document.getElementById('snip-write');
-    const previewarea = document.getElementById('snip-preview');
     const textAreaHeight = document.getElementById('snip-write').clientHeight;
     let text;
     textarea.addEventListener('input', (e) => {
+      const v = document.getElementById('snip-write').value;
+      const regex = /:[a-z]+/g;
+      const n = v.replace(regex, (match) => {
+        if (emoji[match] !== undefined) {
+          return emoji[match];
+        }
+        return match;
+      });
+
+      document.getElementById('snip-write').value = n;
+
       text = marked(e.target.value);
-      text = text.replace(/(<p[^>]*>)([\S\s]*?)(<\/p>)/g, (_, p1, p2, p3) => p1 + p2.replace(/\n/g, '<br>') + p3);
-      document.getElementById('snip-preview').innerHTML = text;
+      outputSnippet(text);
 
       textarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
-      previewarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
     });
     const allButtons = document.querySelectorAll(button);
     allButtons.forEach((button) => {
@@ -78,8 +95,7 @@ const ExecCmdButton = () => {
             snipSym = '';
             range = [1, 4];
             break;
-          default:
-            snipReg = '';
+
         }
 
         const selectMode = (textarea.selectionStart === textarea.selectionEnd) ? 'end' : 'preserve';
@@ -104,9 +120,10 @@ const ExecCmdButton = () => {
         textarea.focus();
         textarea.setRangeText(selected, start, end, selectMode);
 
-        let text = marked(textarea.value);
-        text = text.replace(/(<p[^>]*>)([\S\s]*?)(<\/p>)/g, (_, p1, p2, p3) => p1 + p2.replace(/\n/g, '<br>') + p3);
-        document.getElementById('snip-preview').innerHTML = text;
+        text = marked(textarea.value);
+
+        outputSnippet(text);
+
         e.preventDefault();
       });
     });

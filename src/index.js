@@ -6,6 +6,7 @@ import styles from './styles.css';
 
 const snipText = () => {
   const defaultTextarea = document.querySelector('textarea.snip-markdown');
+  const defaultAvatar = document.querySelector('.snip-markdown-avatar');
 
   const markDown = (...args) => {
     let options = {};
@@ -19,38 +20,49 @@ const snipText = () => {
       defaultTextarea.style.display = 'none';
 
       const snipMarkDown = document.createElement('div');
+      const snipTextContainer = document.createElement('div');
+      snipTextContainer.className = 'snip-text-container';
       snipMarkDown.className = 'snip-text-mark-down';
-      areaParentEle.append(snipMarkDown);
+      snipMarkDown.id = 'snip-text-mark-down';
+
+      if (defaultAvatar !== null) {
+        const avatarSrc = defaultAvatar.getAttribute('src');
+        const avatar = document.createElement('img');
+        avatar.setAttribute('src', avatarSrc);
+        snipTextContainer.append(avatar);
+      }
+      snipTextContainer.append(snipMarkDown);
+      areaParentEle.append(snipTextContainer);
 
       const snipTextBody = document.createElement('div');
       const snipTextArea = document.createElement('textarea');
       const snipPreviewArea = document.createElement('div');
 
       const defaultTextClassName = Utils.concatClassName(defaultTextarea);
-      snipTextBody.className = 'snipTextBody';
-      Utils.textBody(snipTextBody);
+      snipTextBody.className = 'snip-text-body';
+      snipTextBody.id = 'snip-text-body';
 
       snipTextArea.id = 'snip-write';
-      snipTextArea.className = `meme snip-write snip-tab-content tab-content active ${defaultTextClassName}`;
-      Utils.textBody(snipTextArea, true, false);
+      snipTextArea.className = `snip-write snip-tab-content tab-content active ${defaultTextClassName}`;
+      snipTextArea.placeholder = 'Leave your comment';
 
       snipPreviewArea.id = 'snip-preview';
       snipPreviewArea.className = `snip-preview snip-tab-content tab-content ${defaultTextClassName}`;
-      Utils.textBody(snipPreviewArea, true, true);
 
       snipTextBody.append(snipTextArea);
       snipTextBody.append(snipPreviewArea);
 
       window.addEventListener('load', () => {
         snipPreviewArea.style.minHeight = `${snipTextArea.clientHeight}px`;
+        Utils.toggleEmojiArea();
         Utils.containerStyles(args[0]);
         const exec = ExecCmdButton();
-        exec.execCmd('.buttons');
-        ToggleTab.toggle('snipText-tabnav-tabs');
+        exec.execCmd('.buttons.markdown-button');
+        ToggleTab.toggle('snip-text-tabnav-tabs');
       });
 
       const buttonContainer = document.createElement('div');
-      buttonContainer.className = 'snipText-button-container';
+      buttonContainer.className = 'snip-text-header';
 
       snipMarkDown.append(buttonContainer);
       Utils.displayButtons(args[0]);
@@ -68,7 +80,7 @@ const opt = {
   // className: 'fade-and',
   // width: '30%',
   // height: 'auto',
-  buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square|question-circle|jnsda',
+  buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square',
   // buttonBgColor: '#eee'
   // frameStyles: { color: 'red', borderRadius: '10px' },
 };
