@@ -39,7 +39,7 @@ const snipText = () => {
       const snipPreviewArea = document.createElement('div');
 
       const displayEmoji = document.createElement('div');
-      displayEmoji.className = 'filter-emoji-area show-emoji';
+      displayEmoji.className = 'filter-emoji-area';
 
       const defaultTextClassName = Utils.concatClassName(defaultTextarea);
       snipTextBody.className = 'snip-text-body';
@@ -61,7 +61,7 @@ const snipText = () => {
         Utils.toggleEmojiArea();
         Utils.containerStyles(args[0]);
         const exec = ExecCmdButton();
-        exec.execCmd('.buttons.markdown-button');
+        exec.execEditorCommand();
         ToggleTab.toggle('snip-text-tabnav-tabs');
       });
 

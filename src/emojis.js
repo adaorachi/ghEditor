@@ -24,7 +24,7 @@ const Emojis = () => {
 
     let meme = '<ul class="emoji-suggester">';
     filterEmoji.forEach((emo, index) => {
-      meme += `<li role="option" data-emoji-name="${emo[0]}" class="display-emoji emoji-${index}" id="${emo[0]}">${emo[0]} ${emo[1]}</li>`;
+      meme += `<li role="option" data-emoji-name="${emo[0]}" class="display-emoji emoji-${index}" id="emoji-${index}" aria-selected="false">${emo[1]} ${emo[0]}</li>`;
     });
     meme += '</ul>';
     return meme;

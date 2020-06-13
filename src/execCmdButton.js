@@ -3,65 +3,135 @@ import Utils from './utils';
 import * as emoji from './emoji.json';
 import Emojis from './emojis';
 
-const ExecCmdButton = () => {
+const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) => {
   const replaceSnippet = (text) => {
     text = text.replace(/(<p>)([\S\s]*?)(<\/p>)/g, (_, p1, p2, p3) => p1 + p2.replace(/\n/g, '<br>') + p3);
     text = text.replace(/(<li>)(<input[^>]*>)([\S\s]*?)(<\/li>)/g, (_, p1, p2, p3, p4) => p1.replace(p1, '<li class="task-list-item">') + p2 + p3 + p4);
 
     document.getElementById('snip-preview').innerHTML = text;
     document.querySelector('.snip-markdown').innerHTML = text;
+    document.querySelector('#meme').innerHTML = text;
   };
 
-  const fillInputOnKeyCode = (currentFocus, e) => {
+  const utilValues = () => {
+    const textarea = document.getElementById('snip-write');
+    const [textareaValue, regex] = [textarea.value, /(:)([a-z0-9+-_]*)/g];
+    const emojiMatch = regex.test(textareaValue);
+    const currentEmojiId = document.getElementById(`emoji-${currentFocus}`);
+    return [textareaValue, regex, emojiMatch, currentEmojiId];
+  };
+
+  const updatePreviewInput = (matchEmoji) => {
+    document.getElementById('snip-write').value = matchEmoji;
+    const text = marked(document.getElementById('snip-write').value);
+    replaceSnippet(text);
+  };
+
+  const insertEmojiOnClick = (textareaValue, regex) => {
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('display-emoji')) {
+        const { id } = e.target;
+        const currentEmojiHTML = document.getElementById(id).innerHTML;
+        const currentEmojiContent = currentEmojiHTML.split(' ')[0];
+
+        document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
+        currentFocus = 0;
+
+        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiContent} `);
+
+        updatePreviewInput(matchEmoji);
+
+        const textarea = document.getElementById('snip-write');
+        textarea.setSelectionRange(startSelection, endSelection);
+        textarea.focus();
+      }
+    });
+  };
+
+  const selectEmojiOnArrowKey = (e) => {
     const locListItems = document.querySelectorAll('.emoji-suggester .display-emoji');
-    // const e = theArgs[0];
-    // const locationSearch = theArgs[1];
-    // const locList = theArgs[2];
     if (e.keyCode === 40) {
-      arguments[0] += 1;
-      if (arguments[0] >= locListItems.length) {
-        arguments[0] = 0;
+      currentFocus += 1;
+      if (currentFocus >= locListItems.length) {
+        currentFocus = 0;
       }
     } else if (e.keyCode === 38) {
-      arguments[0] -= 1;
-      if (arguments[0] <= 0) {
-        arguments[0] = 0;
+      currentFocus -= 1;
+      if (currentFocus < 0) {
+        currentFocus = locListItems.length - 1;
       }
     }
-    // else if (e.keyCode === 13) {
-    //   const listText = document.getElementById(`city-${arguments[0]}`).innerText;
-    //   locationSearch.value = listText;
-    //   locList.classList.add('slide-effect');
-    //   document.getElementById('auto-complete-text').style.display = 'none';
-    //   document.getElementById('search-btn').click();
-    // } else {
-    //   arguments[0] = 0;
-    // }
-    document.querySelector(`emoji-${arguments[0]}`).style.backgroundColor = 'red';
-    // eslint-disable-next-line prefer-destructuring
-    currentFocus = arguments[0];
-    return currentFocus;
   };
 
+  const insertEmojiOnEnterKey = () => {
+    const textarea = document.getElementById('snip-write');
+    textarea.addEventListener('keydown', (e) => {
+      const [textareaValue, regex, emojiMatch, currentEmojiId] = utilValues();
 
-  const displayEmoji = (textarea) => {
-    let currentFocus = 0;
-    textarea.addEventListener('keyup', (e) => {
-      const textareaValue = textarea.value;
-      const regex = /(:)([a-z0-9+-_]*)/g;
-      const emojiMatch = regex.test(textareaValue);
-      // console.log(e.target.value)
-      if (emojiMatch && e.keyCode !== 32) {
-        document.querySelector('.filter-emoji-area').classList.remove('show-emoji');
-        const match = textareaValue.match(regex)[0];
-        const emojis = Emojis();
-        const filtered = emojis.filterEmojiIcons(match);
-        document.querySelector('.filter-emoji-area').innerHTML = filtered;
+      if (emojiMatch && e.keyCode === 13 && currentEmojiId !== null) {
+        const currentEmojiIdHTML = document.getElementById(`emoji-${currentFocus}`).innerHTML;
+        const currentEmojiIdContent = currentEmojiIdHTML.split(' ')[0];
+        document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
+        currentFocus = 0;
 
-        // currentFocus = fillInputOnKeyCode(currentFocus, e);
-      } else {
-        document.querySelector('.filter-emoji-area').classList.add('show-emoji');
+        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiIdContent} `);
+        updatePreviewInput(matchEmoji);
+        textarea.setSelectionRange(startSelection, endSelection);
+
+        e.preventDefault();
       }
+    });
+  };
+
+  const aaa = () => {
+    document.querySelector('.snip-text-body').addEventListener('click', (e) => {
+      xx = e.clientX;
+      yy = e.clientY;
+      // return [, e.clientY];
+      const filterEmojiArea = document.querySelector('.filter-emoji-area');
+      filterEmojiArea.style.top = `${xx}px`;
+      filterEmojiArea.style.left = `${yy}px`;
+      console.log(e.clientX, e.clientY, xx, yy);
+    });
+  };
+
+  const dropDownEmoji = (textareaValue, regex, emojiMatch, e) => {
+    aaa()
+    if (emojiMatch && e.keyCode !== 32) {
+      // console.log(e.target.clientHeight, e.target.clientWidth, e.target.clientLeft, e.target.clientTop)
+
+      if (e.keyCode === 186) {
+        document.querySelector('.snip-text-body').click();
+
+      }
+
+      // console.log(e)
+      const match = textareaValue.match(regex)[0];
+
+      const emojis = Emojis();
+      const filtered = emojis.filterEmojiIcons(match);
+
+      const filterEmojiArea = document.querySelector('.filter-emoji-area');
+      // filterEmojiArea.style.top = `20px`;
+      // filterEmojiArea.style.left = `10px`;
+      filterEmojiArea.classList.add('emoji-dropdown');
+
+      filterEmojiArea.innerHTML = filtered;
+
+      insertEmojiOnClick(textareaValue, regex);
+      selectEmojiOnArrowKey(e);
+
+      Utils.setAttributeToEmojiSelected(`emoji-${currentFocus}`, '.emoji-suggester .display-emoji');
+    } else {
+      document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
+    }
+  };
+
+  const replaceEmojiOnKeyEvent = () => {
+    const textarea = document.getElementById('snip-write');
+    textarea.addEventListener('keyup', (e) => {
+      const [textareaValue, regex, emojiMatch] = utilValues();
+      dropDownEmoji(textareaValue, regex, emojiMatch, e);
 
       const matchEmoji = textareaValue.replace(regex, (match) => {
         if (emoji[match] !== undefined && e.keyCode === 32) {
@@ -70,28 +140,30 @@ const ExecCmdButton = () => {
         return match;
       });
 
-      document.getElementById('snip-write').value = matchEmoji;
-      const text = marked(document.getElementById('snip-write').value);
-      replaceSnippet(text);
-
+      updatePreviewInput(matchEmoji);
     });
+
+    insertEmojiOnEnterKey();
   };
 
-  const execCmd = (button) => {
+  const insertAllTextOnInput = () => {
     const textarea = document.getElementById('snip-write');
     const textAreaHeight = document.getElementById('snip-write').clientHeight;
     let text;
     textarea.addEventListener('input', (e) => {
-      displayEmoji(textarea);
       text = marked(e.target.value);
-
       replaceSnippet(text);
-      console.log(textarea.value)
-      console.log(displayEmoji(textarea))
-
       textarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
+
+      startSelection = textarea.selectionStart;
+      endSelection = textarea.selectionEnd;
     });
-    const allButtons = document.querySelectorAll(button);
+  };
+
+  const btnExecuteCommand = () => {
+    const textarea = document.getElementById('snip-write');
+    let text;
+    const allButtons = document.querySelectorAll('.buttons.markdown-button');
     allButtons.forEach((button) => {
       const { id } = button;
       button.addEventListener('click', (e) => {
@@ -179,17 +251,21 @@ const ExecCmdButton = () => {
 
         textarea.focus();
         textarea.setRangeText(selected, start, end, selectMode);
-
         text = marked(textarea.value);
-
         replaceSnippet(text);
-
         e.preventDefault();
       });
     });
   };
 
-  return { execCmd };
+  const execEditorCommand = () => {
+    replaceEmojiOnKeyEvent();
+    insertAllTextOnInput();
+
+    btnExecuteCommand();
+  };
+
+  return { execEditorCommand };
 };
 
 export default ExecCmdButton;

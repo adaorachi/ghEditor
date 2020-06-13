@@ -25,6 +25,7 @@ const ToggleTab = (() => {
           document.querySelector('.snipText-button-container').classList.remove('remove');
         } else if (id === 'snip-preview-tab') {
           document.querySelector('.snipText-button-container').classList.add('remove');
+          document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
           if (document.getElementById('snip-write').value === '') {
             document.getElementById('snip-preview').innerHTML = '<p class="placeholder">Nothing to preview<p>';
           }

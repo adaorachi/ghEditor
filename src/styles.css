@@ -94,6 +94,7 @@
 #snip-text-body {
   border-radius: 0 0 0.25rem 0.25rem;
   border: 1px solid #ced4da;
+  border-top: none;
   padding: 6px;
   position: relative;
 }
@@ -134,7 +135,6 @@
 
 .snip-text-header {
   border: 1px solid #d1d5da;
-  border-bottom: none;
   background-color: #f6f8fa;
   display: flex;
   justify-content: space-between;
@@ -211,15 +211,18 @@
   z-index: 10;
 }
 
-.snip-emoji-area.show-emoji, 
-.filter-emoji-area.show-emoji {
+.snip-emoji-area.show-emoji {
   display: none;
 }
 
 .filter-emoji-area {
   height: auto;
-  width: 150px;
   position: absolute;
+  display: none;
+}
+
+.filter-emoji-area.emoji-dropdown {
+  display: block;
 }
 
 .filter-emoji-area .emoji-suggester {
@@ -238,5 +241,11 @@
   display: block;
   padding: 4px 8px;
   font-weight: 600;
+  font-size: 14px;
   border-bottom: 1px solid #e1e4e8;
+}
+
+.emoji-suggester .display-emoji.selected {
+  color: #fff;
+  background: #0366d6;
 }
