@@ -20,6 +20,7 @@ const Utils = (() => {
   const extendDefaults = (properties) => {
     const defaults = {
       className: 'fade-and-drop',
+      emoji: true,
       width: '100%',
       height: '100px',
       buttons: 'underline|bold|italic',

@@ -61,7 +61,7 @@ const snipText = () => {
         Utils.toggleEmojiArea();
         Utils.containerStyles(args[0]);
         const exec = ExecCmdButton();
-        exec.execEditorCommand();
+        exec.execEditorCommand(args[0]);
         ToggleTab.toggle('snip-text-tabnav-tabs');
       });
 

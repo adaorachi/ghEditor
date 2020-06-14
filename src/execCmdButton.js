@@ -2,6 +2,7 @@ import marked from 'marked';
 import Utils from './utils';
 import * as emoji from './emoji.json';
 import Emojis from './emojis';
+import getCaretCoordinates from './caretPos';
 
 const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) => {
   const replaceSnippet = (text) => {
@@ -10,7 +11,7 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
 
     document.getElementById('snip-preview').innerHTML = text;
     document.querySelector('.snip-markdown').innerHTML = text;
-    document.querySelector('#meme').innerHTML = text;
+    // document.querySelector('#meme').innerHTML = text;
   };
 
   const utilValues = () => {
@@ -37,13 +38,13 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
         document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
         currentFocus = 0;
 
-        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiContent} `);
+        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiContent}`);
 
         updatePreviewInput(matchEmoji);
 
         const textarea = document.getElementById('snip-write');
         textarea.setSelectionRange(startSelection, endSelection);
-        textarea.focus();
+        // textarea.focus();
       }
     });
   };
@@ -74,7 +75,7 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
         document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
         currentFocus = 0;
 
-        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiIdContent} `);
+        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiIdContent}`);
         updatePreviewInput(matchEmoji);
         textarea.setSelectionRange(startSelection, endSelection);
 
@@ -83,37 +84,16 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
     });
   };
 
-  const aaa = () => {
-    document.querySelector('.snip-text-body').addEventListener('click', (e) => {
-      xx = e.clientX;
-      yy = e.clientY;
-      // return [, e.clientY];
-      const filterEmojiArea = document.querySelector('.filter-emoji-area');
-      filterEmojiArea.style.top = `${xx}px`;
-      filterEmojiArea.style.left = `${yy}px`;
-      console.log(e.clientX, e.clientY, xx, yy);
-    });
-  };
-
   const dropDownEmoji = (textareaValue, regex, emojiMatch, e) => {
-    aaa()
     if (emojiMatch && e.keyCode !== 32) {
-      // console.log(e.target.clientHeight, e.target.clientWidth, e.target.clientLeft, e.target.clientTop)
-
-      if (e.keyCode === 186) {
-        document.querySelector('.snip-text-body').click();
-
-      }
-
-      // console.log(e)
       const match = textareaValue.match(regex)[0];
 
       const emojis = Emojis();
       const filtered = emojis.filterEmojiIcons(match);
 
       const filterEmojiArea = document.querySelector('.filter-emoji-area');
-      // filterEmojiArea.style.top = `20px`;
-      // filterEmojiArea.style.left = `10px`;
+      filterEmojiArea.style.top = `${xx + 40}px`;
+      filterEmojiArea.style.left = `${yy}px`;
       filterEmojiArea.classList.add('emoji-dropdown');
 
       filterEmojiArea.innerHTML = filtered;
@@ -150,7 +130,19 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
     const textarea = document.getElementById('snip-write');
     const textAreaHeight = document.getElementById('snip-write').clientHeight;
     let text;
+    let scrollT = 0;
     textarea.addEventListener('input', (e) => {
+
+      const coordinates = getCaretCoordinates(textarea, textarea.selectionEnd);
+
+      textarea.addEventListener('scroll', () => {
+        scrollT = textarea.scrollTop;
+      });
+      if (e.data === ':') {
+        xx = coordinates.top - scrollT;
+        yy = coordinates.left;
+      }
+
       text = marked(e.target.value);
       replaceSnippet(text);
       textarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
@@ -258,8 +250,10 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
     });
   };
 
-  const execEditorCommand = () => {
-    replaceEmojiOnKeyEvent();
+  const execEditorCommand = (prop) => {
+    if (Utils.extendDefaults(prop).emoji) {
+      replaceEmojiOnKeyEvent();
+    }
     insertAllTextOnInput();
 
     btnExecuteCommand();
