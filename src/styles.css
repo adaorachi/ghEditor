@@ -1,29 +1,29 @@
-#snip-text-body h1 {
+.snip-text-body h1 {
   font-size: 1.75rem;
 }
 
-#snip-text-body h2 {
+.snip-text-body h2 {
   font-size: 1.3rem;
 }
 
-#snip-text-body h3 {
+.snip-text-body h3 {
   font-size: 1.1rem;
 }
 
-#snip-text-body h4 {
+.snip-text-body h4 {
   font-size: 1rem;
 }
 
-#snip-text-body h5 {
+.snip-text-body h5 {
   font-size: 0.875rem;
 }
 
-#snip-text-body h6 {
+.snip-text-body h6 {
   font-size: 0.8rem;
 }
 
-#snip-text-body h1,
-#snip-text-body h2 {
+.snip-text-body h1,
+.snip-text-body h2 {
   padding-bottom: .3em;
   border-bottom: 1px solid #eaecef;
 }
@@ -32,30 +32,30 @@
   padding-top: 0;
 } */
 
-#snip-text-body code,
-#snip-text-body pre {
+.snip-text-body code,
+.snip-text-body pre {
   font-size: 85%;
   background-color: #f6f8fa;
   border-radius: 3px;
 }
 
-#snip-text-body pre code {
+.snip-text-body pre code {
   padding: 0;
   border-radius: none;
 }
 
-#snip-text-body code {
+.snip-text-body code {
   padding: .2em .4em;
   margin: 0;
 }
 
-#snip-text-body pre {
+.snip-text-body pre {
   padding: 16px;
   overflow: auto;
   line-height: 1.45;
 }
 
-#snip-text-body blockquote {
+.snip-text-body blockquote {
   padding: 0 1em;
   color: #6a737d;
   border-left: .25em solid #dfe2e5;
@@ -65,22 +65,21 @@
   padding-left: 2em;
 }
 
-#snip-text-body .task-list-item {
+.snip-text-body .task-list-item {
   list-style-type: none;
 }
 
-#snip-text-body .task-list-item input {
+.snip-text-body .task-list-item input {
   margin: 0 .2em .25em -1.6em;
 }
 
-#snip-text-body, 
+.snip-text-body, 
 .snip-tab-content.tab-content {
   height: 100%;
   width: 100%;
   border: none;
   outline: none;
   box-sizing: border-box;
-  /* position: relative; */
 }
 
 .snip-tab-content.tab-content {
@@ -91,7 +90,19 @@
   display: block;
 }
 
-#snip-text-body {
+.snip-write.tab-content {
+  background-color: #fafbfc;
+  border: 1px solid #d1d5da;
+}
+
+.snip-write::placeholder,
+.snip-preview .placeholder,
+.snip-word-count {
+ font-size: 90%;
+ color: #ccc;
+}
+
+.snip-text-body {
   border-radius: 0 0 0.25rem 0.25rem;
   border: 1px solid #ced4da;
   border-top: none;
@@ -99,25 +110,14 @@
   position: relative;
 }
 
-#snip-write {
-  background-color: #fafbfc;
-  border: 1px solid #d1d5da;
-}
-
-#snip-write::placeholder,
-#snip-preview .placeholder {
- font-size: 90%;
- color: #ccc;
-}
-
-#snip-text-tabnav-tabs {
+.snip-text-tabnav-tabs {
   padding: 8px 0 0;
   margin: 0 10px;
   margin-bottom: -1px;
   display: flex;
 }
 
-#snip-text-tabnav-tabs .btn-nav {
+.snip-text-tabnav-tabs .btn-nav {
   border: 1px solid #f6f8fa;
   outline: none;
   background-color: transparent;
@@ -125,7 +125,7 @@
   cursor: pointer;
 }
 
-#snip-text-tabnav-tabs .btn-nav.active {
+.snip-text-tabnav-tabs .btn-nav.active {
   background-color: #fff;
   border-color: #d1d5da;
   border-bottom: #fff;
@@ -171,21 +171,25 @@
   border-right-color: #f6f8fa;
 }
 
-.snipText-button-container {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+.snip-text-header-content {
   padding: 8px;
 }
 
-.snipText-button-container .buttons {
+.snip-text-button-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.snip-text-button-container .buttons {
   border: none;
   outline: none;
   background-color: transparent;
   color: #555;
 }
 
-.snipText-button-container.remove {
+.snip-text-button-container.remove,
+.snip-word-count.remove {
   display: none;
 }
 
@@ -194,36 +198,39 @@
 }
 
 .snip-emoji-area {
-  width: 250px;
-  height: 250px;
+  width: 220px;
+  height: 150px;
   position: absolute;
-  background: #fff;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  display: none;
   right: 50%;
   top: 0;
   transform: translate(50px, 30px);
+  z-index: 10;
+}
+
+.snip-emoji-area-content {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  overflow: hidden scroll;
   display: flex;
   flex-wrap: wrap;
   padding: 5px;
   justify-content: center;
   align-items: center;
-  z-index: 10;
-}
-
-.snip-emoji-area.show-emoji {
-  display: none;
 }
 
 .filter-emoji-area {
   height: auto;
   position: absolute;
   display: none;
+  z-index: 999;
 }
 
-.filter-emoji-area.emoji-dropdown {
+.filter-emoji-area.emoji-dropdown,
+.snip-emoji-area.show-emoji {
   display: block;
 }
 

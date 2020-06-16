@@ -4,18 +4,19 @@ import * as emoji from './emoji.json';
 import Emojis from './emojis';
 import getCaretCoordinates from './caretPos';
 
-const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) => {
+const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection, startEmo = 0) => {
+  // const editorId = Utils.extendDefaults(properties).id;
   const replaceSnippet = (text) => {
     text = text.replace(/(<p>)([\S\s]*?)(<\/p>)/g, (_, p1, p2, p3) => p1 + p2.replace(/\n/g, '<br>') + p3);
     text = text.replace(/(<li>)(<input[^>]*>)([\S\s]*?)(<\/li>)/g, (_, p1, p2, p3, p4) => p1.replace(p1, '<li class="task-list-item">') + p2 + p3 + p4);
 
-    document.getElementById('snip-preview').innerHTML = text;
-    document.querySelector('.snip-markdown').innerHTML = text;
+    document.getElementById(`snip-preview-${editorId}`).innerHTML = text;
+    document.getElementById(`${editorId}`).innerHTML = text;
     // document.querySelector('#meme').innerHTML = text;
   };
 
   const utilValues = () => {
-    const textarea = document.getElementById('snip-write');
+    const textarea = document.getElementById(`snip-write-${editorId}`);
     const [textareaValue, regex] = [textarea.value, /(:)([a-z0-9+-_]*)/g];
     const emojiMatch = regex.test(textareaValue);
     const currentEmojiId = document.getElementById(`emoji-${currentFocus}`);
@@ -23,34 +24,58 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
   };
 
   const updatePreviewInput = (matchEmoji) => {
-    document.getElementById('snip-write').value = matchEmoji;
-    const text = marked(document.getElementById('snip-write').value);
+    document.getElementById(`snip-write-${editorId}`).value = matchEmoji;
+    const text = marked(document.getElementById(`snip-write-${editorId}`).value);
     replaceSnippet(text);
   };
 
-  const insertEmojiOnClick = (textareaValue, regex) => {
+  const replaceEmo = (repl, textareaValue) => {
+    const diff = endSelection - startEmo;
+    if (diff >= 0 && diff <= 25) {
+      textareaValue = textareaValue.slice(0, startEmo - 1) + repl + textareaValue.slice(endSelection);
+    }
+    return textareaValue;
+  };
+
+  const insertEmojiOnClick = () => {
+    const textarea = document.getElementById(`snip-write-${editorId}`);
     document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('display-emoji')) {
+      if (e.target.classList.contains(`display-emoji-${editorId}`)) {
         const { id } = e.target;
         const currentEmojiHTML = document.getElementById(id).innerHTML;
         const currentEmojiContent = currentEmojiHTML.split(' ')[0];
 
-        document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
+        document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('emoji-dropdown');
         currentFocus = 0;
 
-        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiContent}`);
+        const matchEmoji = replaceEmo(currentEmojiContent, textarea.value);
+        // textareaValue.replace(regex, () => `${currentEmojiContent}`);
 
         updatePreviewInput(matchEmoji);
-
-        const textarea = document.getElementById('snip-write');
         textarea.setSelectionRange(startSelection, endSelection);
-        // textarea.focus();
+      }
+    });
+  };
+
+  const insertEmojiOnEmojiAreaClick = () => {
+    const textarea = document.getElementById(`snip-write-${editorId}`);
+
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains(`emoji-area-button-${editorId}`)) {
+        const { id } = e.target;
+        const currentEmojiHTML = document.getElementById(id).innerText;
+        let textareaValue = textarea.value;
+        textareaValue = textareaValue.slice(0, startSelection) + currentEmojiHTML + textareaValue.slice(endSelection);
+        const matchEmoji = textareaValue;
+
+        updatePreviewInput(matchEmoji);
+        textarea.setSelectionRange(startSelection, endSelection);
       }
     });
   };
 
   const selectEmojiOnArrowKey = (e) => {
-    const locListItems = document.querySelectorAll('.emoji-suggester .display-emoji');
+    const locListItems = document.querySelectorAll(`.emoji-suggester-${editorId} .display-emoji-${editorId}`);
     if (e.keyCode === 40) {
       currentFocus += 1;
       if (currentFocus >= locListItems.length) {
@@ -65,50 +90,76 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
   };
 
   const insertEmojiOnEnterKey = () => {
-    const textarea = document.getElementById('snip-write');
+    const textarea = document.getElementById(`snip-write-${editorId}`);
     textarea.addEventListener('keydown', (e) => {
-      const [textareaValue, regex, emojiMatch, currentEmojiId] = utilValues();
+      const [_, regex, emojiMatch, currentEmojiId] = utilValues();
+      let textareaValue;
+      const emojiMatch2 = document.getElementById(`snip-write-${editorId}`).value;
+      const diff = endSelection - startEmo;
+      if (diff >= 0 && diff <= 25) {
+        textareaValue = emojiMatch2.slice(startEmo - 1, endSelection);
+      } else {
+        textareaValue = emojiMatch2.slice(endSelection);
+      }
+      const emojis = Emojis();
+      const filtered = emojis.filterEmojiIcons(textareaValue, editorId);
+      const regex1 = /(:)([a-z0-9+-_]*)/g;
+      const match = regex1.test(textareaValue);
 
-      if (emojiMatch && e.keyCode === 13 && currentEmojiId !== null) {
-        const currentEmojiIdHTML = document.getElementById(`emoji-${currentFocus}`).innerHTML;
+      if (match && filtered.content_length > 0 && e.keyCode === 13) {
+        const currentEmojiIdHTML = document.getElementById(`emoji-${currentFocus}-${editorId}`).innerHTML;
         const currentEmojiIdContent = currentEmojiIdHTML.split(' ')[0];
-        document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
+        document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('emoji-dropdown');
         currentFocus = 0;
 
-        const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiIdContent}`);
+        // const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiIdContent}`);
+        const matchEmoji = replaceEmo(currentEmojiIdContent, textarea.value);
         updatePreviewInput(matchEmoji);
         textarea.setSelectionRange(startSelection, endSelection);
 
         e.preventDefault();
       }
+
+      if (e.keyCode === 40 || e.keyCode === 38) {
+        e.preventDefault();
+      }
     });
   };
 
-  const dropDownEmoji = (textareaValue, regex, emojiMatch, e) => {
-    if (emojiMatch && e.keyCode !== 32) {
-      const match = textareaValue.match(regex)[0];
-
-      const emojis = Emojis();
-      const filtered = emojis.filterEmojiIcons(match);
-
-      const filterEmojiArea = document.querySelector('.filter-emoji-area');
-      filterEmojiArea.style.top = `${xx + 40}px`;
-      filterEmojiArea.style.left = `${yy}px`;
+  const dropDownEmoji = (_, __, emojiMatch, e) => {
+    const diff = endSelection - startEmo;
+    let textareaValue;
+    const emojiMatch2 = document.getElementById(`snip-write-${editorId}`).value;
+    if (diff >= 0 && diff <= 25) {
+      textareaValue = emojiMatch2.slice(startEmo - 1, endSelection);
+    } else {
+      textareaValue = emojiMatch2.slice(endSelection);
+    }
+    const filterEmojiArea = document.querySelector(`.filter-emoji-area-${editorId}`);
+    const emojis = Emojis();
+    const filtered = emojis.filterEmojiIcons(textareaValue, editorId);
+    const regex = /(:)([a-z0-9+-_]*)/g;
+    const match = regex.test(textareaValue);
+    // console.log(filtered.content_length)
+    if (match && filtered.content_length > 0 && e.keyCode !== 32) {
       filterEmojiArea.classList.add('emoji-dropdown');
 
-      filterEmojiArea.innerHTML = filtered;
+      filterEmojiArea.innerHTML = filtered.content;
 
-      insertEmojiOnClick(textareaValue, regex);
       selectEmojiOnArrowKey(e);
 
-      Utils.setAttributeToEmojiSelected(`emoji-${currentFocus}`, '.emoji-suggester .display-emoji');
+      Utils.setAttributeToEmojiSelected(`emoji-${currentFocus}-${editorId}`, `.emoji-suggester-${editorId} .display-emoji-${editorId}`);
     } else {
-      document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
+      filterEmojiArea.classList.remove('emoji-dropdown');
+    }
+
+    if (filtered.content_length <= 0) {
+      filterEmojiArea.classList.remove('emoji-dropdown');
     }
   };
 
   const replaceEmojiOnKeyEvent = () => {
-    const textarea = document.getElementById('snip-write');
+    const textarea = document.getElementById(`snip-write-${editorId}`);
     textarea.addEventListener('keyup', (e) => {
       const [textareaValue, regex, emojiMatch] = utilValues();
       dropDownEmoji(textareaValue, regex, emojiMatch, e);
@@ -123,39 +174,46 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
       updatePreviewInput(matchEmoji);
     });
 
+    insertEmojiOnClick();
     insertEmojiOnEnterKey();
   };
 
   const insertAllTextOnInput = () => {
-    const textarea = document.getElementById('snip-write');
-    const textAreaHeight = document.getElementById('snip-write').clientHeight;
+    const textarea = document.getElementById(`snip-write-${editorId}`);
+    const textAreaHeight = document.getElementById(`snip-write-${editorId}`).clientHeight;
     let text;
     let scrollT = 0;
+    let xx;
+    let yy;
     textarea.addEventListener('input', (e) => {
+      const coordinates = getCaretCoordinates(textarea, textarea.selectionEnd, editorId);
+      startSelection = textarea.selectionStart;
+      endSelection = textarea.selectionEnd;
 
-      const coordinates = getCaretCoordinates(textarea, textarea.selectionEnd);
+      if (e.data === ':') {
+        xx = coordinates.top - scrollT;
+        yy = coordinates.left;
+        startEmo = endSelection;
+
+        const filterEmojiArea = document.querySelector(`.filter-emoji-area-${editorId}`);
+        filterEmojiArea.style.top = `${xx + 40}px`;
+        filterEmojiArea.style.left = `${yy}px`;
+      }
 
       textarea.addEventListener('scroll', () => {
         scrollT = textarea.scrollTop;
       });
-      if (e.data === ':') {
-        xx = coordinates.top - scrollT;
-        yy = coordinates.left;
-      }
 
       text = marked(e.target.value);
       replaceSnippet(text);
       textarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
-
-      startSelection = textarea.selectionStart;
-      endSelection = textarea.selectionEnd;
     });
   };
 
   const btnExecuteCommand = () => {
-    const textarea = document.getElementById('snip-write');
+    const textarea = document.getElementById(`snip-write-${editorId}`);
     let text;
-    const allButtons = document.querySelectorAll('.buttons.markdown-button');
+    const allButtons = document.querySelectorAll(`.buttons.markdown-button-${editorId}`);
     allButtons.forEach((button) => {
       const { id } = button;
       button.addEventListener('click', (e) => {
@@ -229,7 +287,7 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
         let end = textarea.selectionEnd;
         const selection2 = textarea.value.slice(start - range[0], end + range[1]);
         if (selected.match(snipReg)) {
-          selected = selected.replace(snipReg, (_, p1, p2) => ((id === 'link') ? p1.replace(/\[/, '') : p2));
+          selected = selected.replace(snipReg, (_, p1, p2) => ((id === 'link') ? (p1.replace(/\[/, '') + p2.replace(p2, ' ')) : p2));
         } else if (selection2.match(snipReg)) {
           start = textarea.selectionStart - range[0];
           end = textarea.selectionEnd + range[1];
@@ -254,6 +312,7 @@ const ExecCmdButton = (currentFocus = 0, startSelection, endSelection, xx, yy) =
     if (Utils.extendDefaults(prop).emoji) {
       replaceEmojiOnKeyEvent();
     }
+    insertEmojiOnEmojiAreaClick()
     insertAllTextOnInput();
 
     btnExecuteCommand();

@@ -35,12 +35,12 @@ const isFirefox = !(window.mozInnerScreenX == null);
 let mirrorDiv; let computed; let
   style;
 
-export default function getCaretCoordinates(element, position) {
-  mirrorDiv = document.getElementById(`${element.nodeName}--mirror-div`);
+export default function getCaretCoordinates(element, position, editorId) {
+  mirrorDiv = document.getElementById(`${element.id}--mirror-div`);
   if (!mirrorDiv) {
     mirrorDiv = document.createElement('div');
-    mirrorDiv.id = `${element.nodeName}--mirror-div`;
-    document.querySelector('.snip-text-body').appendChild(mirrorDiv);
+    mirrorDiv.id = `${element.id}--mirror-div`;
+    document.querySelector(`.snip-text-body-${editorId}`).append(mirrorDiv);
   }
 
   style = mirrorDiv.style;

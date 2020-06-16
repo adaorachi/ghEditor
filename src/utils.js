@@ -19,7 +19,6 @@ library.add(
 const Utils = (() => {
   const extendDefaults = (properties) => {
     const defaults = {
-      className: 'fade-and-drop',
       emoji: true,
       width: '100%',
       height: '100px',
@@ -51,11 +50,11 @@ const Utils = (() => {
     return defaults;
   };
 
-  const concatClassName = (textarea) => {
+  const concatClassName = (textarea, editorId) => {
     const classNames = textarea.classList;
     let concatClassName = '';
     classNames.forEach((className) => {
-      if (className !== 'snip-write') { concatClassName += `${className} `; }
+      if (className !== `snip-write-${editorId}`) { concatClassName += `${className} `; }
     });
     return concatClassName.trim();
   };
@@ -75,18 +74,24 @@ const Utils = (() => {
   };
 
   const displayButtons = (properties) => {
-    const docFrag = document.querySelector('.snip-text-header');
+    const editorId = extendDefaults(properties).id;
+    const docFrag = document.querySelector(`.snip-text-header-${editorId}`);
 
     let content = '';
-    content += `<div class="snip-text-tabnav-tabs" id="snip-text-tabnav-tabs">
-                  <button type="button" class="btn-nav tabnav write-tab-nav active" id="snip-write-tab" role="tab">Write</button>
-                  <button type="button" class="btn-nav tabnav preview-tab-nav" id="snip-preview-tab" role="tab">Preview</button>
-                </div>`;
+    content
+      += `<div class="snip-text-tabnav-tabs-${editorId} snip-text-tabnav-tabs" id="snip-text-tabnav-tabs-${editorId}">
+        <div class="snip-text-tabnav-buttons-${editorId}">
+          <button type="button" class="btn-nav btn-nav-${editorId} tabnav write-tab-nav active" id="snip-write-tab-${editorId}" role="tab">Write</button>
+          <button type="button" class="btn-nav btn-nav-${editorId} tabnav preview-tab-nav" id="snip-preview-tab-${editorId}" role="tab">Preview</button>
+        </div>
+      </div>`;
 
     const mainButtons = extendDefaults(properties).buttons;
-    content += '<div class="snipText-button-container">';
+    content
+      += `<div class="snip-text-header-content snip-text-header-content-${editorId}">
+      <div class="snip-text-button-container snip-text-button-container-${editorId}">`;
 
-    content += embedIcon('smile-beam', 'button', 'snip-emoji-button');
+    content += embedIcon('smile-beam', 'button', `snip-emoji-button-${editorId} snip-emoji-button`);
     content += '&nbsp;&nbsp;&nbsp;';
 
     mainButtons.split('|').forEach((button, index) => {
@@ -95,34 +100,38 @@ const Utils = (() => {
       if (index % 3 === 0 && index !== 0) {
         content += '&nbsp;&nbsp;&nbsp;&nbsp';
       }
-      content += embedIcon(iconName, 'button', `markdown-button button-${iconName}" id="${iconName}`);
+      content += embedIcon(iconName, 'button', `markdown-button-${editorId} button-${iconName}" id="${iconName}`);
     });
 
     content += '&nbsp;&nbsp;&nbsp;';
     content += embedIcon('question-circle', 'anchor', '');
 
     content += '</div>';
+    content += `<div class="snip-word-count snip-word-count-${editorId} remove"></div>`;
+
+    content += '</div>';
     docFrag.innerHTML = content;
     return docFrag;
   };
 
-  const toggleEmojiArea = () => {
-    const emojiBut = document.querySelector('.snip-emoji-button');
+  const toggleEmojiArea = (properties) => {
+    const editorId = extendDefaults(properties).id;
+    const emojiBut = document.querySelector(`.snip-emoji-button-${editorId}`);
 
     const emojiArea = document.createElement('div');
-    emojiArea.className = 'snip-emoji-area';
+    emojiArea.className = `snip-emoji-area snip-emoji-area-${editorId}`;
     emojiBut.append(emojiArea);
 
     const emojis = Emojis();
-    emojiArea.innerHTML = emojis.getEmojiIcons();
+    emojiArea.innerHTML = emojis.getEmojiIcons(editorId);
 
     emojiBut.addEventListener('click', () => {
       emojiArea.classList.toggle('show-emoji');
     });
   };
 
-  const containerStyles = (properties) => {
-    const textArea = document.querySelector('textarea#snip-write');
+  const containerStyles = (properties, editorId) => {
+    const textArea = document.querySelector(`textarea#snip-write-${editorId}`);
     const options = extendDefaults(properties);
     const computedStyles = getComputedStyle(textArea);
 
@@ -142,19 +151,19 @@ const Utils = (() => {
     // delete defaultFrameStyles.border;
     // delete defaultFrameStyles.borderRadius;
 
-    const snipTextBody = document.querySelector('.snip-text-mark-down .snip-text-body');
+    const snipTextBody = document.querySelector(`.snip-text-mark-down .snip-text-body-${options.id}`);
     Object.assign(snipTextBody.style, defaultFrameStyles);
 
     // eslint-disable-next-line no-prototype-builtins
     if (options.hasOwnProperty('buttonBgColor')) {
-      const buttonContainer = document.querySelector('.snip-text-header');
+      const buttonContainer = document.querySelector(`.snip-text-header-${options.id}`);
       buttonContainer.style.backgroundColor = options.buttonBgColor;
     }
 
     if (options.hasOwnProperty('borderColor')) {
-      const buttonContainer = document.querySelector('.snip-text-header');
-      const bodyContainer = document.querySelector('.snip-text-body');
-      const activeTabNav = document.querySelector('.btn-nav.tabnav.active');
+      const buttonContainer = document.querySelector(`.snip-text-header-${options.id}`);
+      const bodyContainer = document.querySelector(`.snip-text-body-${options.id}`);
+      const activeTabNav = document.querySelector(`.btn-nav-${options.id}.tabnav.active`);
 
       buttonContainer.style.border = `1px solid ${options.borderColor}`;
       buttonContainer.style.borderBottom = 'none';
@@ -162,7 +171,7 @@ const Utils = (() => {
       activeTabNav.style.borderBottom = 'none';
       bodyContainer.style.border = `1px solid ${options.borderColor}`;
 
-      const tabNav = document.querySelectorAll('.btn-nav.tabnav');
+      const tabNav = document.querySelectorAll(`.btn-nav-${options.id}.tabnav`);
       tabNav.forEach((nav) => {
         nav.style.border = `1px solid ${options.buttonBgColor}`;
       });
@@ -170,7 +179,7 @@ const Utils = (() => {
 
     // eslint-disable-next-line no-prototype-builtins
     if (options.hasOwnProperty('buttonColor')) {
-      const allButtons = document.querySelectorAll('.snip-text-mark-down .buttons');
+      const allButtons = document.querySelectorAll(`.snip-text-mark-down-${options.id} .buttons`);
       allButtons.forEach((button) => {
         button.style.color = options.buttonColor;
       });

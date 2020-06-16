@@ -10,24 +10,42 @@ const ToggleTab = (() => {
     });
   };
 
-  const toggle = (nav) => {
+  const displayWordCount = (editorId) => {
+    const text = document.getElementById(`snip-preview-${editorId}`).innerText;
+    const charactersLength = text.length === 0 ? text.length : text.length - 1;
+    const wordSplit = text.replace(/\r?\n/g, ' ').split(' ');
+    const wordLength = text.trim() === '' ? 0 : wordSplit.length;
+    return {
+      characters: charactersLength,
+      words: wordLength,
+    };
+  };
+
+  const toggle = (nav, editorId) => {
     const navTab = document.getElementById(nav);
-    const parentId = navTab.parentElement.parentElement.className;
+    // const parentId = navTab.parentElement.parentElement.className;
+    const parentId = `snip-text-mark-down-${editorId}`;
     navTab.addEventListener('click', (e) => {
       if (e.target.classList.contains('tabnav')) {
         const { id } = e.target;
-        const eleTab = id.split('-').slice(0, 2).join('-');
-        hideAndDisplayNav(eleTab, `.${parentId} .snip-tab-content.tab-content`);
-        hideAndDisplayNav(id, `.${parentId} .btn-nav.tabnav`);
+        let eleTab = id.split('-');
+        eleTab = `${eleTab[0]}-${eleTab[1]}-${editorId}`;
+        hideAndDisplayNav(eleTab, `.${parentId} .snip-tab-content-${editorId}.tab-content`);
+        hideAndDisplayNav(id, `.${parentId} .btn-nav-${editorId}.tabnav`);
 
-        if (id === 'snip-write-tab') {
+        if (id === `snip-write-tab-${editorId}`) {
           document.getElementById(eleTab).focus();
-          document.querySelector('.snipText-button-container').classList.remove('remove');
-        } else if (id === 'snip-preview-tab') {
-          document.querySelector('.snipText-button-container').classList.add('remove');
-          document.querySelector('.filter-emoji-area').classList.remove('emoji-dropdown');
-          if (document.getElementById('snip-write').value === '') {
-            document.getElementById('snip-preview').innerHTML = '<p class="placeholder">Nothing to preview<p>';
+          document.querySelector(`.snip-text-button-container-${editorId}`).classList.remove('remove');
+          document.querySelector(`.snip-word-count-${editorId}`).classList.add('remove');
+        } else if (id === `snip-preview-tab-${editorId}`) {
+          document.querySelector(`.snip-text-button-container-${editorId}`).classList.add('remove');
+          const snipWord = document.querySelector(`.snip-word-count-${editorId}`);
+          snipWord.classList.remove('remove');
+          snipWord.innerHTML = `${displayWordCount(editorId).characters} characters ${displayWordCount(editorId).words} words`;
+
+          document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('emoji-dropdown');
+          if (document.getElementById(`snip-write-${editorId}`).value === '') {
+            document.getElementById(`snip-preview-${editorId}`).innerHTML = '<p class="placeholder">Nothing to preview<p>';
           }
         }
       }
