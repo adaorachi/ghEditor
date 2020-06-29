@@ -1,40 +1,115 @@
-import marked from 'marked';
+/* eslint-disable import/no-dynamic-require */
+import showdown from 'showdown';
+import hljs from 'highlight.js/lib/core';
 import Utils from './utils';
 import * as emoji from './emoji.json';
 import Emojis from './emojis';
 import getCaretCoordinates from './caretPos';
+import 'highlight.js/styles/github.css';
+import ToggleTab from './toggleTab';
+
 
 const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection, startEmo = 0) => {
-  // const editorId = Utils.extendDefaults(properties).id;
+  const converter = new showdown.Converter();
+  converter.setFlavor('github');
+  converter.setOption({
+    emoji: false,
+    openLinksInNewWindow: true,
+    underline: true,
+    smoothLivePreview: true,
+  });
+
+
+  const highlightCode = (lang, code) => {
+    const lang1 = lang === 'html' ? 'xml' : lang;
+    try {
+      // eslint-disable-next-line global-require
+      hljs.registerLanguage(lang1, require(`highlight.js/lib/languages/${lang1}`));
+      const highlightedCode = hljs.highlight(lang1, code).value;
+      return highlightedCode.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+        .replace(/'/g, '&#039;');
+    } catch (err) {
+      return code;
+    }
+  };
+
+  console.log(converter.getOptions());
+
+  const coupleClass = (attr, prevAttr) => {
+    const splitAttr = attr.split(' ');
+    const splitPrevAttr = prevAttr.split(' ');
+    let concatPrevAttr = '';
+    splitPrevAttr.forEach((attr) => {
+      if (!(attr.includes('class=') || attr.includes('id='))) {
+        concatPrevAttr += attr;
+      }
+    });
+    let classNames = '';
+    let ids = '';
+    let otherAtt = '';
+    splitAttr.forEach((att) => {
+      att = att.trim();
+      if (att.charAt(0) === '.') {
+        classNames += ` ${att.slice(1)}`;
+      } else if (att.charAt(0) === '#') {
+        ids += ` ${att.slice(1)}`;
+      } else {
+        otherAtt += att;
+      }
+    });
+
+    const classNames1 = `class="${classNames.trim()}"`;
+    const ids1 = `id="${ids.trim()}"`;
+    let attribute = '';
+    if (classNames !== '') {
+      attribute += `${classNames1}`;
+    }
+    if (ids !== '') {
+      attribute += ` ${ids1}`;
+    }
+
+    return `${attribute}${otherAtt}${concatPrevAttr}`;
+  };
+
   const replaceSnippet = (text) => {
-    text = text.replace(/(<p>)([\S\s]*?)(<\/p>)/g, (_, p1, p2, p3) => p1 + p2.replace(/\n/g, '<br>') + p3);
-    text = text.replace(/(<li>)(<input[^>]*>)([\S\s]*?)(<\/li>)/g, (_, p1, p2, p3, p4) => p1.replace(p1, '<li class="task-list-item">') + p2 + p3 + p4);
+    text = text.replace(/(<code class=")([a-z]+)(\s+[^>]*>)([\S\s]*?)(<\/code>)/g, (_, p1, p2, p3, p4, p5) => p1 + p2 + p3 + highlightCode(p2, p4) + p5);
+
+    text = text.replace(/(<pre><code>)([\S\s]*?)(<\/code><\/pre>([\n\s]+))(<p>{: .language-)([a-z]+)(}<\/p>)([\n]*)/g, (_, p1, p2, p3, p4, p5, p6) => p1 + highlightCode(p6, p2) + p3);
+
+    text = text.replace(/((<br \/>\n)*)({::\s+comment})([\s\S]*?)({:\/comment})((<br \/>\n)*)/g, ' ');
+
+    text = text.replace(/(<p>)(.*)(<br \/>\n)({:\s+)(.+?)(}=?)(<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7) => p1.replace(p1, `<p ${coupleClass(p5, '')}>`) + p2 + p7);
+
+    // const aa = /(<p>)({::\s+)(.+?)(}=?)([\s\S]*?)({:\s+\/})(<\/p>)/g;
+    // console.log(text.match(aa))
+
+    // const aa = /(<p>)([\S\s]*?)(<br \/>\n)({:: .class})((?!<p[^>]*>[\S\s]*?<\/p>).*)(<\/p>)/g;
+    // console.log(text.match(aa))
+
+    text = text.replace(/(<p>)({:\s+)(.+?)(}=?)(<br \/>)([\s\S]*?)({:\s+\/})(<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => p1.replace(p1, `<p ${coupleClass(p3, '')}>`) + p6 + p8);
+
+    text = text.replace(/(<a|h1|h2|h3|h4|h5|h6|img)([^>]*)(>.*?)(<\/(h1|h2|h3|h4|h5|h6|a|img)>)(\n<p>|.*)({:\s+)(.+?)(})((.*?)<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p8, p2)}${p3}${p4}`);
+
+    text = text.replace(/(<li|h1|h2|h3|h4|h5|h6|img|p)([^>]*)(>.*?)({:\s+)(.+?)(})(.*?)(<\/(li|h1|h2|h3|h4|h5|h6|img|p)>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p5, p2)} ${p3}${p7}${p8}`);
+
+    console.log(text)
 
     document.getElementById(`snip-preview-${editorId}`).innerHTML = text;
     document.getElementById(`${editorId}`).innerHTML = text;
-    // document.querySelector('#meme').innerHTML = text;
-  };
-
-  const utilValues = () => {
-    const textarea = document.getElementById(`snip-write-${editorId}`);
-    const [textareaValue, regex] = [textarea.value, /(:)([a-z0-9+-_]*)/g];
-    const emojiMatch = regex.test(textareaValue);
-    const currentEmojiId = document.getElementById(`emoji-${currentFocus}`);
-    return [textareaValue, regex, emojiMatch, currentEmojiId];
   };
 
   const updatePreviewInput = (matchEmoji) => {
     document.getElementById(`snip-write-${editorId}`).value = matchEmoji;
-    const text = marked(document.getElementById(`snip-write-${editorId}`).value);
+    const text = converter.makeHtml(document.getElementById(`snip-write-${editorId}`).value);
     replaceSnippet(text);
   };
 
-  const replaceEmo = (repl, textareaValue) => {
+  const insertEmoji = (repl, textVal) => {
     const diff = endSelection - startEmo;
-    if (diff >= 0 && diff <= 25) {
-      textareaValue = textareaValue.slice(0, startEmo - 1) + repl + textareaValue.slice(endSelection);
+    if (diff >= 0 && diff <= 40) {
+      textVal = textVal.slice(0, startEmo - 1) + repl + textVal.slice(endSelection);
     }
-    return textareaValue;
+    return textVal;
   };
 
   const insertEmojiOnClick = () => {
@@ -48,8 +123,7 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
         document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('emoji-dropdown');
         currentFocus = 0;
 
-        const matchEmoji = replaceEmo(currentEmojiContent, textarea.value);
-        // textareaValue.replace(regex, () => `${currentEmojiContent}`);
+        const matchEmoji = insertEmoji(currentEmojiContent, textarea.value);
 
         updatePreviewInput(matchEmoji);
         textarea.setSelectionRange(startSelection, endSelection);
@@ -59,14 +133,13 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
 
   const insertEmojiOnEmojiAreaClick = () => {
     const textarea = document.getElementById(`snip-write-${editorId}`);
-
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains(`emoji-area-button-${editorId}`)) {
         const { id } = e.target;
         const currentEmojiHTML = document.getElementById(id).innerText;
-        let textareaValue = textarea.value;
-        textareaValue = textareaValue.slice(0, startSelection) + currentEmojiHTML + textareaValue.slice(endSelection);
-        const matchEmoji = textareaValue;
+        let textVal = textarea.value;
+        textVal = textVal.slice(0, startSelection) + currentEmojiHTML + textVal.slice(endSelection);
+        const matchEmoji = textVal;
 
         updatePreviewInput(matchEmoji);
         textarea.setSelectionRange(startSelection, endSelection);
@@ -89,22 +162,27 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
     }
   };
 
+  const utilValues = () => {
+    let emojiVal;
+    const textVal = document.getElementById(`snip-write-${editorId}`).value;
+    const diff = endSelection - startEmo;
+    if (diff >= 0 && diff <= 40) {
+      emojiVal = textVal.slice(startEmo - 1, endSelection);
+    } else {
+      emojiVal = textVal.slice(endSelection);
+    }
+    const emojis = Emojis();
+    const filtered = emojis.filterEmojiIcons(emojiVal, editorId);
+    const regex1 = /(:)([a-z0-9+-_]*)/g;
+    const match = regex1.test(emojiVal);
+
+    return [match, filtered];
+  };
+
   const insertEmojiOnEnterKey = () => {
     const textarea = document.getElementById(`snip-write-${editorId}`);
     textarea.addEventListener('keydown', (e) => {
-      const [_, regex, emojiMatch, currentEmojiId] = utilValues();
-      let textareaValue;
-      const emojiMatch2 = document.getElementById(`snip-write-${editorId}`).value;
-      const diff = endSelection - startEmo;
-      if (diff >= 0 && diff <= 25) {
-        textareaValue = emojiMatch2.slice(startEmo - 1, endSelection);
-      } else {
-        textareaValue = emojiMatch2.slice(endSelection);
-      }
-      const emojis = Emojis();
-      const filtered = emojis.filterEmojiIcons(textareaValue, editorId);
-      const regex1 = /(:)([a-z0-9+-_]*)/g;
-      const match = regex1.test(textareaValue);
+      const [match, filtered] = utilValues();
 
       if (match && filtered.content_length > 0 && e.keyCode === 13) {
         const currentEmojiIdHTML = document.getElementById(`emoji-${currentFocus}-${editorId}`).innerHTML;
@@ -112,35 +190,25 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
         document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('emoji-dropdown');
         currentFocus = 0;
 
-        // const matchEmoji = textareaValue.replace(regex, () => `${currentEmojiIdContent}`);
-        const matchEmoji = replaceEmo(currentEmojiIdContent, textarea.value);
+        const matchEmoji = insertEmoji(currentEmojiIdContent, textarea.value);
         updatePreviewInput(matchEmoji);
         textarea.setSelectionRange(startSelection, endSelection);
 
         e.preventDefault();
       }
 
-      if (e.keyCode === 40 || e.keyCode === 38) {
-        e.preventDefault();
+      if (match && filtered.content_length > 0) {
+        if (e.keyCode === 40 || e.keyCode === 38) {
+          e.preventDefault();
+        }
       }
     });
   };
 
-  const dropDownEmoji = (_, __, emojiMatch, e) => {
-    const diff = endSelection - startEmo;
-    let textareaValue;
-    const emojiMatch2 = document.getElementById(`snip-write-${editorId}`).value;
-    if (diff >= 0 && diff <= 25) {
-      textareaValue = emojiMatch2.slice(startEmo - 1, endSelection);
-    } else {
-      textareaValue = emojiMatch2.slice(endSelection);
-    }
+  const dropDownEmoji = (e) => {
     const filterEmojiArea = document.querySelector(`.filter-emoji-area-${editorId}`);
-    const emojis = Emojis();
-    const filtered = emojis.filterEmojiIcons(textareaValue, editorId);
-    const regex = /(:)([a-z0-9+-_]*)/g;
-    const match = regex.test(textareaValue);
-    // console.log(filtered.content_length)
+    const [match, filtered] = utilValues();
+
     if (match && filtered.content_length > 0 && e.keyCode !== 32) {
       filterEmojiArea.classList.add('emoji-dropdown');
 
@@ -158,11 +226,11 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
     }
   };
 
-  const replaceEmojiOnKeyEvent = () => {
+  const insertEmojijiOnKeyEvent = () => {
     const textarea = document.getElementById(`snip-write-${editorId}`);
     textarea.addEventListener('keyup', (e) => {
-      const [textareaValue, regex, emojiMatch] = utilValues();
-      dropDownEmoji(textareaValue, regex, emojiMatch, e);
+      const [textareaValue, regex] = [textarea.value, /(:)([a-z0-9+-_]*)/g];
+      dropDownEmoji(e);
 
       const matchEmoji = textareaValue.replace(regex, (match) => {
         if (emoji[match] !== undefined && e.keyCode === 32) {
@@ -204,7 +272,7 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
         scrollT = textarea.scrollTop;
       });
 
-      text = marked(e.target.value);
+      text = converter.makeHtml(e.target.value);
       replaceSnippet(text);
       textarea.style.height = `${Utils.expandHeight(textarea.value, textAreaHeight)}px`;
     });
@@ -221,57 +289,52 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
         let snipSym;
         let range;
         switch (id) {
-          case 'heading':
+          case `heading-${editorId}`:
             snipReg = new RegExp(/(###\s+)([\S\s]*?)/, 'g');
             snipSym = '### ';
             range = [4, 0];
             break;
-          case 'bold':
+          case `bold-${editorId}`:
             snipReg = new RegExp(/(\*\*)([\S\s]*?)(\*\*)/, 'g');
             snipSym = '**';
             range = [2, 2];
             break;
-          case 'italic':
+          case `italic-${editorId}`:
             snipReg = new RegExp(/(_)([\S\s]*?)(_)/, 'g');
             snipSym = '_';
             range = [1, 1];
             break;
-          case 'underline':
-            snipReg = new RegExp(/(---\s)([\S\s]*?)/, 'g');
-            snipSym = '--- ';
-            range = [4, 0];
+          case `mention-${editorId}`:
+            snipReg = new RegExp(/(@)([\S\s]*?)/, 'g');
+            snipSym = '@';
+            range = [1, 0];
             break;
-          case 'strikethrough':
-            snipReg = new RegExp(/(~~)([\S\s]*?)(~~)/, 'g');
-            snipSym = '~~';
-            range = [2, 2];
-            break;
-          case 'quote-left':
+          case `quote-${editorId}`:
             snipReg = new RegExp(/(>\s)([\S\s]*?)/, 'g');
             snipSym = '> ';
             range = [2, 0];
             break;
-          case 'code':
+          case `code-${editorId}`:
             snipReg = new RegExp(/(`)([\S\s]*?)(`)/, 'g');
             snipSym = '`';
             range = [1, 1];
             break;
-          case 'list-ul':
+          case `list-unordered-${editorId}`:
             snipReg = new RegExp(/(-\s)([\S\s]*?)/, 'g');
             snipSym = '- ';
             range = [2, 0];
             break;
-          case 'list-ol':
+          case `list-ordered-${editorId}`:
             snipReg = new RegExp(/(1.\s)([\S\s]*?)/, 'g');
             snipSym = '1. ';
             range = [3, 0];
             break;
-          case 'check-square':
+          case `tasklist-${editorId}`:
             snipReg = new RegExp(/(-\s\[\s\]\s)([\S\s]*?)/, 'g');
             snipSym = '- [ ] ';
             range = [6, 0];
             break;
-          case 'link':
+          case `link-${editorId}`:
             snipReg = new RegExp(/\[(.*?)\]\((.*?)\)(.*)/, 'g');
             snipSym = '';
             range = [1, 4];
@@ -287,13 +350,13 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
         let end = textarea.selectionEnd;
         const selection2 = textarea.value.slice(start - range[0], end + range[1]);
         if (selected.match(snipReg)) {
-          selected = selected.replace(snipReg, (_, p1, p2) => ((id === 'link') ? (p1.replace(/\[/, '') + p2.replace(p2, ' ')) : p2));
+          selected = selected.replace(snipReg, (_, p1, p2) => ((id === `link-${editorId}`) ? (p1.replace(/\[/, '') + p2.replace(p2, ' ')) : p2));
         } else if (selection2.match(snipReg)) {
           start = textarea.selectionStart - range[0];
           end = textarea.selectionEnd + range[1];
-        } else if (['bold', 'italic', 'strikethrough', 'code'].includes(id)) {
+        } else if ([`bold-${editorId}`, `italic-${editorId}`, `code-${editorId}`].includes(id)) {
           selected = `${snipSym}${selected.trim()}${snipSym} `;
-        } else if (['link'].includes(id)) {
+        } else if ([`link-${editorId}`].includes(id)) {
           selected = `[${selected.trim()}](url) `;
         } else {
           selected = `${snipSym}${selected}`;
@@ -301,18 +364,36 @@ const ExecCmdButton = (editorId, currentFocus = 0, startSelection, endSelection,
 
         textarea.focus();
         textarea.setRangeText(selected, start, end, selectMode);
-        text = marked(textarea.value);
+        text = converter.makeHtml(textarea.value);
         replaceSnippet(text);
         e.preventDefault();
+      });
+    });
+
+    const allButtons2 = document.querySelectorAll(`.buttons.tooltip-${editorId}`);
+    allButtons2.forEach((button) => {
+      const { id } = button;
+      button.addEventListener('mouseover', () => {
+        const tooltipAll = `.buttons.tooltip-${editorId}`;
+        ToggleTab.hideAndDisplayNav(id, tooltipAll);
+      });
+      button.addEventListener('mouseleave', () => {
+        Array.from(allButtons2).forEach((item) => {
+          item.classList.remove('active');
+        });
       });
     });
   };
 
   const execEditorCommand = (prop) => {
-    if (Utils.extendDefaults(prop).emoji) {
-      replaceEmojiOnKeyEvent();
+    if (Utils.extendDefaults(prop).inTextEmoji) {
+      insertEmojijiOnKeyEvent();
     }
-    insertEmojiOnEmojiAreaClick()
+
+    if (Utils.extendDefaults(prop).buttonEmoji) {
+      insertEmojiOnEmojiAreaClick();
+    }
+
     insertAllTextOnInput();
 
     btnExecuteCommand();

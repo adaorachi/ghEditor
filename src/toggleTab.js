@@ -23,7 +23,6 @@ const ToggleTab = (() => {
 
   const toggle = (nav, editorId) => {
     const navTab = document.getElementById(nav);
-    // const parentId = navTab.parentElement.parentElement.className;
     const parentId = `snip-text-mark-down-${editorId}`;
     navTab.addEventListener('click', (e) => {
       if (e.target.classList.contains('tabnav')) {
@@ -52,7 +51,7 @@ const ToggleTab = (() => {
     });
   };
 
-  return { toggle };
+  return { toggle, hideAndDisplayNav };
 })();
 
 export default ToggleTab;

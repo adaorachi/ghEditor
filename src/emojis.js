@@ -14,7 +14,6 @@ const Emojis = () => {
     return emojiIcons;
   };
 
-
   const filterEmojiIcons = (ele, editorId) => {
     const allEmojis = Object.entries(Object.values(emoji)[0]);
     try {

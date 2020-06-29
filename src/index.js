@@ -2,7 +2,7 @@ import Utils from './utils';
 import ToggleTab from './toggleTab';
 import ExecCmdButton from './execCmdButton';
 
-import styles from './styles.css';
+import './styles.css';
 
 const snipText = () => {
   const markDown = (...args) => {
@@ -12,7 +12,6 @@ const snipText = () => {
     }
 
     const defaultTextarea = document.querySelector(`textarea#${options.id}`);
-    const defaultAvatar = document.querySelector('.snip-markdown-avatar');
 
     if (defaultTextarea !== null) {
       const editorId = options.id;
@@ -26,12 +25,6 @@ const snipText = () => {
       snipMarkDown.className = `snip-text-mark-down snip-text-mark-down-${editorId}`;
       snipMarkDown.id = `snip-text-mark-down-${editorId}`;
 
-      // if (defaultAvatar !== null) {
-      //   const avatarSrc = defaultAvatar.getAttribute('src');
-      //   const avatar = document.createElement('img');
-      //   avatar.setAttribute('src', avatarSrc);
-      //   snipTextContainer.append(avatar);
-      // }
       snipTextContainer.append(snipMarkDown);
       areaParentEle.append(snipTextContainer);
 
@@ -85,7 +78,7 @@ const opt = {
   id: 'snip1',
   // width: '30%',
   // height: 'auto',
-  buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square',
+  // buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square',
   // buttonBgColor: '#eee'
   // frameStyles: { color: 'red', borderRadius: '10px' },
 };
@@ -93,8 +86,10 @@ const opt = {
 const sniptext = snipText();
 sniptext.markDown(opt);
 
-const sniptext2 = snipText();
-sniptext2.markDown({ id: 'snip2' });
+// const sniptext2 = snipText();
+// sniptext2.markDown({ id: 'snip2' });
 
-const sniptext3 = snipText();
-sniptext3.markDown({ id: 'snip3', width: '30%' });
+// const sniptext3 = snipText();
+// sniptext3.markDown({ id: 'snip3' });
+
+document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">');

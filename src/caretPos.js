@@ -32,8 +32,7 @@ const properties = [
 
 const isFirefox = !(window.mozInnerScreenX == null);
 
-let mirrorDiv; let computed; let
-  style;
+let mirrorDiv; let computed; let style;
 
 export default function getCaretCoordinates(element, position, editorId) {
   mirrorDiv = document.getElementById(`${element.id}--mirror-div`);

@@ -6,6 +6,7 @@ import {
   faListOl, faCheckSquare, faQuestionCircle,
   faSmileBeam,
 } from '@fortawesome/free-solid-svg-icons';
+import octicon from '@primer/octicons';
 import Emojis from './emojis';
 
 library.add(
@@ -19,17 +20,16 @@ library.add(
 const Utils = (() => {
   const extendDefaults = (properties) => {
     const defaults = {
-      emoji: true,
+      inTextEmoji: true,
+      buttonEmoji: true,
       width: '100%',
       height: '100px',
-      buttons: 'underline|bold|italic',
-      // buttonBgColor: 'red',
-      // borderColor: '#000',
-      // buttonColor: '#ff00ff',
+      // buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square',
+      buttons: 'heading|bold|italic|quote|code|link|list-unordered|list-ordered|tasklist|mention',
+      // buttonColor: 'red',
       frameStyles: {
-        // border: '1px solid #ced4da',
-        // borderRadius: '0.25rem',
-        color: '#495057',
+        // fontSize: '30px',
+        // color: 'red',
         // padding: '0.375rem 0.75rem',
       },
     };
@@ -59,15 +59,30 @@ const Utils = (() => {
     return concatClassName.trim();
   };
 
-  const embedIcon = (iconName, tag, className) => {
+  const embedIcon = (iconName, editorId, tag, className) => {
     let content = '';
-    let isIcon = icon({ prefix: 'fas', iconName });
-    isIcon = isIcon.html;
+    const isIcon = octicon[iconName].toSVG();
+    const buttonId = `${iconName}-${editorId}`;
+    const buttonTitleText = {
+      smiley: 'Insert an emoji',
+      heading: 'Add header text',
+      bold: 'Add bold text',
+      italic: 'Add italic text',
+      quote: 'Insert a quote',
+      code: 'Insert code',
+      link: 'Add a link',
+      'list-unordered': 'Add a bulleted list',
+      'list-ordered': 'Add a numbered list',
+      tasklist: 'Add a tasklist',
+      mention: 'Directly mention a Github user',
+      help: 'Help?',
+    };
     if (isIcon !== undefined) {
       if (tag === 'anchor') {
-        content += `<a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" class="${className}" target="_blank" title="help">${isIcon}</a>`;
+        const anc = `<a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">${isIcon}</a>`;
+        content += `<button type="button" class="tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonTitleText.help}">${anc}</button>`;
       } else if (tag === 'button') {
-        content += `<button type="button" class="buttons ${className}">${isIcon}</button>`;
+        content += `<button type="button" class="tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonTitleText[iconName]}">${isIcon}</button>`;
       }
     }
     return content;
@@ -80,7 +95,7 @@ const Utils = (() => {
     let content = '';
     content
       += `<div class="snip-text-tabnav-tabs-${editorId} snip-text-tabnav-tabs" id="snip-text-tabnav-tabs-${editorId}">
-        <div class="snip-text-tabnav-buttons-${editorId}">
+        <div class="snip-text-tabnav-buttons snip-text-tabnav-buttons-${editorId}">
           <button type="button" class="btn-nav btn-nav-${editorId} tabnav write-tab-nav active" id="snip-write-tab-${editorId}" role="tab">Write</button>
           <button type="button" class="btn-nav btn-nav-${editorId} tabnav preview-tab-nav" id="snip-preview-tab-${editorId}" role="tab">Preview</button>
         </div>
@@ -91,20 +106,32 @@ const Utils = (() => {
       += `<div class="snip-text-header-content snip-text-header-content-${editorId}">
       <div class="snip-text-button-container snip-text-button-container-${editorId}">`;
 
-    content += embedIcon('smile-beam', 'button', `snip-emoji-button-${editorId} snip-emoji-button`);
+    if (extendDefaults(properties).buttonEmoji) {
+      content += embedIcon('smiley', editorId, 'button', `snip-emoji-button-${editorId} snip-emoji-button`);
+    }
+
     content += '&nbsp;&nbsp;&nbsp;';
 
     mainButtons.split('|').forEach((button, index) => {
       const iconName = button.trim();
 
+
       if (index % 3 === 0 && index !== 0) {
         content += '&nbsp;&nbsp;&nbsp;&nbsp';
       }
-      content += embedIcon(iconName, 'button', `markdown-button-${editorId} button-${iconName}" id="${iconName}`);
+
+      // const icon = octicon[iconName].toSVG();
+
+      // const aa = document.getElementById('gistme')
+      // aa.innerHTML = alert;
+      // aa.style.fill = 'red'
+      content += embedIcon(iconName, editorId, 'button', `markdown-button-${editorId} button-${iconName}`);
+
+      // content += embedIcon(iconName, 'button', `markdown-button-${editorId} button-${iconName}" id="${iconName}`);
     });
 
     content += '&nbsp;&nbsp;&nbsp;';
-    content += embedIcon('question-circle', 'anchor', '');
+    content += embedIcon('question', editorId, 'anchor', 'snip-help');
 
     content += '</div>';
     content += `<div class="snip-word-count snip-word-count-${editorId} remove"></div>`;
@@ -135,47 +162,19 @@ const Utils = (() => {
     const options = extendDefaults(properties);
     const computedStyles = getComputedStyle(textArea);
 
-    // const frameBorderColor = options.frameStyles.border;
-    // const textareaBorder = frameBorderColor || computedStyles.border;
-
     const computedFrameStyles = {
-      // fontSize: computedStyles.fontSize,
-      // fontWeight: computedStyles.fontWeight,
-      // lineHeight: computedStyles.lineHeight,
+      fontSize: computedStyles.fontSize,
       color: computedStyles.color,
       fontFamily: computedStyles.fontFamily,
       margin: computedStyles.margin,
     };
 
     const defaultFrameStyles = { ...computedFrameStyles, ...options.frameStyles };
-    // delete defaultFrameStyles.border;
-    // delete defaultFrameStyles.borderRadius;
 
-    const snipTextBody = document.querySelector(`.snip-text-mark-down .snip-text-body-${options.id}`);
+    const snipTextBody = document.querySelector(`.snip-write-${options.id}`);
     Object.assign(snipTextBody.style, defaultFrameStyles);
-
-    // eslint-disable-next-line no-prototype-builtins
-    if (options.hasOwnProperty('buttonBgColor')) {
-      const buttonContainer = document.querySelector(`.snip-text-header-${options.id}`);
-      buttonContainer.style.backgroundColor = options.buttonBgColor;
-    }
-
-    if (options.hasOwnProperty('borderColor')) {
-      const buttonContainer = document.querySelector(`.snip-text-header-${options.id}`);
-      const bodyContainer = document.querySelector(`.snip-text-body-${options.id}`);
-      const activeTabNav = document.querySelector(`.btn-nav-${options.id}.tabnav.active`);
-
-      buttonContainer.style.border = `1px solid ${options.borderColor}`;
-      buttonContainer.style.borderBottom = 'none';
-      activeTabNav.style.border = `1px solid ${options.borderColor}`;
-      activeTabNav.style.borderBottom = 'none';
-      bodyContainer.style.border = `1px solid ${options.borderColor}`;
-
-      const tabNav = document.querySelectorAll(`.btn-nav-${options.id}.tabnav`);
-      tabNav.forEach((nav) => {
-        nav.style.border = `1px solid ${options.buttonBgColor}`;
-      });
-    }
+    const snipPreviewBody = document.querySelector(`.snip-preview-${options.id}`);
+    Object.assign(snipPreviewBody.style, defaultFrameStyles);
 
     // eslint-disable-next-line no-prototype-builtins
     if (options.hasOwnProperty('buttonColor')) {
