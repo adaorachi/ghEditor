@@ -11,14 +11,20 @@ const ToggleTab = (() => {
   };
 
   const displayWordCount = (editorId) => {
-    const text = document.getElementById(`snip-preview-${editorId}`).innerText;
-    const charactersLength = text.length === 0 ? text.length : text.length - 1;
+    const text = document.getElementById(`snip-preview-${editorId}`).innerText.trim();
+    const charactersLength = text.length;
     const wordSplit = text.replace(/\r?\n/g, ' ').split(' ');
-    const wordLength = text.trim() === '' ? 0 : wordSplit.length;
-    return {
-      characters: charactersLength,
-      words: wordLength,
-    };
+    const wordLength = text === '' ? 0 : wordSplit.length;
+
+    const snipWord = document.querySelector(`.snip-word-count-${editorId}`);
+    snipWord.classList.remove('remove');
+    snipWord.innerHTML = `${charactersLength} characters ${wordLength} words`;
+  };
+
+  const removeDropdowns = (args, className) => {
+    [...args].forEach((arg) => {
+      document.querySelector(arg).classList.remove(className);
+    });
   };
 
   const toggle = (nav, editorId) => {
@@ -37,12 +43,10 @@ const ToggleTab = (() => {
           document.querySelector(`.snip-text-button-container-${editorId}`).classList.remove('remove');
           document.querySelector(`.snip-word-count-${editorId}`).classList.add('remove');
         } else if (id === `snip-preview-tab-${editorId}`) {
+          removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
           document.querySelector(`.snip-text-button-container-${editorId}`).classList.add('remove');
-          const snipWord = document.querySelector(`.snip-word-count-${editorId}`);
-          snipWord.classList.remove('remove');
-          snipWord.innerHTML = `${displayWordCount(editorId).characters} characters ${displayWordCount(editorId).words} words`;
 
-          document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('emoji-dropdown');
+          displayWordCount(editorId);
           if (document.getElementById(`snip-write-${editorId}`).value === '') {
             document.getElementById(`snip-preview-${editorId}`).innerHTML = '<p class="placeholder">Nothing to preview<p>';
           }

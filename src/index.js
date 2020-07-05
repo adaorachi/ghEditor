@@ -1,14 +1,45 @@
-import Utils from './utils';
 import ToggleTab from './toggleTab';
-import ExecCmdButton from './execCmdButton';
+import Exec from './execMarkdown';
+import {
+  extendDefaults,
+  concatClassName,
+  toggleEmojiArea,
+  containerStyles,
+} from './utils';
+import { displayButtons } from './toolbar';
 
 import './styles.css';
 
 const snipText = () => {
+  const outputData = (editorId, args) => {
+    try {
+      const { form } = document.getElementById(editorId);
+      form.addEventListener('submit', (e) => {
+        let textArea = document.getElementById(editorId).value;
+        const snipWrite = document.getElementById(`snip-write-${editorId}`);
+        const textAreaHeight = document.querySelector(`.snip-text-body-${editorId}`);
+        const exec = Exec(editorId);
+        textArea = exec.getMarkdown();
+        snipWrite.value = '';
+        textAreaHeight.style.height = extendDefaults(args).height;
+        console.log(textArea);
+        e.preventDefault();
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getData = (editorId) => {
+    const exec = Exec(editorId);
+    console.log(exec.getMarkdown());
+    return exec.getMarkdown();
+  };
+
   const markDown = (...args) => {
     let options = {};
     if (args[0] && typeof args[0] === 'object') {
-      options = Utils.extendDefaults(args[0]);
+      options = extendDefaults(args[0]);
     }
 
     const defaultTextarea = document.querySelector(`textarea#${options.id}`);
@@ -34,10 +65,13 @@ const snipText = () => {
 
       const displayEmoji = document.createElement('div');
       displayEmoji.className = `filter-emoji-area filter-emoji-area-${editorId}`;
+      const displayToolbar = document.createElement('div');
+      displayToolbar.className = `toolbar-button-area toolbar-button-area-${editorId}`;
 
-      const defaultTextClassName = Utils.concatClassName(defaultTextarea, editorId);
+      const defaultTextClassName = concatClassName(defaultTextarea, editorId);
       snipTextBody.className = `snip-text-body snip-text-body-${editorId}`;
       snipTextBody.id = 'snip-text-body';
+      snipTextBody.style.height = options.height;
 
       snipTextArea.id = `snip-write-${editorId}`;
       snipTextArea.className = `snip-write snip-write-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content active ${defaultTextClassName}`;
@@ -48,27 +82,29 @@ const snipText = () => {
 
       snipTextBody.append(snipTextArea);
       snipTextBody.append(displayEmoji);
+      snipTextBody.append(displayToolbar);
       snipTextBody.append(snipPreviewArea);
 
       window.addEventListener('load', () => {
         snipPreviewArea.style.minHeight = `${snipTextArea.clientHeight}px`;
-        Utils.toggleEmojiArea(args[0]);
-        Utils.containerStyles(args[0], editorId);
-        const exec = ExecCmdButton(editorId);
-        exec.execEditorCommand(args[0]);
+        toggleEmojiArea(args[0]);
+        containerStyles(args[0], editorId);
+        const exec = Exec(editorId);
+        exec.outputMarkDown(args[0]);
         ToggleTab.toggle(`snip-text-tabnav-tabs-${editorId}`, editorId);
+        outputData(editorId, args[0]);
       });
 
       const buttonContainer = document.createElement('div');
       buttonContainer.className = `snip-text-header snip-text-header-${editorId}`;
 
       snipMarkDown.append(buttonContainer);
-      Utils.displayButtons(args[0]);
+      displayButtons(args[0]);
       snipMarkDown.append(snipTextBody);
     }
   };
 
-  return { markDown };
+  return { markDown, getData };
 };
 
 export default snipText;
@@ -77,7 +113,7 @@ export default snipText;
 const opt = {
   id: 'snip1',
   // width: '30%',
-  // height: 'auto',
+  // height: '300px',
   // buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square',
   // buttonBgColor: '#eee'
   // frameStyles: { color: 'red', borderRadius: '10px' },
@@ -86,8 +122,15 @@ const opt = {
 const sniptext = snipText();
 sniptext.markDown(opt);
 
-// const sniptext2 = snipText();
-// sniptext2.markDown({ id: 'snip2' });
+// document.getElementById('button').addEventListener('click', (e) => {
+//   sniptext.getData('snip1');
+//   e.preventDefault();
+// });
+
+
+
+const sniptext2 = snipText();
+sniptext2.markDown({ id: 'snip2' });
 
 // const sniptext3 = snipText();
 // sniptext3.markDown({ id: 'snip3' });
