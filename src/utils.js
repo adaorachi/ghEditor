@@ -3,7 +3,8 @@ const extendDefaults = (properties) => {
     inTextEmoji: true,
     buttonEmoji: true,
     width: '100%',
-    height: 'auto',
+    minHeight: 'auto',
+    maxHeight: 'auto',
     buttons: 'heading|bold|italic|quote|code|link|code-square|list-unordered|list-ordered|tasklist|mention',
     // buttonColor: 'red',
     frameStyles: {
@@ -29,26 +30,9 @@ const extendDefaults = (properties) => {
   return defaults;
 };
 
-const concatClassName = (textarea, editorId) => {
-  const classNames = textarea.classList;
-  let concatClassName = '';
-  classNames.forEach((className) => {
-    if (className !== `snip-write-${editorId}`) { concatClassName += `${className} `; }
-  });
-  return concatClassName.trim();
-};
-
-const toggleEmojiArea = (properties) => {
-  const editorId = extendDefaults(properties).id;
-  const emojiBut = document.querySelector(`.snip-emoji-button-${editorId}`);
-
-  const emojiArea = document.createElement('div');
-  emojiArea.className = `snip-emoji-area snip-emoji-area-${editorId}`;
-  emojiBut.append(emojiArea);
-};
 
 const containerStyles = (properties, editorId) => {
-  const textArea = document.querySelector(`textarea#snip-write-${editorId}`);
+  const textArea = document.querySelector(`textarea#${editorId}`);
   const options = extendDefaults(properties);
   const computedStyles = getComputedStyle(textArea);
 
@@ -76,10 +60,14 @@ const containerStyles = (properties, editorId) => {
   }
 };
 
-const expandHeight = (value, textAreaHeight) => {
-  const numberOfLineBreaks = (value.match(/\n/g) || []).length;
-  const newHeight = textAreaHeight + (numberOfLineBreaks) * 20 + 15;
-  return newHeight;
+const expandHeight = (textArea, defaultHeight) => {
+  textArea.style.height = defaultHeight;
+  const computed = window.getComputedStyle(textArea);
+  const height = parseInt(computed.getPropertyValue('border-top-width'), 10)
+    + textArea.scrollHeight
+    + parseInt(computed.getPropertyValue('border-bottom-width'), 10);
+
+  return height;
 };
 
 const setAttributeToEmojiSelected = (ele, arrayList) => {
@@ -97,9 +85,7 @@ const setAttributeToEmojiSelected = (ele, arrayList) => {
 
 export {
   extendDefaults,
-  concatClassName,
   containerStyles,
   expandHeight,
-  toggleEmojiArea,
   setAttributeToEmojiSelected,
 };

@@ -11,9 +11,34 @@ const headerTabs = (editorId) => {
   return content;
 };
 
+const toggleToolbarButton = (editorId) => {
+  const octIcon = octicon['triangle-down'];
+  const isIcon = octIcon.toSVG({ width: 24, height: 24 });
+  const toggleT = `<button type="button" class="buttons toggle-toolbar-button toggle-toolbar-${editorId}">${isIcon}</button>`;
+  return toggleT;
+};
+
+const toggleToolbar = (editorId) => {
+  const toggle = document.querySelector(`.toggle-toolbar-${editorId}`);
+  if (toggle !== null) {
+    toggle.addEventListener('click', () => {
+      const lowerToolbar = document.querySelector(`.button-container-toggle-${editorId}`);
+      lowerToolbar.classList.toggle('open');
+    });
+  }
+};
+
 const displayCommandButtons = (editorId, mainButtons, size = 16, toolSuggester = false) => {
-  let content = '';
+  // eslint-disable-next-line one-var
+  let content = '',
+    div1 = '',
+    div2 = '',
+    addClass,
+    limiter,
+    mainButtons2;
+
   const buttonTitleText = {
+    smiley: 'Insert an emoji',
     heading: 'Add header text',
     bold: 'Add bold text',
     italic: 'Add italic text',
@@ -25,52 +50,67 @@ const displayCommandButtons = (editorId, mainButtons, size = 16, toolSuggester =
     'list-ordered': 'Add a numbered list',
     tasklist: 'Add a tasklist',
     mention: 'Directly mention a Github user',
+    question: 'Help?',
   };
-  mainButtons.split('|').forEach((button, index) => {
+
+  if (toolSuggester) {
+    addClass = '-suggester';
+    limiter = '<span>|</span>';
+    mainButtons2 = mainButtons.split('|');
+  } else {
+    addClass = '';
+    limiter = '&nbsp;&nbsp;&nbsp';
+    mainButtons2 = `smiley|${mainButtons}|question`.split('|');
+  }
+
+  mainButtons2.forEach((button, index) => {
     const iconName = button.trim();
-    const isIcon = octicon[iconName].toSVG({ width: size, height: size });
-    let addClass;
-    let limiter;
-    if (toolSuggester) {
-      addClass = '-suggester';
-      limiter = '<span>|</span>';
-    } else {
-      addClass = '';
-      limiter = '&nbsp;&nbsp;&nbsp;&nbsp';
-    }
+    const octIcon = octicon[iconName];
+
     const buttonId = `${iconName}-${editorId}${addClass}`;
 
-    if (isIcon !== undefined) {
-      if (index % 3 === 0 && index !== 0) {
-        content += limiter;
+    if (octIcon !== undefined) {
+      const isIcon = octIcon.toSVG({ width: size, height: size });
+      let className;
+      let isIcon1 = isIcon;
+
+      if (button === 'smiley') {
+        className = `snip-emoji-button-${editorId} snip-emoji-button`;
+      } else if (button === 'question') {
+        className = 'snip-help';
+        isIcon1 = `<a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">${isIcon}</a>`;
+      } else {
+        className = `markdown-button-${editorId}${addClass} button-${iconName}`;
       }
-      const className = `markdown-button-${editorId}${addClass} button-${iconName}`;
-      content += `<button type="button" class="tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonTitleText[iconName]}">${isIcon}</button>`;
+
+      let limit = '';
+      if ((index - 1) % 3 === 0 || index === (mainButtons2.length - 1)) {
+        limit += limiter;
+      }
+
+      const button1 = `${limit}<button type="button" class="tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonTitleText[iconName]}">${isIcon1}</button>`;
+
+      if (index === 7) {
+        div1 += toggleToolbarButton(editorId);
+      }
+      if (index <= 6) {
+        div1 += button1;
+      } else {
+        div2 += button1;
+      }
     }
   });
 
+  div1 = `<div class="button-container-untoggle button-container-untoggle-${editorId}">${div1}</div>`;
+  div2 = `<div class="button-container-toggle button-container-toggle-${editorId}">${div2}</div>`;
+  content = `${div1}${div2}`;
   return content;
 };
 
-const displayUtilButtons = (properties, editorId) => {
-  let smiley = '';
-  let help = '';
+const displayUtilButtons = (editorId) => {
   let wordCount = '';
-  if (extendDefaults(properties).buttonEmoji) {
-    const isIcon = octicon.smiley.toSVG();
-    const className = `snip-emoji-button-${editorId} snip-emoji-button`;
-    smiley += `<button type="button" class="tooltip-${editorId} buttons ${className}" id="smiley-${editorId}" aria-label="Insert an emoji">${isIcon}</button>`;
-    smiley += '&nbsp;&nbsp;&nbsp;';
-  }
-
-  help += '&nbsp;&nbsp;&nbsp;';
-  const isIcon = octicon.question.toSVG();
-  const anc = `<a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">${isIcon}</a>`;
-  help += `<button type="button" class="tooltip-${editorId} buttons snip-help" id="help-${editorId}" aria-label="Help?">${anc}</button>`;
-
   wordCount += `<div class="snip-word-count snip-word-count-${editorId} remove"></div>`;
-
-  return [smiley, help, wordCount];
+  return wordCount;
 };
 
 const displayButtons = (properties) => {
@@ -79,22 +119,19 @@ const displayButtons = (properties) => {
 
   let content = '';
   content += headerTabs(editorId);
-
   content
     += `<div class="snip-text-header-content snip-text-header-content-${editorId}">
       <div class="snip-text-button-container snip-text-button-container-${editorId}">`;
 
-  content += displayUtilButtons(properties, editorId)[0];
   const mainButtons = extendDefaults(properties).buttons;
   content += displayCommandButtons(editorId, mainButtons);
-  content += displayUtilButtons(properties, editorId)[1];
 
   content += '</div>';
-  content += displayUtilButtons(properties, editorId)[2];
+  content += displayUtilButtons(editorId);
   content += '</div>';
 
   docFrag.innerHTML = content;
   return docFrag;
 };
 
-export { displayButtons, displayCommandButtons };
+export { displayButtons, displayCommandButtons, toggleToolbar };

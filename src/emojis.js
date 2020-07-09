@@ -56,4 +56,20 @@ const emojis = async (editorId, ele) => {
   }
 };
 
-export default emojis;
+const toggleEmojiArea = (editorId) => {
+  const emojiBut = document.querySelector(`.snip-emoji-button-${editorId}`);
+
+  const emojiArea = document.createElement('div');
+  emojiArea.className = `snip-emoji-area snip-emoji-area-${editorId}`;
+  emojiBut.append(emojiArea);
+
+  const emoji = emojis(editorId, '');
+  emojiBut.addEventListener('click', () => {
+    emoji.then(data => {
+      emojiArea.innerHTML = data.getEmojiIcon;
+    });
+    emojiArea.classList.toggle('show-emoji');
+  });
+};
+
+export { emojis, toggleEmojiArea };

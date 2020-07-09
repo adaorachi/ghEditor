@@ -2,13 +2,12 @@ import ToggleTab from './toggleTab';
 import Exec from './execMarkdown';
 import {
   extendDefaults,
-  concatClassName,
-  toggleEmojiArea,
   containerStyles,
 } from './utils';
-import { displayButtons } from './toolbar';
+import { displayButtons, toggleToolbar } from './toolbar';
+import { toggleEmojiArea } from './emojis';
 
-import './styles.css';
+// import './styles.css';
 
 const snipText = () => {
   const outputData = (editorId, args) => {
@@ -17,11 +16,10 @@ const snipText = () => {
       form.addEventListener('submit', (e) => {
         let textArea = document.getElementById(editorId).value;
         const snipWrite = document.getElementById(`snip-write-${editorId}`);
-        const textAreaHeight = document.querySelector(`.snip-text-body-${editorId}`);
         const exec = Exec(editorId);
         textArea = exec.getMarkdown();
         snipWrite.value = '';
-        textAreaHeight.style.height = extendDefaults(args).height;
+        snipWrite.style.height = extendDefaults(args).minHeight;
         console.log(textArea);
         e.preventDefault();
       });
@@ -44,10 +42,11 @@ const snipText = () => {
 
     const defaultTextarea = document.querySelector(`textarea#${options.id}`);
 
+    // if (event.target.tagName.toLowerCase() !== 'textarea') return;
+
     if (defaultTextarea !== null) {
       const editorId = options.id;
       const areaParentEle = defaultTextarea.parentElement;
-      areaParentEle.style.width = options.width;
       defaultTextarea.style.display = 'none';
 
       const snipMarkDown = document.createElement('div');
@@ -68,17 +67,17 @@ const snipText = () => {
       const displayToolbar = document.createElement('div');
       displayToolbar.className = `toolbar-button-area toolbar-button-area-${editorId}`;
 
-      const defaultTextClassName = concatClassName(defaultTextarea, editorId);
       snipTextBody.className = `snip-text-body snip-text-body-${editorId}`;
       snipTextBody.id = 'snip-text-body';
-      snipTextBody.style.height = options.height;
 
       snipTextArea.id = `snip-write-${editorId}`;
-      snipTextArea.className = `snip-write snip-write-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content active ${defaultTextClassName}`;
+      snipTextArea.className = `snip-write snip-write-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content active`;
       snipTextArea.placeholder = 'Leave your comment';
+      snipTextArea.style.height = options.minHeight;
+      snipTextArea.style.maxHeight = options.maxHeight;
 
       snipPreviewArea.id = `snip-preview-${editorId}`;
-      snipPreviewArea.className = `snip-preview snip-preview-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content ${defaultTextClassName}`;
+      snipPreviewArea.className = `snip-preview snip-preview-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content`;
 
       snipTextBody.append(snipTextArea);
       snipTextBody.append(displayEmoji);
@@ -86,11 +85,13 @@ const snipText = () => {
       snipTextBody.append(snipPreviewArea);
 
       window.addEventListener('load', () => {
-        snipPreviewArea.style.minHeight = `${snipTextArea.clientHeight}px`;
-        toggleEmojiArea(args[0]);
+        toggleToolbar(editorId);
+        if (extendDefaults(args[0]).buttonEmoji) {
+          toggleEmojiArea(editorId);
+        }
         containerStyles(args[0], editorId);
-        const exec = Exec(editorId);
-        exec.outputMarkDown(args[0]);
+        const exec = Exec(editorId, args[0]);
+        exec.outputMarkDown();
         ToggleTab.toggle(`snip-text-tabnav-tabs-${editorId}`, editorId);
         outputData(editorId, args[0]);
       });
@@ -112,9 +113,13 @@ export default snipText;
 
 const opt = {
   id: 'snip1',
-  // width: '30%',
-  // height: '300px',
-  // buttons: 'heading|bold|italic|underline|strikethrough|quote-left|code|link|list-ul|list-ol|check-square',
+  width: '30%',
+  minHeight: '100px',
+  // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
+  // disallowedTags: ['p'],
+  allowedAttributes: ['style'],
+  // maxHeight: '300px',
+  buttons: 'heading|bold|italic|quote|code|link|code-square|list-unordered|list-ordered|tasklist|mention|meme',
   // buttonBgColor: '#eee'
   // frameStyles: { color: 'red', borderRadius: '10px' },
 };

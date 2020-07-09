@@ -45,10 +45,13 @@ const ToggleTab = (() => {
         } else if (id === `snip-preview-tab-${editorId}`) {
           removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
           document.querySelector(`.snip-text-button-container-${editorId}`).classList.add('remove');
+          const snipPreviewArea = document.getElementById(`snip-preview-${editorId}`);
+          const snipTextArea = document.getElementById(`snip-write-${editorId}`);
 
+          snipPreviewArea.style.height = 'auto';
           displayWordCount(editorId);
-          if (document.getElementById(`snip-write-${editorId}`).value === '') {
-            document.getElementById(`snip-preview-${editorId}`).innerHTML = '<p class="placeholder">Nothing to preview<p>';
+          if (snipTextArea.value === '') {
+            snipPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
           }
         }
       }

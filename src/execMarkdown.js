@@ -2,7 +2,7 @@
 import showdown from 'showdown';
 import hljs from 'highlight.js/lib/core';
 import sanitizeHtml from 'sanitize-html';
-import emojis from './emojis';
+import { emojis } from './emojis';
 import getCaretCoordinates from './caretPos';
 import 'highlight.js/styles/github.css';
 import ToggleTab from './toggleTab';
@@ -13,7 +13,7 @@ import {
   extendDefaults,
 } from './utils';
 
-const Exec = (editorId) => {
+const Exec = (editorId, prop) => {
   const converter = new showdown.Converter();
   converter.setFlavor('github');
   converter.setOption({
@@ -23,13 +23,14 @@ const Exec = (editorId) => {
     smoothLivePreview: true,
   });
 
-  let currentFocus = 0;
-  let startSelection;
-  let endSelection;
-  let startEmo = 0;
-  let scrollT = 0;
-  let xx;
-  let yy;
+  // eslint-disable-next-line one-var
+  let currentFocus = 0,
+    startSelection,
+    endSelection,
+    startEmo = 0,
+    scrollT = 0,
+    xx,
+    yy;
 
   const highlightCode = (lang, code) => {
     const lang1 = lang === 'html' ? 'xml' : lang;
@@ -98,11 +99,55 @@ const Exec = (editorId) => {
     return text;
   };
 
+  const getAllAllowedAttributes = (attributes) => {
+    const { allowedAttributes } = extendDefaults(prop);
+    const { disallowedAttributes } = extendDefaults(prop);
+
+    let allAttributes = attributes;
+    // eslint-disable-next-line no-prototype-builtins
+    if (extendDefaults(prop).hasOwnProperty('allowedAttributes')) {
+      allAttributes = allAttributes.concat(allowedAttributes);
+    }
+    // eslint-disable-next-line no-prototype-builtins
+    if (extendDefaults(prop).hasOwnProperty('disallowedAttributes')) {
+      allAttributes = allAttributes.filter((attr) => disallowedAttributes.indexOf(attr) < 0);
+    }
+
+    return allAttributes;
+  };
+
+  const getAllAllowedTags = (tags) => {
+    const { allowedTags } = extendDefaults(prop);
+    const { disallowedTags } = extendDefaults(prop);
+
+    let allTags = tags;
+    // eslint-disable-next-line no-prototype-builtins
+    if (extendDefaults(prop).hasOwnProperty('allowedTags')) {
+      allTags = allTags.concat(allowedTags);
+    }
+    // eslint-disable-next-line no-prototype-builtins
+    if (extendDefaults(prop).hasOwnProperty('disallowedTags')) {
+      allTags = allTags.filter((attr) => disallowedTags.indexOf(attr) < 0);
+    }
+
+    return allTags;
+  };
+
   const getMarkdown = () => {
-    let text = document.getElementById(`snip-write-${editorId}`).value;
-    text = converter.makeHtml(text);
-    text = replaceSnippet(text);
-    return sanitizeHtml(text);
+    const text = document.getElementById(`snip-write-${editorId}`).value;
+    const text1 = converter.makeHtml(text);
+    const text2 = replaceSnippet(text1);
+    const attr = ['class', 'id', 'href', 'align', 'alt', 'target', 'src'];
+    const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'span', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'img', 'detail', 'figure'];
+    const sanitizedText = sanitizeHtml(text2, {
+      allowedAttributes: {
+        '*': getAllAllowedAttributes(attr),
+      },
+      allowedTags: getAllAllowedTags(tags),
+    });
+
+
+    return sanitizedText;
   };
 
   const updatePreviewInputOnClick = () => {
@@ -110,7 +155,6 @@ const Exec = (editorId) => {
     previewButton.addEventListener('click', () => {
       const text = getMarkdown();
       document.getElementById(`snip-preview-${editorId}`).innerHTML = text;
-      // document.getElementById(`${editorId}`).innerHTML = text;
     });
   };
 
@@ -230,10 +274,13 @@ const Exec = (editorId) => {
           filterEmojiArea.classList.add('dropdown');
 
           filterEmojiArea.innerHTML = filtered.content;
-          const boundArea = filterEmojiArea.getBoundingClientRect().right;
-          const boundArea1 = textarea.getBoundingClientRect().right;
-          if (boundArea > boundArea1) {
+          const boundArea = filterEmojiArea.getBoundingClientRect();
+          const boundArea1 = textarea.getBoundingClientRect();
+          if (boundArea.right > boundArea1.right) {
             filterEmojiArea.style.left = `${yy - 140}px`;
+          }
+          if (boundArea.bottom > boundArea1.bottom) {
+            filterEmojiArea.style.top = `${boundArea1.height - 150}px`;
           }
 
           selectEmojiOnArrowKey(e);
@@ -249,7 +296,9 @@ const Exec = (editorId) => {
   };
 
   const placeAreasByCoord = (area, textarea, leftCoord = 0) => {
-    const coordinates = getCaretCoordinates(textarea, textarea.selectionStart, textarea.selectionEnd, editorId);
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const coordinates = getCaretCoordinates(textarea, start, end, editorId);
     xx = coordinates.top - scrollT;
     yy = coordinates.left;
     startEmo = endSelection;
@@ -291,6 +340,7 @@ const Exec = (editorId) => {
         const tooltipAll = `.buttons.tooltip-${editorId}`;
         ToggleTab.hideAndDisplayNav(id, tooltipAll);
       });
+
       button.addEventListener('mouseleave', () => {
         Array.from(allButtons2).forEach((item) => {
           item.classList.remove('active');
@@ -421,14 +471,14 @@ const Exec = (editorId) => {
         const boundArea = toolbarButtonArea.getBoundingClientRect();
         const boundArea1 = textarea.getBoundingClientRect();
         if (boundArea.right > boundArea1.right) {
-          toolbarButtonArea.style.left = `${yy - 160}px`;
+          toolbarButtonArea.style.left = `${yy - 200}px`;
           toolbarButtonArea.classList.add('adjust-tip');
         } else {
           toolbarButtonArea.classList.remove('adjust-tip');
         }
 
         if (boundArea.bottom > boundArea1.bottom) {
-          toolbarButtonArea.style.top = `${boundArea1.height}px`;
+          toolbarButtonArea.style.top = `${boundArea1.height - 30}px`;
         }
       }
       document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('dropdown');
@@ -437,9 +487,7 @@ const Exec = (editorId) => {
 
   const insertAllTextOnInput = () => {
     const textarea = document.getElementById(`snip-write-${editorId}`);
-    const textAreaHeight = textarea.clientHeight;
-    // const scrollH = document.getElementById(`snip-write-${editorId}`).scrollHeight;
-    // const textAreaHeight2 = textAreaHeight.clientHeight;
+    const textAreaHeight = textarea.style.height;
     textarea.addEventListener('input', (e) => {
       startSelection = textarea.selectionStart;
       endSelection = textarea.selectionEnd;
@@ -447,7 +495,7 @@ const Exec = (editorId) => {
         placeAreasByCoord(`.filter-emoji-area-${editorId}`, textarea);
       }
 
-      textarea.style.height = `${expandHeight(textarea.value, textAreaHeight)}px`;
+      textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
 
       const toolbarButtonArea = document.querySelector(`.toolbar-button-area-${editorId}`);
       toolbarButtonArea.classList.remove('dropdown');
@@ -475,13 +523,14 @@ const Exec = (editorId) => {
     buttonTooltip();
   };
 
-  const outputMarkDown = (prop) => {
+  const outputMarkDown = () => {
     if (extendDefaults(prop).inTextEmoji) {
       insertEmojijiOnKeyEvent();
     }
 
     if (extendDefaults(prop).buttonEmoji) {
       insertEmojiOnEmojiAreaClick();
+      document.getElementById(`smiley-${editorId}`).style.display = 'initial';
     }
 
     insertAllTextOnInput();
@@ -490,6 +539,7 @@ const Exec = (editorId) => {
 
     updatePreviewInputOnClick();
   };
+
   return { outputMarkDown, getMarkdown };
 };
 
