@@ -30,7 +30,6 @@ const extendDefaults = (properties) => {
   return defaults;
 };
 
-
 const containerStyles = (properties, editorId) => {
   const textArea = document.querySelector(`textarea#${editorId}`);
   const options = extendDefaults(properties);

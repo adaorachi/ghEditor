@@ -5,13 +5,9 @@
   padding: 6px;
   position: relative;
 
-  blockquote, details, dl, ol, p, pre, table, ul {
-  margin-top: 0;
-  margin-bottom: 16px;
-  color: #24292e;
-  }
-
-  h1, h2, h3, h4, h5, h6{
+  blockquote, details, dl, ol, p, pre, table, ul, h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 16px;
     color: #24292e;
   }
 
@@ -120,11 +116,9 @@
 }
 
  .task-list-item {
-  list-style-type: none;
-}
-
- .task-list-item input {
-  margin: 0 .2em .25em -1.6em;
+  input:hover {
+    box-shadow: 0 0 2px 2px rgba(188,217,246,0.4), 0 0 0 1px rgba(188,217,246,0.4);
+  }
 }
 
  details {
@@ -173,6 +167,11 @@
   border: 1px solid #d1d5da;
   white-space: pre-wrap;
   overflow-wrap: break-word;
+  &:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
 }
 
 .snip-preview.tab-content {

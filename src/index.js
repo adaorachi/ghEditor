@@ -133,7 +133,6 @@ sniptext.markDown(opt);
 // });
 
 
-
 const sniptext2 = snipText();
 sniptext2.markDown({ id: 'snip2' });
 

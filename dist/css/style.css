@@ -6,13 +6,9 @@
   position: relative;
 }
 
-.snip-text-body blockquote, .snip-text-body details, .snip-text-body dl, .snip-text-body ol, .snip-text-body p, .snip-text-body pre, .snip-text-body table, .snip-text-body ul {
+.snip-text-body blockquote, .snip-text-body details, .snip-text-body dl, .snip-text-body ol, .snip-text-body p, .snip-text-body pre, .snip-text-body table, .snip-text-body ul, .snip-text-body h1, .snip-text-body h2, .snip-text-body h3, .snip-text-body h4, .snip-text-body h5, .snip-text-body h6 {
   margin-top: 0;
   margin-bottom: 16px;
-  color: #24292e;
-}
-
-.snip-text-body h1, .snip-text-body h2, .snip-text-body h3, .snip-text-body h4, .snip-text-body h5, .snip-text-body h6 {
   color: #24292e;
 }
 
@@ -120,12 +116,9 @@
   padding-left: 2em;
 }
 
-.snip-text-body .task-list-item {
-  list-style-type: none;
-}
-
-.snip-text-body .task-list-item input {
-  margin: 0 .2em .25em -1.6em;
+.snip-text-body .task-list-item input:hover {
+  -webkit-box-shadow: 0 0 2px 2px rgba(188, 217, 246, 0.4), 0 0 0 1px rgba(188, 217, 246, 0.4);
+          box-shadow: 0 0 2px 2px rgba(188, 217, 246, 0.4), 0 0 0 1px rgba(188, 217, 246, 0.4);
 }
 
 .snip-text-body details {
@@ -175,6 +168,13 @@
   border: 1px solid #d1d5da;
   white-space: pre-wrap;
   overflow-wrap: break-word;
+}
+
+.snip-write.tab-content:focus {
+  border-color: #80bdff;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .snip-preview.tab-content {

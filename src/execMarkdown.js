@@ -96,6 +96,9 @@ const Exec = (editorId, prop) => {
 
     text = text.replace(/(<li|h1|h2|h3|h4|h5|h6|img|p)([^>]*)(>.*?)({:\s+)(.+?)(})(.*?)(<\/(li|h1|h2|h3|h4|h5|h6|img|p)>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p5, p2)} ${p3}${p7}${p8}`);
 
+    text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+      .replace(/'/g, '&#039;');
+
     return text;
   };
 
@@ -135,19 +138,18 @@ const Exec = (editorId, prop) => {
 
   const getMarkdown = () => {
     const text = document.getElementById(`snip-write-${editorId}`).value;
-    const text1 = converter.makeHtml(text);
-    const text2 = replaceSnippet(text1);
     const attr = ['class', 'id', 'href', 'align', 'alt', 'target', 'src'];
     const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'span', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'img', 'detail', 'figure'];
-    const sanitizedText = sanitizeHtml(text2, {
+    const sanitizedText = sanitizeHtml(text, {
       allowedAttributes: {
         '*': getAllAllowedAttributes(attr),
       },
       allowedTags: getAllAllowedTags(tags),
     });
+    const text1 = replaceSnippet(sanitizedText);
+    const text2 = converter.makeHtml(text1);
 
-
-    return sanitizedText;
+    return text2;
   };
 
   const updatePreviewInputOnClick = () => {
@@ -278,9 +280,6 @@ const Exec = (editorId, prop) => {
           const boundArea1 = textarea.getBoundingClientRect();
           if (boundArea.right > boundArea1.right) {
             filterEmojiArea.style.left = `${yy - 140}px`;
-          }
-          if (boundArea.bottom > boundArea1.bottom) {
-            filterEmojiArea.style.top = `${boundArea1.height - 150}px`;
           }
 
           selectEmojiOnArrowKey(e);
