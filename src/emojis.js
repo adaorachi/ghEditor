@@ -41,7 +41,7 @@ const filterEmojiIcons = (ele, editorId, emoji) => {
 
 const emojis = async (editorId, ele) => {
   try {
-    const fetchEmoji = await fetch('./src/emoji.json');
+    const fetchEmoji = await fetch('../../src/emoji.json');
     const emoji = await fetchEmoji.json();
     const getEmojiIcon = getEmojiIcons(editorId, emoji);
     const filterEmojiIcon = filterEmojiIcons(ele, editorId, emoji);

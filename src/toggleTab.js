@@ -1,3 +1,7 @@
+import {
+  expandHeight, extendDefaults,
+} from './utils';
+
 const ToggleTab = (() => {
   const hideAndDisplayNav = (ele, arrayList) => {
     const array = document.querySelectorAll(arrayList);
@@ -17,7 +21,6 @@ const ToggleTab = (() => {
     const wordLength = text === '' ? 0 : wordSplit.length;
 
     const snipWord = document.querySelector(`.snip-word-count-${editorId}`);
-    snipWord.classList.remove('remove');
     snipWord.innerHTML = `${charactersLength} characters ${wordLength} words`;
   };
 
@@ -38,27 +41,89 @@ const ToggleTab = (() => {
         hideAndDisplayNav(eleTab, `.${parentId} .snip-tab-content-${editorId}.tab-content`);
         hideAndDisplayNav(id, `.${parentId} .btn-nav-${editorId}.tabnav`);
 
-        if (id === `snip-write-tab-${editorId}`) {
+        if (id === `snip-writearea-tab-${editorId}`) {
           document.getElementById(eleTab).focus();
           document.querySelector(`.snip-text-button-container-${editorId}`).classList.remove('remove');
           document.querySelector(`.snip-word-count-${editorId}`).classList.add('remove');
         } else if (id === `snip-preview-tab-${editorId}`) {
-          removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
           document.querySelector(`.snip-text-button-container-${editorId}`).classList.add('remove');
-          const snipPreviewArea = document.getElementById(`snip-preview-${editorId}`);
-          const snipTextArea = document.getElementById(`snip-write-${editorId}`);
+          document.querySelector(`.snip-word-count-${editorId}`).classList.remove('remove');
 
-          snipPreviewArea.style.height = 'auto';
+          removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
           displayWordCount(editorId);
-          if (snipTextArea.value === '') {
-            snipPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
-          }
+        }
+
+        const snipTextArea = document.getElementById(`snip-write-${editorId}`);
+        const snipPreviewArea = document.getElementById(`snip-preview-${editorId}`);
+        snipPreviewArea.style.height = 'auto';
+        if (snipTextArea.value === '') {
+          snipPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
         }
       }
     });
   };
 
-  return { toggle, hideAndDisplayNav };
+  const togglePreview = (editorId, args) => {
+    if (extendDefaults(args).togglePreview) {
+      const snipContainers2 = [
+        `snip-write-${editorId}`,
+        `snip-preview-${editorId}`,
+      ];
+      const previewBut = document.querySelector(`.snip-preview-button-${editorId}`);
+      previewBut.style.display = 'initial';
+
+      previewBut.addEventListener('click', () => {
+        const snipContainers = [
+          `snip-writearea-${editorId}`,
+          `snip-preview-${editorId}`,
+          `snip-text-body-${editorId}`,
+          `snip-text-tabnav-tabs-${editorId}`,
+          `${editorId}--mirror-div`,
+          `snip-text-header-content-${editorId}`,
+          `snip-upload-container-${editorId}`,
+          `snip-autosave-${editorId}`,
+        ];
+        snipContainers.forEach(container => {
+          document.getElementById(container).classList.toggle('preview');
+        });
+
+        document.getElementById(`snip-word-count-${editorId}`).classList.toggle('remove');
+        displayWordCount(editorId);
+
+        snipContainers2.forEach(container => {
+          const snipWriteHeight = document.getElementById(snipContainers2[0]).style.height;
+          const containerArea = document.getElementById(container);
+          containerArea.style.height = `${expandHeight(containerArea, snipWriteHeight)}px`;
+
+          const snipPreview = document.querySelector(`#snip-preview-${editorId}.preview`);
+          if (snipPreview !== null) {
+            const snipPreviewStyle = {
+              minHeight: extendDefaults(args).minHeight,
+              maxHeight: extendDefaults(args).maxHeight,
+              padding: '6px 20px',
+            };
+            Object.assign(snipPreview.style, snipPreviewStyle);
+          }
+        });
+      });
+
+      const fixedDiv = document.getElementById(snipContainers2[0]);
+      const scrollableDiv = document.getElementById(snipContainers2[1]);
+
+      fixedDiv.addEventListener('scroll', () => {
+        scrollableDiv.scrollTop = fixedDiv.scrollTop
+        * ((scrollableDiv.scrollHeight - scrollableDiv.clientHeight)
+        / (fixedDiv.scrollHeight - fixedDiv.clientHeight));
+      });
+    }
+  };
+
+  return {
+    toggle,
+    hideAndDisplayNav,
+    togglePreview,
+    displayWordCount,
+  };
 })();
 
 export default ToggleTab;

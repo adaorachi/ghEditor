@@ -3,140 +3,209 @@ import Exec from './execMarkdown';
 import {
   extendDefaults,
   containerStyles,
+  expandHeight,
+  setEditorTextToStore,
+  stopStorageInterval,
+  autoSaveOnClicked,
+  defaultOptionSnippet,
+  appendToDOM,
+  createDOMElement,
 } from './utils';
 import { displayButtons, toggleToolbar } from './toolbar';
-import { toggleEmojiArea } from './emojis';
 
-// import './styles.css';
 
 const snipText = () => {
+  let options = {};
+  let editorId;
+  let initialSetVal = '';
+
+  const syncValue = () => {
+    const defaultTextArea = document.getElementById(editorId);
+    const exec = Exec(editorId, {});
+    defaultTextArea.value = exec.getMarkdown();
+    return defaultTextArea.value;
+  };
+
   const outputData = (editorId, args) => {
     try {
       const { form } = document.getElementById(editorId);
       form.addEventListener('submit', (e) => {
-        let textArea = document.getElementById(editorId).value;
+        syncValue();
         const snipWrite = document.getElementById(`snip-write-${editorId}`);
-        const exec = Exec(editorId);
-        textArea = exec.getMarkdown();
         snipWrite.value = '';
         snipWrite.style.height = extendDefaults(args).minHeight;
-        console.log(textArea);
+        window.localStorage.removeItem('snipText');
+        stopStorageInterval(editorId);
         e.preventDefault();
       });
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
     }
   };
 
-  const getData = (editorId) => {
-    const exec = Exec(editorId);
-    console.log(exec.getMarkdown());
+  const getValue = () => {
+    const exec = Exec(editorId, {});
     return exec.getMarkdown();
   };
 
+  const getOptions = () => extendDefaults(options);
+
+  const getDefaultOptions = () => extendDefaults({});
+
+  const getOption = (key) => {
+    const obj = extendDefaults(options);
+    // eslint-disable-next-line no-prototype-builtins
+    if (obj.hasOwnProperty(key)) {
+      return obj[key];
+    }
+    return 'Not an option';
+  };
+
+  const setValue = (data) => {
+    const allText = {};
+    allText[editorId] = data;
+    localStorage.setItem('snipText', JSON.stringify(allText));
+    const snipWrite = document.getElementById(`snip-write-${editorId}`);
+    snipWrite.value = data;
+    initialSetVal = data;
+  };
+
   const markDown = (...args) => {
-    let options = {};
     if (args[0] && typeof args[0] === 'object') {
       options = extendDefaults(args[0]);
+    } else {
+      // eslint-disable-next-line prefer-destructuring
+      const defaultContainer = document.querySelectorAll('textarea.snip-markdown')[0];
+      options = extendDefaults({});
+      options.container = 'sniptext';
+      defaultContainer.id = 'sniptext';
     }
 
-    const defaultTextarea = document.querySelector(`textarea#${options.id}`);
-
-    // if (event.target.tagName.toLowerCase() !== 'textarea') return;
+    const defaultTextarea = document.querySelector(`textarea.snip-markdown#${options.container}`);
 
     if (defaultTextarea !== null) {
-      const editorId = options.id;
+      editorId = options.container;
       const areaParentEle = defaultTextarea.parentElement;
       defaultTextarea.style.display = 'none';
 
-      const snipMarkDown = document.createElement('div');
-      const snipTextContainer = document.createElement('div');
-      snipTextContainer.className = `snip-text-container snip-text-container-${editorId}`;
-      snipMarkDown.className = `snip-text-mark-down snip-text-mark-down-${editorId}`;
-      snipMarkDown.id = `snip-text-mark-down-${editorId}`;
+      const snipMarkDown = createDOMElement('div', `snip-text-mark-down snip-text-mark-down-${editorId}`, `snip-text-mark-down-${editorId}`);
 
-      snipTextContainer.append(snipMarkDown);
-      areaParentEle.append(snipTextContainer);
+      const snipTextContainer = createDOMElement('div', `snip-text-container snip-text-container-${editorId}`);
 
-      const snipTextBody = document.createElement('div');
-      const snipTextArea = document.createElement('textarea');
-      const snipPreviewArea = document.createElement('div');
+      const snipTextBody = createDOMElement('div', `snip-text-body snip-text-body-${editorId}`, `snip-text-body-${editorId}`);
 
-      const displayEmoji = document.createElement('div');
-      displayEmoji.className = `filter-emoji-area filter-emoji-area-${editorId}`;
-      const displayToolbar = document.createElement('div');
-      displayToolbar.className = `toolbar-button-area toolbar-button-area-${editorId}`;
+      const snipTextAreaContainer = createDOMElement('div', `snip-writearea snip-writearea-${editorId} snip-tab-content snip-tab-content-${editorId} tab-content active`, `snip-writearea-${editorId}`);
 
-      snipTextBody.className = `snip-text-body snip-text-body-${editorId}`;
-      snipTextBody.id = 'snip-text-body';
+      const snipTextAreaParams = [`snip-write-${editorId}`, extendDefaults(options).placeholder, options.minHeight, options.maxHeight];
+      const snipTextArea = createDOMElement('textarea', `snip-write snip-write-${editorId}`, ...snipTextAreaParams);
 
-      snipTextArea.id = `snip-write-${editorId}`;
-      snipTextArea.className = `snip-write snip-write-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content active`;
-      snipTextArea.placeholder = 'Leave your comment';
-      snipTextArea.style.height = options.minHeight;
-      snipTextArea.style.maxHeight = options.maxHeight;
+      const snipPreviewArea = createDOMElement('div', `snip-preview snip-preview-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content`, `snip-preview-${editorId}`);
 
-      snipPreviewArea.id = `snip-preview-${editorId}`;
-      snipPreviewArea.className = `snip-preview snip-preview-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content`;
+      const displayEmoji = createDOMElement('div', `filter-emoji-area filter-emoji-area-${editorId}`);
 
-      snipTextBody.append(snipTextArea);
-      snipTextBody.append(displayEmoji);
-      snipTextBody.append(displayToolbar);
-      snipTextBody.append(snipPreviewArea);
+      const displayToolbar = createDOMElement('div', `toolbar-button-area toolbar-button-area-${editorId}`);
+
+      const snipUploadImage = createDOMElement('div', `snip-footer snip-footer-${editorId}`);
+
+      const mirrorDiv = createDOMElement('div', `${editorId}--mirror-div snip-mirror-div`, `${editorId}--mirror-div`);
+
+      const buttonContainer = createDOMElement('div', `snip-text-header snip-text-header-${editorId}`);
 
       window.addEventListener('load', () => {
+        const textarea = document.getElementById(`snip-write-${editorId}`);
+
+        defaultOptionSnippet(options, editorId, snipUploadImage);
         toggleToolbar(editorId);
-        if (extendDefaults(args[0]).buttonEmoji) {
-          toggleEmojiArea(editorId);
-        }
-        containerStyles(args[0], editorId);
-        const exec = Exec(editorId, args[0]);
+
+        containerStyles(options, editorId);
+        const exec = Exec(editorId, options);
         exec.outputMarkDown();
         ToggleTab.toggle(`snip-text-tabnav-tabs-${editorId}`, editorId);
-        outputData(editorId, args[0]);
+        ToggleTab.togglePreview(editorId, options);
+
+        outputData(editorId, options);
+        setEditorTextToStore(editorId, options, initialSetVal);
+        exec.uploadImage();
+        autoSaveOnClicked(editorId, options);
+
+        const textAreaHeight = textarea.style.height;
+        textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
       });
 
-      const buttonContainer = document.createElement('div');
-      buttonContainer.className = `snip-text-header snip-text-header-${editorId}`;
+      appendToDOM(snipTextContainer, snipMarkDown);
+      appendToDOM(areaParentEle, snipTextContainer);
 
-      snipMarkDown.append(buttonContainer);
-      displayButtons(args[0]);
-      snipMarkDown.append(snipTextBody);
+      const appended = [snipTextArea, displayEmoji, displayToolbar, snipUploadImage];
+      appendToDOM(snipTextAreaContainer, ...appended);
+
+      appendToDOM(snipMarkDown, ...[buttonContainer, snipTextBody]);
+
+      displayButtons(options);
+      const appended2 = [snipTextAreaContainer, snipPreviewArea, mirrorDiv];
+      appendToDOM(snipTextBody, ...appended2);
     }
   };
 
-  return { markDown, getData };
+  return {
+    markDown,
+    getValue,
+    syncValue,
+    setValue,
+    getOptions,
+    getOption,
+    getDefaultOptions,
+  };
 };
 
 export default snipText;
 
 
 const opt = {
-  id: 'snip1',
+  container: 'snip-1',
   width: '30%',
   minHeight: '100px',
+  placeholder: 'meme',
   // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
   // disallowedTags: ['p'],
   allowedAttributes: ['style'],
-  // maxHeight: '300px',
-  buttons: 'heading|bold|italic|quote|code|link|code-square|list-unordered|list-ordered|tasklist|mention|meme',
+  maxHeight: '300px',
   // buttonBgColor: '#eee'
   // frameStyles: { color: 'red', borderRadius: '10px' },
+  autoSave: {
+    enable: true,
+    delay: 3000,
+  },
+  uploadImageConfig: {
+    storageBucket: 'snip-editor.appspot.com',
+  },
 };
 
 const sniptext = snipText();
 sniptext.markDown(opt);
+// sniptext.setValue('# This is me');
+// sniptext.getValue('snip1');
+// console.log(sniptext.getOptions());
+// console.log(sniptext.getDefaultOptions());
+
+// console.log(sniptext.getOption('minHeight'));
+
 
 // document.getElementById('button').addEventListener('click', (e) => {
-//   sniptext.getData('snip1');
-//   e.preventDefault();
+//   console.log(sniptext.syncValue());
+//   // e.preventDefault();
 // });
 
 
-const sniptext2 = snipText();
-sniptext2.markDown({ id: 'snip2' });
+// const sniptext2 = snipText();
+// sniptext2.markDown({container: 'snip2'});
+// document.getElementById('button').addEventListener('click', (e) => {
+//   console.log(sniptext2.syncValue());
+//   // e.preventDefault();
+// });
+
 
 // const sniptext3 = snipText();
 // sniptext3.markDown({ id: 'snip3' });
 
-document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">');
+// document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">');

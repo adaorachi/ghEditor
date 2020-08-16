@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack-dev-server": "webpack-dev-server",
     "build": "webpack --mode production",
     "dev": "webpack --mode development",
     "start": "webpack-dev-server --mode development --open",
@@ -44,8 +45,11 @@
   },
   "dependencies": {
     "@primer/octicons": "^10.0.0",
+    "firebase": "^7.17.2",
     "highlight.js": "^10.1.1",
+    "html-webpack-plugin": "^4.3.0",
     "sanitize-html": "^1.27.0",
-    "showdown": "^1.9.1"
+    "showdown": "^1.9.1",
+    "webpack-dev-server": "^3.11.0"
   }
 }

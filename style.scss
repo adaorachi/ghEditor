@@ -1,14 +1,21 @@
 .snip-text-body {
   border-radius: 0 0 0.25rem 0.25rem;
   border: 1px solid #ced4da;
-  border-top: none;
   padding: 6px;
   position: relative;
 
-  blockquote, details, dl, ol, p, pre, table, ul, h1, h2, h3, h4, h5, h6 {
+  &.preview {
+    display: flex;
+  }
+
+  blockquote, details, a, dl, ol, p, pre, table, ul, h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
     margin-bottom: 16px;
-    color: #24292e;
+    color: #343b42;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
   }
 
   h1 {
@@ -156,26 +163,142 @@
 }
 
 .snip-text-body, 
-.snip-tab-content.tab-content {
+.snip-writearea.tab-content,
+.snip-write {
   width: 100%;
   outline: none;
   box-sizing: border-box;
 }
 
-.snip-write.tab-content {
+.snip-writearea.tab-content,
+.snip-write {
+  border-radius: 6px;
   background-color: #fafbfc;
+}
+
+.snip-writearea.tab-content {
   border: 1px solid #d1d5da;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-  &:focus {
+
+  &:focus-within {
     border-color: #80bdff;
-    outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
 }
 
+.snip-write {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  border: none;
+}
+
 .snip-preview.tab-content {
-  min-height: 50px;
+  min-height: 100px;
+}
+
+.snip-writearea.tab-content,
+.snip-preview.tab-content {
+  &.preview {
+    display: block;
+    flex: 1;
+    overflow-y: scroll;
+  }
+}
+
+.snip-mirror-div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -9999;
+  visibility: hidden;
+
+  &.preview {
+    width: 50%;
+  }
+}
+
+.snip-footer {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border: 1px solid #d1d5da;
+  border-top: 1px dashed #d1d5da;
+  background: #fafbfc;
+  position: relative;
+  height: auto;
+  padding: 0.3rem 0.6rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #888;
+
+  .snip-upload-container {
+    width: 80%;
+    border-right: 1px dashed #aaa;
+  }
+
+  .snip-upload-container.preview,
+  .snip-upload-container.preview .snip-uploadimage-input {
+    width: 55%;
+  }
+
+  .upload-image-progress {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  &:focus-within,
+  &.highlight {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+
+  .snip-uploadimage-input {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 80%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border-radius: 20px;
+    z-index: 2;
+  }
+
+  .snip-autosave {
+    width: 16%;
+    display: flex;
+    margin-left: 10px;
+    position: relative;
+
+    &.preview {
+      width: 45%;
+    }
+
+    .auto-save-icon {
+      position: absolute;
+      left: 0;
+      cursor: pointer;
+      margin-right: 0.4rem;
+      fill: #888;
+
+      &:hover {
+        fill: #0366d6;
+      }
+    }
+
+    .auto-saved {
+      position: relative;
+      margin-left: 20px;
+
+      &.scale {
+        color: blue;
+        animation: timer-appear 200ms ease-in;
+      }
+    }
+  }
 }
 
 .snip-write::placeholder,
@@ -188,6 +311,10 @@
 .snip-text-tabnav-tabs {
   padding: 8px 0 0;
   margin: 0 10px;
+
+  &.preview {
+    display: none;
+  }
 
    .btn-nav {
     border: 1px solid #f6f8fa;
@@ -216,6 +343,7 @@
 
 .snip-text-header {
   border: 1px solid #d1d5da;
+  border-bottom: none;
   background-color: #f6f8fa;
   display: flex;
   justify-content: space-between;
@@ -249,20 +377,21 @@
     border-width: 7px;
     border-right-color: #f6f8fa;
   }
+
+  &.hide {
+    display: none;
+  }
 }
 
 
 .snip-text-header-content {
   padding: 8px;
   display: flex;
-}
-
-.snip-text-button-container {
-  display: flex;
   align-items: center;
 
-  .buttons svg {
-    fill: #586069;
+  &.preview {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 
@@ -274,22 +403,24 @@
     background-color: transparent;
     color: #586069;
     position: relative;
+
+    &:hover {
+      box-shadow: 2px 2px 3px #ccc7c7;
+      transform: scale(1.1);
+      border-radius: 5px;
+    }
+  }
+  svg {
+    fill: #fff;
+
+    &:hover {
+      fill: #0366d6;
+    }
   }
 }
 
-.toolbar-button-area .buttons svg {
-  fill: #fff;
-}
-
-.snip-text-button-container .buttons svg:hover,
-.toolbar-button-area .buttons  svg:hover {
-  fill: #0366d6;
-  transform: scale(1.1);
-  transition: all 0.2s ease-in-out;
-}
-
 .snip-text-button-container {
-  .buttons.active::after {
+  .tooltip-button.active::after {
     position: absolute;
     content: attr(aria-label);
     width: max-content;
@@ -306,9 +437,18 @@
     animation: tooltip-appear 200ms ease-in;
   }
 
-  .buttons.active::before {
+  .tooltip-button.active::before {
     border-top: 6px solid #1b1f23;
     left: 50%;
+  }
+
+  .limiter {
+    display: inline-block;
+    width: 0;
+    border-left: 1px solid #d9d9d9;
+    border-right: 1px solid #fff;
+    color: transparent;
+    margin: 0 6px;
   }
 }
 
@@ -340,7 +480,8 @@
   display: none;
 }
 
-.snip-emoji-button {
+.snip-emoji-button,
+.snip-preview-button {
   position: relative;
   display: none;
 }
@@ -422,7 +563,8 @@
   }
 }
 
-.snip-write {
+.snip-write,
+.snip-preview.preview {
   &::-webkit-scrollbar {
     width: 12px;
     background-color: #f5f5f5;
@@ -453,10 +595,14 @@
   to {opacity: 1;}
 }
 
+@keyframes timer-appear {
+  from {transform: scale(1.05);}
+  to {transform: scale(1);}
+}
+
 @media only screen and (max-width: 767px) {
-  .snip-text-button-container {
+  .snip-text-header {
     flex-direction: column;
-    align-items: flex-start;
   }
 
   .snip-text-tabnav-buttons .btn-nav {
@@ -476,6 +622,11 @@
     }
   }
 
+  .snip-word-count {
+    text-align: center;
+    width: 100%;
+  }
+
   .toggle-toolbar-button {
     display: initial;
   }
@@ -490,11 +641,16 @@
     justify-content: center;
   }
 
-  .snip-text-header {
-    flex-direction: column;
-  }
+  
 
-  .snip-text-tabnav-tabs {
-    order: 2;
+  .snip-footer {
+    .snip-upload-container,
+    .snip-upload-container .snip-uploadimage-input {
+      width: 55%;
+    }
+
+    .snip-autosave {
+      width: 45%;
+    }
   }
 }

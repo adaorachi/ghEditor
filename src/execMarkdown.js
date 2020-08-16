@@ -1,7 +1,9 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable import/no-dynamic-require */
 import showdown from 'showdown';
 import hljs from 'highlight.js/lib/core';
 import sanitizeHtml from 'sanitize-html';
+import * as firebase from 'firebase';
 import { emojis } from './emojis';
 import getCaretCoordinates from './caretPos';
 import 'highlight.js/styles/github.css';
@@ -11,7 +13,9 @@ import {
   setAttributeToEmojiSelected,
   expandHeight,
   extendDefaults,
+  setStorageInterval,
 } from './utils';
+
 
 const Exec = (editorId, prop) => {
   const converter = new showdown.Converter();
@@ -29,10 +33,16 @@ const Exec = (editorId, prop) => {
     endSelection,
     startEmo = 0,
     scrollT = 0,
+    insertImage = 0,
     xx,
     yy;
 
-  const highlightCode = (lang, code) => {
+  const textarea = document.getElementById(`snip-write-${editorId}`);
+
+  const firebaseConfig = extendDefaults(prop).uploadImageConfig;
+  firebase.initializeApp(firebaseConfig);
+
+  const syncHighlightCode = (lang, code) => {
     const lang1 = lang === 'html' ? 'xml' : lang;
     try {
       // eslint-disable-next-line global-require
@@ -82,10 +92,6 @@ const Exec = (editorId, prop) => {
   };
 
   const replaceSnippet = (text) => {
-    text = text.replace(/(<code class=")([a-z]+)(\s+[^>]*>)([\S\s]*?)(<\/code>)/g, (_, p1, p2, p3, p4, p5) => p1 + p2 + p3 + highlightCode(p2, p4) + p5);
-
-    text = text.replace(/(<pre><code>)([\S\s]*?)(<\/code><\/pre>([\n\s]+))(<p>{: .language-)([a-z]+)(}<\/p>)([\n]*)/g, (_, p1, p2, p3, p4, p5, p6) => p1 + highlightCode(p6, p2) + p3);
-
     text = text.replace(/((<br \/>\n)*)({::\s+comment})([\s\S]*?)({:\/comment})((<br \/>\n)*)/g, ' ');
 
     text = text.replace(/(<p>)(.*)(<br \/>\n)({:\s+)(.+?)(}=?)(<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7) => p1.replace(p1, `<p ${coupleClass(p5, '')}>`) + p2 + p7);
@@ -96,9 +102,21 @@ const Exec = (editorId, prop) => {
 
     text = text.replace(/(<li|h1|h2|h3|h4|h5|h6|img|p)([^>]*)(>.*?)({:\s+)(.+?)(})(.*?)(<\/(li|h1|h2|h3|h4|h5|h6|img|p)>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p5, p2)} ${p3}${p7}${p8}`);
 
-    text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
-      .replace(/'/g, '&#039;');
+    return text;
+  };
 
+  const highlightCode = (text) => {
+    if (extendDefaults(prop).highlightCode) {
+      text = text.replace(/(<code class=")([a-z]+)(\s+[^>]*>)([\S\s]*?)(<\/code>)/g, (_, p1, p2, p3, p4, p5) => p1 + p2 + p3 + syncHighlightCode(p2, p4) + p5);
+
+      text = text.replace(/(<pre><code>)([\S\s]*?)(<\/code><\/pre>([\n\s]+))(<p>{: .language-)([a-z]+)(}<\/p>)([\n]*)/g, (_, p1, p2, p3, p4, p5, p6) => p1 + syncHighlightCode(p6, p2) + p3);
+    }
+    return text;
+  };
+
+  const insertQuote = (text) => {
+    text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'");
     return text;
   };
 
@@ -137,31 +155,48 @@ const Exec = (editorId, prop) => {
   };
 
   const getMarkdown = () => {
-    const text = document.getElementById(`snip-write-${editorId}`).value;
+    const text = textarea.value;
     const attr = ['class', 'id', 'href', 'align', 'alt', 'target', 'src'];
-    const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'span', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'img', 'detail', 'figure'];
+    const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'span', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'img', 'details', 'summary', 'figure'];
     const sanitizedText = sanitizeHtml(text, {
       allowedAttributes: {
         '*': getAllAllowedAttributes(attr),
       },
       allowedTags: getAllAllowedTags(tags),
     });
-    const text1 = replaceSnippet(sanitizedText);
-    const text2 = converter.makeHtml(text1);
 
-    return text2;
+    let text1 = insertQuote(sanitizedText);
+    text1 = converter.makeHtml(text1);
+    text1 = replaceSnippet(text1);
+    text1 = highlightCode(text1);
+
+    return text1;
   };
 
   const updatePreviewInputOnClick = () => {
-    const previewButton = document.getElementById(`snip-preview-tab-${editorId}`);
-    previewButton.addEventListener('click', () => {
-      const text = getMarkdown();
-      document.getElementById(`snip-preview-${editorId}`).innerHTML = text;
+    const previewButtons = [`#snip-preview-tab-${editorId}`, `.snip-preview-button-${editorId}`];
+    previewButtons.forEach(button => {
+      document.querySelector(button).addEventListener('click', () => {
+        const text = getMarkdown();
+        document.getElementById(`snip-preview-${editorId}`).innerHTML = text;
+      });
     });
   };
 
+  const autoUpdatePreviewInput = (textarea) => {
+    const textAreaHeight = textarea.style.height;
+    if (extendDefaults(prop).togglePreview) {
+      const text = getMarkdown();
+      const previewArea = document.getElementById(`snip-preview-${editorId}`);
+      previewArea.innerHTML = text;
+      previewArea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
+      ToggleTab.displayWordCount(editorId);
+    }
+  };
+
   const insertWriteInput = (matchEmoji) => {
-    document.getElementById(`snip-write-${editorId}`).value = matchEmoji;
+    textarea.value = matchEmoji;
+    autoUpdatePreviewInput(textarea);
   };
 
   const insertEmoji = (repl, textVal) => {
@@ -173,7 +208,6 @@ const Exec = (editorId, prop) => {
   };
 
   const insertEmojiOnClick = () => {
-    const textarea = document.getElementById(`snip-write-${editorId}`);
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains(`display-emoji-${editorId}`)) {
         const { id } = e.target;
@@ -192,7 +226,6 @@ const Exec = (editorId, prop) => {
   };
 
   const insertEmojiOnEmojiAreaClick = () => {
-    const textarea = document.getElementById(`snip-write-${editorId}`);
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains(`emoji-area-button-${editorId}`)) {
         const { id } = e.target;
@@ -224,7 +257,7 @@ const Exec = (editorId, prop) => {
 
   const utilValues = () => {
     let emojiVal;
-    const textVal = document.getElementById(`snip-write-${editorId}`).value;
+    const textVal = textarea.value;
     const diff = endSelection - startEmo;
     if (diff >= 0 && diff <= 40) {
       emojiVal = textVal.slice(startEmo - 1, endSelection);
@@ -237,9 +270,23 @@ const Exec = (editorId, prop) => {
     return [match, emoji];
   };
 
+  const indentTab = (event, textarea) => {
+    if (extendDefaults(prop).indentWithTab) {
+      if (event.keyCode === 9) {
+        const v = textarea.value;
+        const s = textarea.selectionStart;
+        const e = textarea.selectionEnd;
+        textarea.value = `${v.substring(0, s)}\t${v.substring(e)}`;
+        textarea.selectionStart = s + '\t'.length;
+        textarea.selectionEnd = s + '\t'.length;
+        event.preventDefault();
+      }
+    }
+  };
+
   const insertEmojiOnEnterKey = () => {
-    const textarea = document.getElementById(`snip-write-${editorId}`);
     textarea.addEventListener('keydown', (e) => {
+      indentTab(e, textarea);
       const [match, emoji] = utilValues();
       if (match) {
         emoji.then(data => {
@@ -256,10 +303,19 @@ const Exec = (editorId, prop) => {
 
             e.preventDefault();
           }
+        }).catch(() => {
+          // console.log(err);
         });
 
         if (e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
+        }
+      }
+
+      if (extendDefaults(prop).togglePreviewShortcut) {
+        if (e.ctrlKey && e.shiftKey) {
+          const previewBut = document.querySelector(`.snip-preview-button-${editorId}`);
+          previewBut.click();
         }
       }
     });
@@ -267,7 +323,6 @@ const Exec = (editorId, prop) => {
 
   const dropDownEmoji = (e) => {
     const filterEmojiArea = document.querySelector(`.filter-emoji-area-${editorId}`);
-    const textarea = document.getElementById(`snip-write-${editorId}`);
     const [match, emoji] = utilValues();
     if (match) {
       emoji.then(data => {
@@ -294,12 +349,12 @@ const Exec = (editorId, prop) => {
     }
   };
 
-  const placeAreasByCoord = (area, textarea, leftCoord = 0) => {
+  const placeAreasByCoord = (area, textarea, leftCoord = 0, isEmojiArea = true) => {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const coordinates = getCaretCoordinates(textarea, start, end, editorId);
     xx = coordinates.top - scrollT;
-    yy = coordinates.left;
+    yy = isEmojiArea ? coordinates.highlightLeft : coordinates.left;
     startEmo = endSelection;
     const inputArea = document.querySelector(area);
 
@@ -308,7 +363,6 @@ const Exec = (editorId, prop) => {
   };
 
   const insertEmojijiOnKeyEvent = () => {
-    const textarea = document.getElementById(`snip-write-${editorId}`);
     textarea.addEventListener('keyup', (e) => {
       dropDownEmoji(e);
       let currentEmojiContent;
@@ -356,22 +410,24 @@ const Exec = (editorId, prop) => {
 
     const selection2 = textarea.value.slice(start - range[0], end + range[1]);
     if (selected.match(snipReg)) {
-      selected = selected.replace(snipReg, (_, p1, p2) => ((id === `link-${editorId}`) ? (p1.replace(/\[/, '') + p2.replace(p2, ' ')) : p2));
+      selected = selected.replace(snipReg, (_, p1, p2) => ((id === `link-${editorId}` || id === `image-${editorId}`) ? p1.replace(/\[/, '') + p2.replace(p2, ' ') : p2));
     } else if (selection2.match(snipReg)) {
       start = textarea.selectionStart - range[0];
       end = textarea.selectionEnd + range[1];
-    } else if ([`bold-${editorId}`, `italic-${editorId}`, `code-${editorId}`].includes(id)) {
+    } else if ([`bold-${editorId}`, `italic-${editorId}`, `code-${editorId}`, `fold-${editorId}`].includes(id)) {
       selected = `${snipSym}${selected.trim()}${snipSym} `;
     } else if (id === `code-square-${editorId}`) {
       selected = `${snipSym}\n${selected.trim()}\n${snipSym} `;
     } else if (id === `link-${editorId}`) {
       selected = `[${selected.trim()}](url) `;
+    } else if (id === `image-${editorId}`) {
+      selected = '![image-alt-text](http://) ';
     } else {
       selected = `${snipSym}${selected}`;
     }
-
     textarea.focus();
-    textarea.setRangeText(selected, start, end, selectMode);
+    textarea.setRangeText(selected.trim(), start, end, selectMode);
+    autoUpdatePreviewInput(textarea);
   };
 
   const execCommandOnButtons = (textarea, buttonElement) => {
@@ -383,24 +439,33 @@ const Exec = (editorId, prop) => {
         idSplit.pop();
         id = idSplit.join('-');
       }
+
+      function blockStyle(style) {
+        const str = extendDefaults(prop).blockStyles[style];
+        const str2 = str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = new RegExp(`(${str2})([\\S\\s]*?)(${str2})`, 'g');
+        return [str, regex];
+      }
+
       button.addEventListener('click', (e) => {
         let snipReg;
         let snipSym;
+        let synCon = '';
         let range;
         switch (id) {
           case `heading-${editorId}`:
-            snipReg = new RegExp(/(###\s+)([\S\s]*?)/, 'g');
+            snipReg = new RegExp(/(###)([\S\s]*?)/, 'g');
             snipSym = '### ';
             range = [4, 0];
             break;
           case `bold-${editorId}`:
-            snipReg = new RegExp(/(\*\*)([\S\s]*?)(\*\*)/, 'g');
-            snipSym = '**';
+            snipReg = blockStyle('bold')[1];
+            snipSym = blockStyle('bold')[0];
             range = [2, 2];
             break;
           case `italic-${editorId}`:
-            snipReg = new RegExp(/(_)([\S\s]*?)(_)/, 'g');
-            snipSym = '_';
+            snipReg = blockStyle('italic')[1];
+            snipSym = blockStyle('italic')[0];
             range = [1, 1];
             break;
           case `mention-${editorId}`:
@@ -413,6 +478,27 @@ const Exec = (editorId, prop) => {
             snipSym = '> ';
             range = [2, 0];
             break;
+          case `server-${editorId}`:
+            snipReg = null;
+            synCon = '';
+            synCon += '\n| Default-aligned | Left-aligned | Center-aligned  | Right-aligned  |';
+            synCon += '\n|-----------------|:-------------|:---------------:|---------------:|';
+            synCon += '\n| First-row cell-1 | cell-2  | cell-3      | cell-4    |';
+            synCon += '\n| Second-row cell-1 | cell-2  | cell-3      | cell-4    |';
+            synCon += '\n| Third-row cell-1 | cell-2  | cell-3      | cell-4    |\n';
+            snipSym = synCon;
+            range = [0, 0];
+            break;
+          case `fold-${editorId}`:
+            snipReg = new RegExp(/(~~)([\S\s]*?)(~~)/, 'g');
+            snipSym = '~~';
+            range = [2, 2];
+            break;
+          case `kebab-horizontal-${editorId}`:
+            snipReg = null;
+            snipSym = '---';
+            range = [4, 0];
+            break;
           case `code-${editorId}`:
             snipReg = new RegExp(/(`)([\S\s]*?)(`)/, 'g');
             snipSym = '`';
@@ -424,8 +510,8 @@ const Exec = (editorId, prop) => {
             range = [2, 0];
             break;
           case `code-square-${editorId}`:
-            snipReg = new RegExp(/(```)([\S\s]*?)(```)/, 'g');
-            snipSym = '```';
+            snipReg = blockStyle('code-block')[1];
+            snipSym = blockStyle('code-block')[0];
             range = [3, 3];
             break;
           case `list-ordered-${editorId}`:
@@ -440,6 +526,11 @@ const Exec = (editorId, prop) => {
             break;
           case `link-${editorId}`:
             snipReg = new RegExp(/\[(.*?)\]\((.*?)\)(.*)/, 'g');
+            snipSym = '';
+            range = [1, 4];
+            break;
+          case `image-${editorId}`:
+            snipReg = new RegExp(/!\[(.*?)\]\((.*?)\)(.*)/, 'g');
             snipSym = '';
             range = [1, 4];
             break;
@@ -461,31 +552,32 @@ const Exec = (editorId, prop) => {
       const end = textarea.selectionEnd;
       const selected = textarea.value.slice(start, end).length;
       if (selected > 0) {
-        placeAreasByCoord(`.toolbar-button-area-${editorId}`, textarea, 40);
+        placeAreasByCoord(`.toolbar-button-area-${editorId}`, textarea, 40, false);
         toolbarButtonArea.classList.add('dropdown');
-        const suggestorButtons = 'heading|bold|italic|code|link|list-unordered';
-        toolbarButtonArea.innerHTML = displayCommandButtons(editorId, suggestorButtons, 20, true);
+        const suggestorButtons = extendDefaults(prop).inlineToolbar;
+        toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, true);
         execCommandOnButtons(textarea, `.buttons.markdown-button-${editorId}-suggester`);
 
         const boundArea = toolbarButtonArea.getBoundingClientRect();
         const boundArea1 = textarea.getBoundingClientRect();
-        if (boundArea.right > boundArea1.right) {
-          toolbarButtonArea.style.left = `${yy - 200}px`;
+        if ((boundArea.right > boundArea1.right) || (yy > 140)) {
+          toolbarButtonArea.style.left = `${yy - 140}px`;
           toolbarButtonArea.classList.add('adjust-tip');
         } else {
+          toolbarButtonArea.style.left = '0';
           toolbarButtonArea.classList.remove('adjust-tip');
         }
 
-        if (boundArea.bottom > boundArea1.bottom) {
-          toolbarButtonArea.style.top = `${boundArea1.height - 30}px`;
-        }
+        // if (boundArea.bottom > boundArea1.bottom) {
+        //   toolbarButtonArea.style.top = `${boundArea1.height - 30}px`;
+        // }
       }
       document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('dropdown');
     });
   };
 
   const insertAllTextOnInput = () => {
-    const textarea = document.getElementById(`snip-write-${editorId}`);
+    let savedInterval = null;
     const textAreaHeight = textarea.style.height;
     textarea.addEventListener('input', (e) => {
       startSelection = textarea.selectionStart;
@@ -494,10 +586,19 @@ const Exec = (editorId, prop) => {
         placeAreasByCoord(`.filter-emoji-area-${editorId}`, textarea);
       }
 
-      textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
+      autoUpdatePreviewInput(textarea);
 
+      textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
       const toolbarButtonArea = document.querySelector(`.toolbar-button-area-${editorId}`);
       toolbarButtonArea.classList.remove('dropdown');
+    });
+
+    textarea.addEventListener('focus', () => {
+      savedInterval = setStorageInterval(editorId, prop);
+    });
+
+    textarea.addEventListener('blur', () => {
+      clearInterval(savedInterval);
     });
 
     textarea.addEventListener('click', () => {
@@ -507,6 +608,8 @@ const Exec = (editorId, prop) => {
         const a = document.querySelector(area);
         a.classList.remove('dropdown');
       });
+
+      insertImage = textarea.selectionEnd;
     });
 
     textarea.addEventListener('scroll', () => {
@@ -516,14 +619,13 @@ const Exec = (editorId, prop) => {
   };
 
   const execAllCommands = () => {
-    const textarea = document.getElementById(`snip-write-${editorId}`);
     execCommandOnButtons(textarea, `.buttons.markdown-button-${editorId}`);
 
     buttonTooltip();
   };
 
   const outputMarkDown = () => {
-    if (extendDefaults(prop).inTextEmoji) {
+    if (extendDefaults(prop).inlineEmoji) {
       insertEmojijiOnKeyEvent();
     }
 
@@ -539,7 +641,74 @@ const Exec = (editorId, prop) => {
     updatePreviewInputOnClick();
   };
 
-  return { outputMarkDown, getMarkdown };
+  const uploadImage = () => {
+    function callUploaded(fileUpload) {
+      const storageRef = firebase.storage().ref().child(fileUpload.name);
+      const uploadImage = storageRef.put(fileUpload);
+      const progressStatus = document.getElementById(`upload-image-progress-${editorId}`);
+      let repl;
+      let insertImageSelected = insertImage;
+      let lineBreak = '\n';
+      uploadImage.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        if (progress === 0) {
+          let textVal = textarea.value;
+          if (insertImage - 1 < 0) { insertImageSelected = 0; lineBreak = ''; }
+          repl = `${lineBreak}![uploading ${fileUpload.name} ... ]()\n`;
+          textVal = `${textVal.slice(0, insertImageSelected)}${repl}${textVal.slice(insertImage)}`;
+          insertWriteInput(textVal);
+          progressStatus.innerHTML = '<span><img src="../../dist/images/loader.gif" alt="loader" width="20"/> Uploading your files ...</span>';
+        }
+      }, (error) => {
+      // eslint-disable-next-line no-console
+        console.log(error.message);
+        progressStatus.innerHTML = 'Error uploading file!';
+      }, () => {
+        uploadImage.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          let textVal = textarea.value;
+          const str = repl.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+          const regex = RegExp(str);
+          const uploadedImage = `${lineBreak}![${fileUpload.name}](${downloadURL})\n`;
+          if (regex.test(textVal)) {
+            textVal = textVal.replace(repl, uploadedImage);
+            insertWriteInput(textVal);
+            progressStatus.innerHTML = 'Attach files by draggng and dropping or selecting them';
+          }
+        });
+      });
+    }
+
+    if (extendDefaults(prop).uploadImage) {
+      const fileInput = document.getElementById(`snip-uploadimage-${editorId}`);
+      const fileInputContainer = document.querySelector(`.snip-footer-${editorId}`);
+
+      fileInput.addEventListener('change', (e) => {
+        const fileUpload = e.target.files[0];
+        callUploaded(fileUpload);
+      });
+
+      fileInput.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const { files } = dt;
+        const fileUpload = files[0];
+        callUploaded(fileUpload);
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileInput.addEventListener(eventName, () => {
+          if (['dragenter', 'dragover'].includes(eventName)) {
+            fileInputContainer.classList.add('highlight');
+          } else {
+            fileInputContainer.classList.remove('highlight');
+          }
+        });
+      });
+    }
+  };
+
+  return { outputMarkDown, getMarkdown, uploadImage };
 };
 
 export default Exec;

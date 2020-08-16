@@ -3,15 +3,8 @@ const properties = [
   'overflowX',
   'overflowY',
 
-  'borderTopWidth',
-  'borderRightWidth',
-  'borderBottomWidth',
-  'borderLeftWidth',
-
-  'paddingTop',
-  'paddingRight',
-  'paddingBottom',
-  'paddingLeft',
+  'border',
+  'padding',
 
   'fontStyle',
   'fontVariant',
@@ -32,16 +25,10 @@ const properties = [
 
 const isFirefox = !(window.mozInnerScreenX == null);
 
-let mirrorDiv; let computed; let
-  style;
+let mirrorDiv; let computed; let style;
 
 export default function getCaretCoordinates(element, position1, position2, editorId) {
-  mirrorDiv = document.getElementById(`${element.id}--mirror-div`);
-  if (!mirrorDiv) {
-    mirrorDiv = document.createElement('div');
-    mirrorDiv.id = `${element.id}--mirror-div`;
-    document.querySelector(`.snip-text-body-${editorId}`).append(mirrorDiv);
-  }
+  mirrorDiv = document.getElementById(`${editorId}--mirror-div`);
 
   style = mirrorDiv.style;
   computed = getComputedStyle(element);
@@ -51,18 +38,8 @@ export default function getCaretCoordinates(element, position1, position2, edito
   if (element.nodeName !== 'INPUT') style.wordWrap = 'break-word'; // only for textarea-s
 
   // position off-screen
-  style.position = 'absolute';
-  style.top = '0';
-  style.left = '0';
-  style.height = '100%';
-  style.width = '100%';
-  style.zIndex = '-9999';
-  style.visibility = 'hidden';
-
   properties.forEach((prop) => {
-    if (prop === 'paddingTop' || prop === 'paddingBottom') {
-      style[prop] = `calc(${computed[prop]} + 6px)`;
-    } else if (prop === 'paddingLeft' || prop === 'paddingRight') {
+    if (prop === 'padding') {
       style[prop] = `calc(${computed[prop]} + 6px)`;
     } else {
       style[prop] = computed[prop];
@@ -92,6 +69,7 @@ export default function getCaretCoordinates(element, position1, position2, edito
   const coordinates = {
     top: span1.offsetTop + parseInt(computed.borderTopWidth, 10),
     left: span1.offsetLeft + parseInt(computed.borderLeftWidth, 10),
+    highlightLeft: span2.offsetLeft + parseInt(computed.borderLeftWidth, 10),
   };
 
   return coordinates;
