@@ -8,52 +8,91 @@ const setIntervalTimers = [];
 
 const extendDefaults = (properties) => {
   const defaults = {
-    inlineEmoji: true,
-    buttonEmoji: true,
-    width: '100%',
-    minHeight: '100%',
-    maxHeight: '100%',
-    placeholder: 'Leave your comment',
-    inlineToolbar: 'heading|bold|italic|code|link|list-unordered',
-    headerColor: '#586069',
-    headerToolbar: {
-      icons: 'heading|bold|italic|fold|kebab-horizontal|quote|code|link|code-square|list-unordered|list-ordered|tasklist|mention|image|server|',
-      iconSize: '16',
-    },
-    frameStyles: {
-      // fontSize: '30px',
-      // color: 'red',
-      // padding: '0.375rem 0.75rem',
-      // background: 'red',
-    },
-    uploadImage: true,
+    container: 'sniptext',
     autoSave: {
-      enable: true,
+      enabled: false,
       delay: 10000,
     },
+    autoUseFontAwesome: true,
     blockStyles: {
       bold: '**',
       italic: '_',
       'code-block': '```',
     },
-    autoUseFontAwesome: true,
-    indentWithTab: false,
-    highlightCode: true,
-    toolTip: true,
-    togglePreview: true,
-    togglePreviewShortcut: true,
+    frameStyles: {
+      fontSize: '1rem',
+      // color: 'red',
+      // padding: '0.375rem 0.75rem',
+      // background: 'red',
+    },
+    headerColor: '#586069',
+    headerToolbar: {
+      icons: 'heading|bold|italic|fold|kebab-horizontal|quote|code|link|code-square|list-unordered|list-ordered|tasklist|mention|image|server|',
+      iconSize: '16',
+    },
     hideToolBar: false,
+    highlightCode: true,
+    indentWithTab: false,
+    inlineEmoji: {
+      enabled: true,
+      emojiPrefix: ':',
+    },
+    inlineToolbar: 'heading|bold|italic|code|link|list-unordered',
+    maxHeight: 'auto',
+    minHeight: '100px',
+    placeholder: 'Leave your comment',
+    splitScreen: {
+      enabled: true,
+      shortcut: true,
+    },
+    toolbarEmoji: true,
+    toolTip: {
+      enabled: true,
+      toolTipText: {
+        smiley: 'Insert an emoji',
+        mirror: 'Toggle Preview',
+        heading: 'Add header text',
+        bold: 'Add bold text',
+        italic: 'Add italic text',
+        quote: 'Insert a quote',
+        fold: 'Add a strikethrough text',
+        'kebab-horizontal': 'Add an horizontal rule',
+        code: 'Insert code',
+        link: 'Add a link',
+        'code-square': 'Insert code block',
+        'list-unordered': 'Add a bulleted list',
+        'list-ordered': 'Add a numbered list',
+        tasklist: 'Add a tasklist',
+        mention: 'Directly mention a Github user',
+        server: 'Insert a table',
+        image: 'Add an image',
+        question: 'Help?',
+      },
+    },
+    uploadImage: true,
+    uploadImageConfig: {},
+    width: '100%',
   };
 
-  const concatframeStyle = (propKey) => ({ ...defaults[propKey], ...properties[propKey] });
+  const concatframeStyle = (propKey, childObj) => {
+    if (childObj !== undefined) {
+      return { ...defaults[propKey][childObj], ...properties[propKey][childObj] };
+    }
+    return { ...defaults[propKey], ...properties[propKey] };
+  };
 
   Object.keys(properties).forEach((property) => {
-    const parentProps = ['frameStyles', 'autoSave', 'headerToolbar', 'blockStyles'];
+    const parentProps = ['frameStyles', 'autoSave', 'headerToolbar', 'blockStyles', 'inlineEmoji', 'toolTip'];
 
     // eslint-disable-next-line no-prototype-builtins
-    if (properties.hasOwnProperty(property)) {
+    if (defaults.hasOwnProperty(property)) {
       if (parentProps.includes(property)) {
-        defaults[property] = concatframeStyle(property);
+        if (property === 'toolTip') {
+          defaults[property].toolTipText = concatframeStyle(property, 'toolTipText');
+          defaults[property].enabled = properties[property].enabled;
+        } else {
+          defaults[property] = concatframeStyle(property);
+        }
       } else {
         defaults[property] = properties[property];
       }
@@ -62,8 +101,9 @@ const extendDefaults = (properties) => {
   return defaults;
 };
 
-const containerStyles = (properties, editorId) => {
-  const textArea = document.querySelector(`textarea#${editorId}`);
+const containerStyles = (properties) => {
+  const editorId = extendDefaults(properties).container;
+  const textArea = document.querySelector(`textarea.${editorId}`);
   const options = extendDefaults(properties);
   const computedStyles = getComputedStyle(textArea);
 
@@ -91,6 +131,7 @@ const containerStyles = (properties, editorId) => {
     [`snip-writearea-tab-${editorId}`, `snip-preview-tab-${editorId}`].forEach(tab => {
       document.getElementById(tab).style.color = options.headerColor;
       document.getElementById(tab).style.fontFamily = defaultFrameStyles.fontFamily;
+      document.querySelector(`.filter-emoji-area-${editorId}`).style.fontFamily = defaultFrameStyles.fontFamily;
     });
   }
 };
@@ -135,7 +176,7 @@ const setAttributeToEmojiSelected = (ele, arrayList) => {
 const setEditorTextToStore = (editorId, props, value) => {
   let allText;
   const textarea = document.getElementById(`snip-write-${editorId}`);
-  if (extendDefaults(props).autoSave.enable) {
+  if (extendDefaults(props).autoSave.enabled) {
     if (localStorage.getItem('snipText') === null) {
       allText = {};
       allText[editorId] = textarea.value;
@@ -173,7 +214,7 @@ const autoSave = (editorId) => {
 };
 
 const autoSaveOnClicked = (editorId, props) => {
-  if (extendDefaults(props).autoSave.enable) {
+  if (extendDefaults(props).autoSave.enabled) {
     const timer2 = document.getElementById(`auto-saved-${editorId}`);
     const autoSavedButton = document.getElementById(`auto-save-icon-${editorId}`);
     autoSavedButton.addEventListener('click', () => {
@@ -190,7 +231,7 @@ const autoSaveOnClicked = (editorId, props) => {
 
 const setStorageInterval = (editorId, props) => {
   let timer = null;
-  if (extendDefaults(props).autoSave.enable) {
+  if (extendDefaults(props).autoSave.enabled) {
     timer = setInterval(() => {
       autoSave(editorId);
     }, extendDefaults(props).autoSave.delay);
@@ -235,14 +276,14 @@ const defaultOptionSnippet = (props, editorId, snipUploadImage) => {
     snipUploadImage.append(uploadProgress);
   }
 
-  if (extendDefaults(props).autoSave.enable) {
+  if (extendDefaults(props).autoSave.enabled) {
     const autoSaveArea = document.createElement('div');
     autoSaveArea.id = `snip-autosave-${editorId}`;
     autoSaveArea.className = 'snip-autosave';
     snipUploadImage.append(autoSaveArea);
   }
 
-  if (extendDefaults(props).buttonEmoji) {
+  if (extendDefaults(props).toolbarEmoji) {
     toggleEmojiArea(editorId);
   }
 
@@ -252,7 +293,7 @@ const defaultOptionSnippet = (props, editorId, snipUploadImage) => {
 const createDOMElement = (tag, className, ...args) => {
   const a = document.createElement(tag);
   a.className = className;
-  if (args) {
+  if (args.length > 0) {
     // eslint-disable-next-line prefer-destructuring
     a.id = args[0];
     // eslint-disable-next-line prefer-destructuring

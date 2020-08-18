@@ -14,7 +14,7 @@ import {
 import { displayButtons, toggleToolbar } from './toolbar';
 
 
-const snipText = () => {
+const snipDown = () => {
   let options = {};
   let editorId;
   let initialSetVal = '';
@@ -72,20 +72,21 @@ const snipText = () => {
   };
 
   const markDown = (...args) => {
+    let defaultTextarea;
     if (args[0] && typeof args[0] === 'object') {
       options = extendDefaults(args[0]);
+      defaultTextarea = document.querySelector(`textarea.snip-markdown#${options.container}`);
     } else {
-      // eslint-disable-next-line prefer-destructuring
-      const defaultContainer = document.querySelectorAll('textarea.snip-markdown')[0];
       options = extendDefaults({});
-      options.container = 'sniptext';
-      defaultContainer.id = 'sniptext';
-    }
 
-    const defaultTextarea = document.querySelector(`textarea.snip-markdown#${options.container}`);
+      // eslint-disable-next-line prefer-destructuring
+      defaultTextarea = document.querySelectorAll('textarea.snip-markdown')[0];
+    }
 
     if (defaultTextarea !== null) {
       editorId = options.container;
+      defaultTextarea.classList.add(editorId);
+
       const areaParentEle = defaultTextarea.parentElement;
       defaultTextarea.style.display = 'none';
 
@@ -158,37 +159,42 @@ const snipText = () => {
   };
 };
 
-export default snipText;
+export default snipDown;
 
 
 const opt = {
   container: 'snip-1',
   width: '30%',
-  minHeight: '100px',
-  placeholder: 'meme',
+  // minHeight: '100px',
+  placeholder: 'A message ...',
   // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
   // disallowedTags: ['p'],
   allowedAttributes: ['style'],
-  maxHeight: '300px',
+  // maxHeight: '300px',
   // buttonBgColor: '#eee'
   // frameStyles: { color: 'red', borderRadius: '10px' },
   autoSave: {
-    enable: true,
+    enabled: false,
     delay: 3000,
   },
   uploadImageConfig: {
     storageBucket: 'snip-editor.appspot.com',
   },
+  toolTip: {
+    enabled: true,
+  },
 };
 
-const sniptext = snipText();
-sniptext.markDown(opt);
-// sniptext.setValue('# This is me');
-// sniptext.getValue('snip1');
-// console.log(sniptext.getOptions());
-// console.log(sniptext.getDefaultOptions());
+// :(?=[a-zA-Z]+)
 
-// console.log(sniptext.getOption('minHeight'));
+const snipdown = snipDown();
+snipdown.markDown(opt);
+// snipdown.setValue('# This is me');
+// snipdown.getValue('snip1');
+// console.log(snipdown.getOptions());
+// console.log(snipdown.getDefaultOptions());
+
+// console.log(snipdown.getOption('minHeight'));
 
 
 // document.getElementById('button').addEventListener('click', (e) => {
@@ -197,7 +203,7 @@ sniptext.markDown(opt);
 // });
 
 
-// const sniptext2 = snipText();
+// const sniptext2 = snipDown();
 // sniptext2.markDown({container: 'snip2'});
 // document.getElementById('button').addEventListener('click', (e) => {
 //   console.log(sniptext2.syncValue());

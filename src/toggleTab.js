@@ -64,7 +64,7 @@ const ToggleTab = (() => {
   };
 
   const togglePreview = (editorId, args) => {
-    if (extendDefaults(args).togglePreview) {
+    if (extendDefaults(args).splitScreen.enabled) {
       const snipContainers2 = [
         `snip-write-${editorId}`,
         `snip-preview-${editorId}`,
@@ -84,7 +84,10 @@ const ToggleTab = (() => {
           `snip-autosave-${editorId}`,
         ];
         snipContainers.forEach(container => {
-          document.getElementById(container).classList.toggle('preview');
+          const containerDOM = document.getElementById(container);
+          if (containerDOM !== null) {
+            containerDOM.classList.toggle('preview');
+          }
         });
 
         document.getElementById(`snip-word-count-${editorId}`).classList.toggle('remove');

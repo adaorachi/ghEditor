@@ -15,6 +15,10 @@
   color: #343b42;
 }
 
+.snip-text-body a {
+  color: #0d0e0e;
+}
+
 .snip-text-body h1, .snip-text-body h2, .snip-text-body h3, .snip-text-body h4, .snip-text-body h5, .snip-text-body h6 {
   font-weight: bold;
 }

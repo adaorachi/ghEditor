@@ -29,27 +29,6 @@ const displayCommandButtons = (editorId, prop, mainButtons, toolSuggester = fals
     mainButtons2;
   const size = extendDefaults(prop).headerToolbar.iconSize;
 
-  const buttonTitleText = {
-    smiley: 'Insert an emoji',
-    heading: 'Add header text',
-    bold: 'Add bold text',
-    italic: 'Add italic text',
-    quote: 'Insert a quote',
-    fold: 'Add a strikethrough text',
-    'kebab-horizontal': 'Add an horizontal rule',
-    code: 'Insert code',
-    link: 'Add a link',
-    'code-square': 'Insert code block',
-    'list-unordered': 'Add a bulleted list',
-    'list-ordered': 'Add a numbered list',
-    tasklist: 'Add a tasklist',
-    mention: 'Directly mention a Github user',
-    server: 'Insert a table',
-    image: 'Add an image',
-    mirror: 'Toggle Preview',
-    question: 'Help?',
-  };
-
   if (toolSuggester) {
     addClass = '-suggester';
     limiter = '';
@@ -60,6 +39,8 @@ const displayCommandButtons = (editorId, prop, mainButtons, toolSuggester = fals
     mainButtons2 = `smiley|mirror|${mainButtons}|question`.split('|');
   }
 
+  const buttonIconNames = ['smiley', 'mirror', 'heading', 'bold', 'italic', 'quote', 'fold', 'kebab-horizontal', 'code', 'link', 'code-square', 'list-unordered', 'list-ordered', 'tasklist', 'mention', 'server', 'image', 'question'];
+
   mainButtons2.forEach((button, index) => {
     const iconName = button.trim();
     const octIcon = octicon[iconName];
@@ -67,7 +48,7 @@ const displayCommandButtons = (editorId, prop, mainButtons, toolSuggester = fals
     const buttonId = `${iconName}-${editorId}${addClass}`;
 
     // eslint-disable-next-line no-prototype-builtins
-    if (buttonTitleText.hasOwnProperty(button)) {
+    if (buttonIconNames.includes(button)) {
       const isIcon = octIcon.toSVG({ width: size, height: size });
       let className;
       let isIcon1 = isIcon;
@@ -88,12 +69,13 @@ const displayCommandButtons = (editorId, prop, mainButtons, toolSuggester = fals
         limit += limiter;
       }
 
-      let tooltip = '';
-      if (extendDefaults(prop).toolTip) {
-        tooltip = 'tooltip-button';
+      let tooltipClass = '';
+      if (extendDefaults(prop).toolTip.enabled) {
+        tooltipClass = 'tooltip-button';
       }
 
-      const button1 = `${limit}<button type="button" class="${tooltip} tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonTitleText[iconName]}">${isIcon1}</button>`;
+      const buttonToolTip = extendDefaults(prop).toolTip.toolTipText;
+      const button1 = `${limit}<button type="button" class="${tooltipClass} tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonToolTip[iconName]}">${isIcon1}</button>`;
       content += button1;
     }
   });

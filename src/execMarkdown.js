@@ -36,6 +36,7 @@ const Exec = (editorId, prop) => {
     insertImage = 0,
     xx,
     yy;
+  let isSelected = false;
 
   const textarea = document.getElementById(`snip-write-${editorId}`);
 
@@ -185,7 +186,7 @@ const Exec = (editorId, prop) => {
 
   const autoUpdatePreviewInput = (textarea) => {
     const textAreaHeight = textarea.style.height;
-    if (extendDefaults(prop).togglePreview) {
+    if (extendDefaults(prop).splitScreen.enabled) {
       const text = getMarkdown();
       const previewArea = document.getElementById(`snip-preview-${editorId}`);
       previewArea.innerHTML = text;
@@ -257,16 +258,26 @@ const Exec = (editorId, prop) => {
 
   const utilValues = () => {
     let emojiVal;
+    let emojiVal2;
     const textVal = textarea.value;
     const diff = endSelection - startEmo;
     if (diff >= 0 && diff <= 40) {
       emojiVal = textVal.slice(startEmo - 1, endSelection);
+      emojiVal2 = textVal.slice(startEmo, endSelection);
     } else {
-      emojiVal = textVal.slice(endSelection);
+      // eslint-disable-next-line no-multi-assign
+      emojiVal = emojiVal2 = textVal.slice(endSelection);
     }
-    const emoji = emojis(editorId, emojiVal);
-    const regex1 = /(:)([a-z0-9+-_]*)/g;
-    const match = regex1.test(emojiVal);
+    const emoji = emojis(editorId, emojiVal2);
+    const allowedEmojiPrefix = ['-', ':', '/', '!', '#', '$', '&', '*', '=', '+', '^'];
+    const { emojiPrefix } = extendDefaults(prop).inlineEmoji;
+    let match = false;
+    if (allowedEmojiPrefix.includes(emojiPrefix)) {
+      const emojiPreStripped = emojiPrefix.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex1 = new RegExp(`(${emojiPreStripped})([a-z0-9+-_]*)`, 'g');
+      match = regex1.test(`${emojiVal}`);
+      return [match, emoji];
+    }
     return [match, emoji];
   };
 
@@ -312,8 +323,8 @@ const Exec = (editorId, prop) => {
         }
       }
 
-      if (extendDefaults(prop).togglePreviewShortcut) {
-        if (e.ctrlKey && e.shiftKey) {
+      if (extendDefaults(prop).splitScreen.shortcut) {
+        if (e.ctrlKey && e.altKey && e.which === 80) {
           const previewBut = document.querySelector(`.snip-preview-button-${editorId}`);
           previewBut.click();
         }
@@ -327,6 +338,7 @@ const Exec = (editorId, prop) => {
     if (match) {
       emoji.then(data => {
         const filtered = data.filterEmojiIcon;
+        // console.log(match)
         if (filtered.content_length > 0 && e.keyCode !== 32) {
           filterEmojiArea.classList.add('dropdown');
 
@@ -402,32 +414,133 @@ const Exec = (editorId, prop) => {
     });
   };
 
-  const execCommand = (textarea, snipReg, snipSym, range, id) => {
+  const execCommand = (textarea, snipReg, snipSym, range, list, id) => {
     let start = textarea.selectionStart;
     let end = textarea.selectionEnd;
     const selectMode = (start === end) ? 'end' : 'preserve';
     let selected = textarea.value.slice(start, end);
 
     const selection2 = textarea.value.slice(start - range[0], end + range[1]);
+
     if (selected.match(snipReg)) {
-      selected = selected.replace(snipReg, (_, p1, p2) => ((id === `link-${editorId}` || id === `image-${editorId}`) ? p1.replace(/\[/, '') + p2.replace(p2, ' ') : p2));
+      selected = selected.replace(snipReg, (_, p1, p2) => ((id === list.link || id === list.image) ? p1.replace(/\[/, '') + p2.replace(p2, ' ') : p2));
     } else if (selection2.match(snipReg)) {
       start = textarea.selectionStart - range[0];
       end = textarea.selectionEnd + range[1];
-    } else if ([`bold-${editorId}`, `italic-${editorId}`, `code-${editorId}`, `fold-${editorId}`].includes(id)) {
+    } else if ([list.bold, list.italic, list.code, list.fold].includes(id)) {
       selected = `${snipSym}${selected.trim()}${snipSym} `;
-    } else if (id === `code-square-${editorId}`) {
+    } else if (id === list['code-square']) {
       selected = `${snipSym}\n${selected.trim()}\n${snipSym} `;
-    } else if (id === `link-${editorId}`) {
+    } else if (id === list.link) {
       selected = `[${selected.trim()}](url) `;
-    } else if (id === `image-${editorId}`) {
-      selected = '![image-alt-text](http://) ';
+    } else if (id === list.image) {
+      selected = `![${selected.trim()}](image_url) `;
     } else {
       selected = `${snipSym}${selected}`;
     }
     textarea.focus();
     textarea.setRangeText(selected.trim(), start, end, selectMode);
     autoUpdatePreviewInput(textarea);
+  };
+
+  const cmdBlock = (id, blockStyle, list, e) => {
+    let snipReg;
+    let snipSym;
+    let synCon = '';
+    let range;
+    switch (id) {
+      case list.heading:
+        snipReg = new RegExp(/(###)([\S\s]*?)/, 'g');
+        snipSym = '### ';
+        range = [4, 0];
+        break;
+      case list.bold:
+        snipReg = blockStyle('bold')[1];
+        snipSym = blockStyle('bold')[0];
+        range = [2, 2];
+        break;
+      case list.italic:
+        snipReg = blockStyle('italic')[1];
+        snipSym = blockStyle('italic')[0];
+        range = [1, 1];
+        break;
+      case list.mention:
+        snipReg = new RegExp(/(@)([\S\s]*?)/, 'g');
+        snipSym = '@';
+        range = [1, 0];
+        break;
+      case list.quote:
+        snipReg = new RegExp(/(>\s)([\S\s]*?)/, 'g');
+        snipSym = '> ';
+        range = [2, 0];
+        break;
+      case list.server:
+        snipReg = null;
+        synCon = '';
+        synCon += '\n| Default-aligned | Left-aligned | Center-aligned  | Right-aligned  |';
+        synCon += '\n|-----------------|:-------------|:---------------:|---------------:|';
+        synCon += '\n| First-row cell-1 | cell-2  | cell-3      | cell-4    |';
+        synCon += '\n| Second-row cell-1 | cell-2  | cell-3      | cell-4    |';
+        synCon += '\n| Third-row cell-1 | cell-2  | cell-3      | cell-4    |\n';
+        snipSym = synCon;
+        range = [0, 0];
+        break;
+      case list.fold:
+        snipReg = new RegExp(/(~~)([\S\s]*?)(~~)/, 'g');
+        snipSym = '~~';
+        range = [2, 2];
+        break;
+      case list['kebab-horizontal']:
+        snipReg = null;
+        snipSym = '---';
+        range = [4, 0];
+        break;
+      case list.code:
+        snipReg = new RegExp(/(`)([\S\s]*?)(`)/, 'g');
+        snipSym = '`';
+        range = [1, 1];
+        break;
+      case list['list-unordered']:
+        snipReg = new RegExp(/(-\s)([\S\s]*?)/, 'g');
+        snipSym = '- ';
+        range = [2, 0];
+        break;
+      case list['code-square']:
+        snipReg = blockStyle('code-block')[1];
+        snipSym = blockStyle('code-block')[0];
+        range = [3, 3];
+        break;
+      case list['list-ordered']:
+        snipReg = new RegExp(/(1.\s)([\S\s]*?)/, 'g');
+        snipSym = '1. ';
+        range = [3, 0];
+        break;
+      case list.tasklist:
+        snipReg = new RegExp(/(-\s\[\s\]\s)([\S\s]*?)/, 'g');
+        snipSym = '- [ ] ';
+        range = [6, 0];
+        break;
+      case list.link:
+        snipReg = new RegExp(/\[(.*?)\]\((.*?)\)(.*)/, 'g');
+        snipSym = '';
+        range = [1, 4];
+        break;
+      case list.image:
+        snipReg = new RegExp(/!\[(.*?)\]\((.*?)\)(.*)/, 'g');
+        snipSym = '';
+        range = [1, 4];
+        break;
+      default:
+        break;
+    }
+
+    if (range === undefined) {
+      return;
+    }
+
+    execCommand(textarea, snipReg, snipSym, range, list, id);
+
+    e.preventDefault();
   };
 
   const execCommandOnButtons = (textarea, buttonElement) => {
@@ -447,101 +560,73 @@ const Exec = (editorId, prop) => {
         return [str, regex];
       }
 
+      const idList = {
+        heading: `heading-${editorId}`,
+        bold: `bold-${editorId}`,
+        italic: `italic-${editorId}`,
+        mention: `mention-${editorId}`,
+        quote: `quote-${editorId}`,
+        server: `server-${editorId}`,
+        fold: `fold-${editorId}`,
+        'kebab-horizontal': `kebab-horizontal-${editorId}`,
+        code: `code-${editorId}`,
+        'list-unordered': `list-unordered-${editorId}`,
+        'code-square': `code-square-${editorId}`,
+        'list-ordered': `list-ordered-${editorId}`,
+        tasklist: `tasklist-${editorId}`,
+        link: `link-${editorId}`,
+        image: `image-${editorId}`,
+      };
+
       button.addEventListener('click', (e) => {
-        let snipReg;
-        let snipSym;
-        let synCon = '';
-        let range;
-        switch (id) {
-          case `heading-${editorId}`:
-            snipReg = new RegExp(/(###)([\S\s]*?)/, 'g');
-            snipSym = '### ';
-            range = [4, 0];
-            break;
-          case `bold-${editorId}`:
-            snipReg = blockStyle('bold')[1];
-            snipSym = blockStyle('bold')[0];
-            range = [2, 2];
-            break;
-          case `italic-${editorId}`:
-            snipReg = blockStyle('italic')[1];
-            snipSym = blockStyle('italic')[0];
-            range = [1, 1];
-            break;
-          case `mention-${editorId}`:
-            snipReg = new RegExp(/(@)([\S\s]*?)/, 'g');
-            snipSym = '@';
-            range = [1, 0];
-            break;
-          case `quote-${editorId}`:
-            snipReg = new RegExp(/(>\s)([\S\s]*?)/, 'g');
-            snipSym = '> ';
-            range = [2, 0];
-            break;
-          case `server-${editorId}`:
-            snipReg = null;
-            synCon = '';
-            synCon += '\n| Default-aligned | Left-aligned | Center-aligned  | Right-aligned  |';
-            synCon += '\n|-----------------|:-------------|:---------------:|---------------:|';
-            synCon += '\n| First-row cell-1 | cell-2  | cell-3      | cell-4    |';
-            synCon += '\n| Second-row cell-1 | cell-2  | cell-3      | cell-4    |';
-            synCon += '\n| Third-row cell-1 | cell-2  | cell-3      | cell-4    |\n';
-            snipSym = synCon;
-            range = [0, 0];
-            break;
-          case `fold-${editorId}`:
-            snipReg = new RegExp(/(~~)([\S\s]*?)(~~)/, 'g');
-            snipSym = '~~';
-            range = [2, 2];
-            break;
-          case `kebab-horizontal-${editorId}`:
-            snipReg = null;
-            snipSym = '---';
-            range = [4, 0];
-            break;
-          case `code-${editorId}`:
-            snipReg = new RegExp(/(`)([\S\s]*?)(`)/, 'g');
-            snipSym = '`';
-            range = [1, 1];
-            break;
-          case `list-unordered-${editorId}`:
-            snipReg = new RegExp(/(-\s)([\S\s]*?)/, 'g');
-            snipSym = '- ';
-            range = [2, 0];
-            break;
-          case `code-square-${editorId}`:
-            snipReg = blockStyle('code-block')[1];
-            snipSym = blockStyle('code-block')[0];
-            range = [3, 3];
-            break;
-          case `list-ordered-${editorId}`:
-            snipReg = new RegExp(/(1.\s)([\S\s]*?)/, 'g');
-            snipSym = '1. ';
-            range = [3, 0];
-            break;
-          case `tasklist-${editorId}`:
-            snipReg = new RegExp(/(-\s\[\s\]\s)([\S\s]*?)/, 'g');
-            snipSym = '- [ ] ';
-            range = [6, 0];
-            break;
-          case `link-${editorId}`:
-            snipReg = new RegExp(/\[(.*?)\]\((.*?)\)(.*)/, 'g');
-            snipSym = '';
-            range = [1, 4];
-            break;
-          case `image-${editorId}`:
-            snipReg = new RegExp(/!\[(.*?)\]\((.*?)\)(.*)/, 'g');
-            snipSym = '';
-            range = [1, 4];
-            break;
-          default:
-            break;
-        }
-
-        execCommand(textarea, snipReg, snipSym, range, id);
-
-        e.preventDefault();
+        cmdBlock(id, blockStyle, idList, e);
       });
+    });
+  };
+
+
+  const execCommandOnShortcut = (e) => {
+    function blockStyle(style) {
+      const str = extendDefaults(prop).blockStyles[style];
+      const str2 = str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex = new RegExp(`(${str2})([\\S\\s]*?)(${str2})`, 'g');
+      return [str, regex];
+    }
+
+    const listShortCuts = {
+      heading: 72,
+      bold: 66,
+      italic: 73,
+      mention: 50,
+      quote: 190,
+      server: 51,
+      fold: 52,
+      // 'kebab-horizontal': 73,
+      code: 192,
+      'list-unordered': 85,
+      'code-square': 222,
+      'list-ordered': 79,
+      tasklist: 189,
+      link: 76,
+      image: 77,
+    };
+
+    let id;
+    const shiftSC = [51, 52];
+    if (shiftSC.includes(id)) {
+      id = e.ctrlKey && e.shiftKey && e.which;
+    } else {
+      id = e.ctrlKey && e.which;
+    }
+
+    cmdBlock(id, blockStyle, listShortCuts, e);
+  };
+
+  const toolbarShortcut = () => {
+    textarea.addEventListener('keydown', (e) => {
+      if (isSelected) {
+        execCommandOnShortcut(e);
+      }
     });
   };
 
@@ -571,6 +656,7 @@ const Exec = (editorId, prop) => {
         // if (boundArea.bottom > boundArea1.bottom) {
         //   toolbarButtonArea.style.top = `${boundArea1.height - 30}px`;
         // }
+        isSelected = true;
       }
       document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('dropdown');
     });
@@ -582,7 +668,9 @@ const Exec = (editorId, prop) => {
     textarea.addEventListener('input', (e) => {
       startSelection = textarea.selectionStart;
       endSelection = textarea.selectionEnd;
-      if (e.data === ':') {
+      const allowedEmojiPrefix = ['-', ':', '/', '!', '#', '$', '&', '*', '=', '+', '^'];
+      const { emojiPrefix } = extendDefaults(prop).inlineEmoji;
+      if (e.data === emojiPrefix && allowedEmojiPrefix.includes(emojiPrefix)) {
         placeAreasByCoord(`.filter-emoji-area-${editorId}`, textarea);
       }
 
@@ -625,11 +713,11 @@ const Exec = (editorId, prop) => {
   };
 
   const outputMarkDown = () => {
-    if (extendDefaults(prop).inlineEmoji) {
+    if (extendDefaults(prop).inlineEmoji.enabled) {
       insertEmojijiOnKeyEvent();
     }
 
-    if (extendDefaults(prop).buttonEmoji) {
+    if (extendDefaults(prop).toolbarEmoji) {
       insertEmojiOnEmojiAreaClick();
       document.getElementById(`smiley-${editorId}`).style.display = 'initial';
     }
@@ -639,6 +727,8 @@ const Exec = (editorId, prop) => {
     execAllCommands();
 
     updatePreviewInputOnClick();
+
+    toolbarShortcut();
   };
 
   const uploadImage = () => {
@@ -708,7 +798,10 @@ const Exec = (editorId, prop) => {
     }
   };
 
-  return { outputMarkDown, getMarkdown, uploadImage };
+
+  return {
+    outputMarkDown, getMarkdown, uploadImage,
+  };
 };
 
 export default Exec;
