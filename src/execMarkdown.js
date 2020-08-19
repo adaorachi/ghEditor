@@ -750,7 +750,7 @@ const Exec = (editorId, prop) => {
           progressStatus.innerHTML = '<span><img src="../../dist/images/loader.gif" alt="loader" width="20"/> Uploading your files ...</span>';
         }
       }, (error) => {
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.log(error.message);
         progressStatus.innerHTML = 'Error uploading file!';
       }, () => {

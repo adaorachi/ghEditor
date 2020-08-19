@@ -413,12 +413,12 @@
       transform: scale(1.1);
       border-radius: 5px;
     }
-  }
-  svg {
-    fill: #fff;
-
-    &:hover {
-      fill: #0366d6;
+    svg {
+      fill: #fff;
+  
+      &:hover {
+        fill: #0366d6;
+      }
     }
   }
 }

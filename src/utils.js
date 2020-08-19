@@ -27,7 +27,7 @@ const extendDefaults = (properties) => {
     },
     headerColor: '#586069',
     headerToolbar: {
-      icons: 'heading|bold|italic|fold|kebab-horizontal|quote|code|link|code-square|list-unordered|list-ordered|tasklist|mention|image|server|',
+      icons: 'heading|bold|italic|blockquote|strikethrough|horizontal-rule|code|link|code-block|unordered-list|ordered-list|tasklist|mention|image|table|',
       iconSize: '16',
     },
     hideToolBar: false,
@@ -37,7 +37,7 @@ const extendDefaults = (properties) => {
       enabled: true,
       emojiPrefix: ':',
     },
-    inlineToolbar: 'heading|bold|italic|code|link|list-unordered',
+    inlineToolbar: 'heading|bold|italic|code|link|unordered-list',
     maxHeight: 'auto',
     minHeight: '100px',
     placeholder: 'Leave your comment',
@@ -50,23 +50,23 @@ const extendDefaults = (properties) => {
       enabled: true,
       toolTipText: {
         smiley: 'Insert an emoji',
-        mirror: 'Toggle Preview',
+        'split-screen': 'Toggle Preview',
         heading: 'Add header text',
         bold: 'Add bold text',
         italic: 'Add italic text',
-        quote: 'Insert a quote',
-        fold: 'Add a strikethrough text',
-        'kebab-horizontal': 'Add an horizontal rule',
+        blockquote: 'Insert a quote',
+        strikethrough: 'Add a strikethrough text',
+        'horizontal-rule': 'Add an horizontal rule',
         code: 'Insert code',
         link: 'Add a link',
-        'code-square': 'Insert code block',
-        'list-unordered': 'Add a bulleted list',
-        'list-ordered': 'Add a numbered list',
+        'code-block': 'Insert code block',
+        'unordered-list': 'Add a bulleted list',
+        'ordered-list': 'Add a numbered list',
         tasklist: 'Add a tasklist',
         mention: 'Directly mention a Github user',
-        server: 'Insert a table',
+        table: 'Insert a table',
         image: 'Add an image',
-        question: 'Help?',
+        guide: 'Help?',
       },
     },
     uploadImage: true,
@@ -127,6 +127,7 @@ const containerStyles = (properties) => {
     const allButtons = document.querySelectorAll(`.snip-text-mark-down-${options.container} .buttons svg`);
     allButtons.forEach((button) => {
       button.style.fill = options.headerColor;
+      button.style.width = options.headerToolbar.iconSize;
     });
     [`snip-writearea-tab-${editorId}`, `snip-preview-tab-${editorId}`].forEach(tab => {
       document.getElementById(tab).style.color = options.headerColor;

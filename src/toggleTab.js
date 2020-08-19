@@ -115,8 +115,8 @@ const ToggleTab = (() => {
 
       fixedDiv.addEventListener('scroll', () => {
         scrollableDiv.scrollTop = fixedDiv.scrollTop
-        * ((scrollableDiv.scrollHeight - scrollableDiv.clientHeight)
-        / (fixedDiv.scrollHeight - fixedDiv.clientHeight));
+          * ((scrollableDiv.scrollHeight - scrollableDiv.clientHeight)
+            / (fixedDiv.scrollHeight - fixedDiv.clientHeight));
       });
     }
   };

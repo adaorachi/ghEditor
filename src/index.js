@@ -12,6 +12,7 @@ import {
   createDOMElement,
 } from './utils';
 import { displayButtons, toggleToolbar } from './toolbar';
+import image from '../dist/images/table.svg';
 
 
 const snipDown = () => {
