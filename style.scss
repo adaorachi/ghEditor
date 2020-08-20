@@ -52,15 +52,10 @@
     border-bottom: 1px solid #eaecef;
   }
 
-  img,
-  iframe  {
-    max-width: 100%;
-  }
-
   iframe {
   max-height: 500px;
   min-height: 300px;
-  min-width: 60%;
+  width: 100%;
   }
 
  hr {
@@ -415,6 +410,7 @@
     }
     svg {
       fill: #fff;
+      width: 16px;
   
       &:hover {
         fill: #0366d6;

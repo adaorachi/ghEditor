@@ -12,7 +12,6 @@ import {
   createDOMElement,
 } from './utils';
 import { displayButtons, toggleToolbar } from './toolbar';
-import image from '../dist/images/table.svg';
 
 
 const snipDown = () => {
@@ -161,58 +160,3 @@ const snipDown = () => {
 };
 
 export default snipDown;
-
-
-const opt = {
-  container: 'snip-1',
-  width: '30%',
-  // minHeight: '100px',
-  placeholder: 'A message ...',
-  // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
-  // disallowedTags: ['p'],
-  allowedAttributes: ['style'],
-  // maxHeight: '300px',
-  // buttonBgColor: '#eee'
-  // frameStyles: { color: 'red', borderRadius: '10px' },
-  autoSave: {
-    enabled: false,
-    delay: 3000,
-  },
-  uploadImageConfig: {
-    storageBucket: 'snip-editor.appspot.com',
-  },
-  toolTip: {
-    enabled: true,
-  },
-};
-
-// :(?=[a-zA-Z]+)
-
-const snipdown = snipDown();
-snipdown.markDown(opt);
-// snipdown.setValue('# This is me');
-// snipdown.getValue('snip1');
-// console.log(snipdown.getOptions());
-// console.log(snipdown.getDefaultOptions());
-
-// console.log(snipdown.getOption('minHeight'));
-
-
-// document.getElementById('button').addEventListener('click', (e) => {
-//   console.log(sniptext.syncValue());
-//   // e.preventDefault();
-// });
-
-
-// const sniptext2 = snipDown();
-// sniptext2.markDown({container: 'snip2'});
-// document.getElementById('button').addEventListener('click', (e) => {
-//   console.log(sniptext2.syncValue());
-//   // e.preventDefault();
-// });
-
-
-// const sniptext3 = snipText();
-// sniptext3.markDown({ id: 'snip3' });
-
-// document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">');

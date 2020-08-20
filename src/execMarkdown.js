@@ -427,9 +427,9 @@ const Exec = (editorId, prop) => {
     } else if (selection2.match(snipReg)) {
       start = textarea.selectionStart - range[0];
       end = textarea.selectionEnd + range[1];
-    } else if ([list.bold, list.italic, list.code, list.fold].includes(id)) {
+    } else if ([list.bold, list.italic, list.code, list.strikethrough].includes(id)) {
       selected = `${snipSym}${selected.trim()}${snipSym} `;
-    } else if (id === list['code-square']) {
+    } else if (id === list['code-block']) {
       selected = `${snipSym}\n${selected.trim()}\n${snipSym} `;
     } else if (id === list.link) {
       selected = `[${selected.trim()}](url) `;
@@ -469,12 +469,12 @@ const Exec = (editorId, prop) => {
         snipSym = '@';
         range = [1, 0];
         break;
-      case list.quote:
+      case list.blockquote:
         snipReg = new RegExp(/(>\s)([\S\s]*?)/, 'g');
         snipSym = '> ';
         range = [2, 0];
         break;
-      case list.server:
+      case list.table:
         snipReg = null;
         synCon = '';
         synCon += '\n| Default-aligned | Left-aligned | Center-aligned  | Right-aligned  |';
@@ -485,12 +485,12 @@ const Exec = (editorId, prop) => {
         snipSym = synCon;
         range = [0, 0];
         break;
-      case list.fold:
+      case list.strikethrough:
         snipReg = new RegExp(/(~~)([\S\s]*?)(~~)/, 'g');
         snipSym = '~~';
         range = [2, 2];
         break;
-      case list['kebab-horizontal']:
+      case list['horizontal-rule']:
         snipReg = null;
         snipSym = '---';
         range = [4, 0];
@@ -500,17 +500,17 @@ const Exec = (editorId, prop) => {
         snipSym = '`';
         range = [1, 1];
         break;
-      case list['list-unordered']:
+      case list['unordered-list']:
         snipReg = new RegExp(/(-\s)([\S\s]*?)/, 'g');
         snipSym = '- ';
         range = [2, 0];
         break;
-      case list['code-square']:
+      case list['code-block']:
         snipReg = blockStyle('code-block')[1];
         snipSym = blockStyle('code-block')[0];
         range = [3, 3];
         break;
-      case list['list-ordered']:
+      case list['ordered-list']:
         snipReg = new RegExp(/(1.\s)([\S\s]*?)/, 'g');
         snipSym = '1. ';
         range = [3, 0];
@@ -565,14 +565,14 @@ const Exec = (editorId, prop) => {
         bold: `bold-${editorId}`,
         italic: `italic-${editorId}`,
         mention: `mention-${editorId}`,
-        quote: `quote-${editorId}`,
-        server: `server-${editorId}`,
-        fold: `fold-${editorId}`,
-        'kebab-horizontal': `kebab-horizontal-${editorId}`,
+        blockquote: `blockquote-${editorId}`,
+        table: `table-${editorId}`,
+        strikethrough: `strikethrough-${editorId}`,
+        'horizontal-rule': `horizontal-rule-${editorId}`,
         code: `code-${editorId}`,
-        'list-unordered': `list-unordered-${editorId}`,
-        'code-square': `code-square-${editorId}`,
-        'list-ordered': `list-ordered-${editorId}`,
+        'unordered-list': `unordered-list-${editorId}`,
+        'code-block': `code-block-${editorId}`,
+        'ordered-list': `ordered-list-${editorId}`,
         tasklist: `tasklist-${editorId}`,
         link: `link-${editorId}`,
         image: `image-${editorId}`,
@@ -598,14 +598,14 @@ const Exec = (editorId, prop) => {
       bold: 66,
       italic: 73,
       mention: 50,
-      quote: 190,
-      server: 51,
-      fold: 52,
-      // 'kebab-horizontal': 73,
+      blockquote: 190,
+      table: 51,
+      strikethrough: 52,
+      // 'horizontal-rule': 73,
       code: 192,
-      'list-unordered': 85,
-      'code-square': 222,
-      'list-ordered': 79,
+      'unordered-list': 85,
+      'code-block': 222,
+      'ordered-list': 79,
       tasklist: 189,
       link: 76,
       image: 77,
@@ -619,7 +619,9 @@ const Exec = (editorId, prop) => {
       id = e.ctrlKey && e.which;
     }
 
-    cmdBlock(id, blockStyle, listShortCuts, e);
+    if (extendDefaults.inlineShortcut) {
+      cmdBlock(id, blockStyle, listShortCuts, e);
+    }
   };
 
   const toolbarShortcut = () => {
@@ -632,34 +634,39 @@ const Exec = (editorId, prop) => {
 
   const displayToolbar = (textarea) => {
     const toolbarButtonArea = document.querySelector(`.toolbar-button-area-${editorId}`);
-    textarea.addEventListener('select', () => {
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const selected = textarea.value.slice(start, end).length;
-      if (selected > 0) {
-        placeAreasByCoord(`.toolbar-button-area-${editorId}`, textarea, 40, false);
-        toolbarButtonArea.classList.add('dropdown');
-        const suggestorButtons = extendDefaults(prop).inlineToolbar;
-        toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, true);
-        execCommandOnButtons(textarea, `.buttons.markdown-button-${editorId}-suggester`);
+    const suggestorButtons = extendDefaults(prop).inlineToolbar;
+    if (suggestorButtons !== '') {
+      textarea.addEventListener('select', () => {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selected = textarea.value.slice(start, end).length;
+        if (selected > 0) {
+          placeAreasByCoord(`.toolbar-button-area-${editorId}`, textarea, 40, false);
+          toolbarButtonArea.classList.add('dropdown');
+          // eslint-disable-next-line max-len
+          toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, true);
+          execCommandOnButtons(textarea, `.buttons.markdown-button-${editorId}-suggester`);
 
-        const boundArea = toolbarButtonArea.getBoundingClientRect();
-        const boundArea1 = textarea.getBoundingClientRect();
-        if ((boundArea.right > boundArea1.right) || (yy > 140)) {
-          toolbarButtonArea.style.left = `${yy - 140}px`;
-          toolbarButtonArea.classList.add('adjust-tip');
-        } else {
-          toolbarButtonArea.style.left = '0';
-          toolbarButtonArea.classList.remove('adjust-tip');
+          const boundArea = toolbarButtonArea.getBoundingClientRect();
+          const boundArea1 = textarea.getBoundingClientRect();
+          if ((boundArea.right > boundArea1.right) || (yy > 140)) {
+            toolbarButtonArea.style.left = `${yy - 140}px`;
+            toolbarButtonArea.classList.add('adjust-tip');
+          } else {
+            toolbarButtonArea.style.left = '0';
+            toolbarButtonArea.classList.remove('adjust-tip');
+          }
+
+          // if (boundArea.bottom > boundArea1.bottom) {
+          //   toolbarButtonArea.style.top = `${boundArea1.height - 30}px`;
+          // }
+          isSelected = true;
         }
-
-        // if (boundArea.bottom > boundArea1.bottom) {
-        //   toolbarButtonArea.style.top = `${boundArea1.height - 30}px`;
-        // }
-        isSelected = true;
-      }
-      document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('dropdown');
-    });
+        document.querySelector(`.filter-emoji-area-${editorId}`).classList.remove('dropdown');
+      });
+    } else {
+      toolbarButtonArea.style.display = 'none';
+    }
   };
 
   const insertAllTextOnInput = () => {

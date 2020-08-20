@@ -3,11 +3,9 @@
 SnipDown is a lightweight, flexible, highly customizable WYSIGWG for your web applications. It is a drop-in JavaScript textarea replacement for writing beautiful and understandable Markdown. The WYSIWYG-esque editor allows users who may be less experienced with Markdown to use familiar toolbar buttons and shortcuts. If you never have written a single line in markdown markup, don't worry, it's easy to learn and even easier to use. You'll probably be surprised how handy it is once you get used to it. And you'll miss it whenever the tech you're using doesn't support markdown.
 
 
-
-
 ### Why use SnipDown Editor?
 
-SnipDown is one of the first markdown editors to feature an all-in-one built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow, split-screen-preview and file upload and storage WYSIWYG-style. It is also designed to mimic Github markdown editor features and implements all Github flavoured markdown syntax. In other words, SnipDown uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github markdown editor embedded in your web application just by a simple installation, plus SnipDown can be rendered natively on more than one textarea container in a web page. It also 
+SnipDown is one of the first markdown editors to feature an all-in-one built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow, split-screen-preview and file upload and storage WYSIWYG-style. It is also designed to mimic Github markdown editor features and implements most Github flavoured markdown syntax and much more. In other words, SnipDown uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github-flavored markdown editor embedded in your web application just by a simple installation, plus SnipDown can be rendered natively on more than one textarea container in a web page. Previews are rendered by Marked using GFM.
 
 
 
@@ -217,3 +215,30 @@ snipdown.isSideBySideActive(); // returns boolean
 snipdown.isFullscreenActive(); // returns boolean
 snipdown.clearAutosavedValue(); // no returned value
 ```
+
+## Contributing
+
+If you wish to contribute please read the following quick guide.
+
+### Want a Feature?
+You can request a new feature by submitting an issue. If you would like to implement a new feature feel free to issue a Pull Request.
+
+
+### Pull requests (PRs)
+PRs are awesome. However, before you submit your pull request consider the following guidelines:
+
+ - Search GitHub for an open or closed Pull Request that relates to your submission. You don't want to duplicate effort.
+ - When issuing PRs that change code, make your changes in a new git branch based on master:
+
+   ```bash
+   git checkout -b my-fix-branch master
+   ```
+
+ - Documentation (i.e: README.md) changes can be made directly against master.
+ - Run the full test suite before submitting and make sure all tests pass (obviously =P).
+ - Refrain from fixing multiple issues in the same pull request. It's preferable to open multiple small PRs instead of one hard to review big one.
+ - After your pull request is merged, you can safely delete your branch.
+
+If you have time to contribute to this project, we feel obliged that you get credit for it.
+These rules enable us to review your PR faster and will give you appropriate credit in your GitHub profile.
+We thank you in advance for your contribution!

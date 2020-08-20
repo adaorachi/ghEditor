@@ -38,6 +38,7 @@ const extendDefaults = (properties) => {
       emojiPrefix: ':',
     },
     inlineToolbar: 'heading|bold|italic|code|link|unordered-list',
+    inlineShortcut: true,
     maxHeight: 'auto',
     minHeight: '100px',
     placeholder: 'Leave your comment',

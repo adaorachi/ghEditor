@@ -1,5 +1,5 @@
 {
-  "name": "sniptextmarkdown",
+  "name": "snipdown",
   "version": "1.0.0",
   "description": "A markdown text editor plugin built with JavaScript",
   "main": "dist/main.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adaorachi/SnipTextMarkDown.git"
+    "url": "git+https://github.com/adaorachi/SnipDown.git"
   },
   "keywords": [
     "editor",
@@ -28,9 +28,9 @@
   "author": "MaryAnn Chukwuka",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/adaorachi/SnipTextMarkDown/issues"
+    "url": "https://github.com/adaorachi/SnipDown/issues"
   },
-  "homepage": "https://github.com/adaorachi/SnipTextMarkDown#readme",
+  "homepage": "https://github.com/adaorachi/SnipDown#readme",
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@types/highlight.js": "^9.12.4",
@@ -45,7 +45,6 @@
   },
   "dependencies": {
     "@primer/octicons": "^10.0.0",
-    "file-loader": "^6.0.0",
     "firebase": "^7.17.2",
     "highlight.js": "^10.1.1",
     "html-webpack-plugin": "^4.3.0",
