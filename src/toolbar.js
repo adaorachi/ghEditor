@@ -1,4 +1,6 @@
+import octicon from '@primer/octicons';
 import { extendDefaults } from './utils';
+import toggle from './images/more.svg';
 
 const headerTabs = (editorId) => {
   const content = `<div class="snip-text-tabnav-tabs-${editorId} snip-text-tabnav-tabs" id="snip-text-tabnav-tabs-${editorId}">
@@ -20,6 +22,11 @@ const toggleToolbar = (editorId) => {
   }
 };
 
+const toggleToolbarButton = (editorId) => {
+  const toggleT = `<button type="button" class="buttons toggle-toolbar-button toggle-toolbar-${editorId}">${toggle}</button>`;
+  return toggleT;
+};
+
 const importAll = (r) => {
   const svg = {};
   // eslint-disable-next-line array-callback-return
@@ -30,6 +37,8 @@ const importAll = (r) => {
 const displayCommandButtons = (editorId, prop, mainButtons, toolSuggester = false) => {
   // eslint-disable-next-line one-var
   let content = '',
+    div1 = '',
+    div2 = '',
     addClass,
     limiter,
     mainButtons2;
@@ -49,8 +58,9 @@ const displayCommandButtons = (editorId, prop, mainButtons, toolSuggester = fals
   mainButtons2.forEach((button, index) => {
     if (buttonIconNames.includes(button)) {
       const iconName = button.trim();
-      const svg = importAll(require.context('../dist/images', false, /\.(svg)$/));
+      const svg = importAll(require.context('./images', false, /\.(svg)$/));
       let isIcon = svg[`${iconName}.svg`];
+
       const buttonId = `${iconName}-${editorId}${addClass}`;
       let className;
 
@@ -71,18 +81,35 @@ const displayCommandButtons = (editorId, prop, mainButtons, toolSuggester = fals
         limit += limiter;
       }
 
+      // const button1 = `${limit}<button type="button" class="tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonTitleText[iconName]}">${isIcon1}</button>`;
       let tooltipClass = '';
       if (extendDefaults(prop).toolTip.enabled) {
         tooltipClass = 'tooltip-button';
       }
-
       const buttonToolTip = extendDefaults(prop).toolTip.toolTipText;
       const button1 = `${limit}<button type="button" class="${tooltipClass} tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonToolTip[iconName]}">${isIcon}</button>`;
 
-      content += button1;
+      if (index === 8) {
+        div1 += toggleToolbarButton(editorId);
+      }
+      if (index <= 7) {
+        div1 += button1;
+      } else {
+        div2 += button1;
+      }
+
+      // const buttonToolTip = extendDefaults(prop).toolTip.toolTipText;
+      // eslint-disable-next-line max-len
+      // const button1 = `${limit}<button type="button" class="${tooltipClass} tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonToolTip[iconName]}">${isIcon}</button>`;
+
+      // content += button1;
     }
   });
+  div1 = `<div class="button-container-untoggle button-container-untoggle-${editorId}">${div1}</div>`;
+  div2 = `<div class="button-container-toggle button-container-toggle-${editorId}">${div2}</div>`;
+  content = `${div1}${div2}`;
   return content;
+  // return content;
 };
 
 const displayUtilButtons = (editorId) => {

@@ -15,7 +15,7 @@ import {
   extendDefaults,
   setStorageInterval,
 } from './utils';
-
+import loader from './images/loader.svg';
 
 const Exec = (editorId, prop) => {
   const converter = new showdown.Converter();
@@ -584,7 +584,6 @@ const Exec = (editorId, prop) => {
     });
   };
 
-
   const execCommandOnShortcut = (e) => {
     function blockStyle(style) {
       const str = extendDefaults(prop).blockStyles[style];
@@ -754,7 +753,7 @@ const Exec = (editorId, prop) => {
           repl = `${lineBreak}![uploading ${fileUpload.name} ... ]()\n`;
           textVal = `${textVal.slice(0, insertImageSelected)}${repl}${textVal.slice(insertImage)}`;
           insertWriteInput(textVal);
-          progressStatus.innerHTML = '<span><img src="../../dist/images/loader.gif" alt="loader" width="20"/> Uploading your files ...</span>';
+          progressStatus.innerHTML = `<span class="snip-loader" style="width:100px">${loader}</span> Uploading your files ..`;
         }
       }, (error) => {
         // eslint-disable-next-line no-console
@@ -770,6 +769,8 @@ const Exec = (editorId, prop) => {
             textVal = textVal.replace(repl, uploadedImage);
             insertWriteInput(textVal);
             progressStatus.innerHTML = 'Attach files by draggng and dropping or selecting them';
+            const uploadInput = document.getElementById(`snip-uploadimage-${editorId}`);
+            uploadInput.value = '';
           }
         });
       });
@@ -804,7 +805,6 @@ const Exec = (editorId, prop) => {
       });
     }
   };
-
 
   return {
     outputMarkDown, getMarkdown, uploadImage,

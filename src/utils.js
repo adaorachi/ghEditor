@@ -314,7 +314,6 @@ const appendToDOM = (appender, ...args) => {
   });
 };
 
-
 export {
   extendDefaults,
   containerStyles,
