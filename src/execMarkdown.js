@@ -3,12 +3,14 @@
 import showdown from 'showdown';
 import hljs from 'highlight.js/lib/core';
 import sanitizeHtml from 'sanitize-html';
-import * as firebase from 'firebase';
-import { emojis } from './emojis';
+import { emojis, toggleEmojiArea } from './emojis';
 import getCaretCoordinates from './caretPos';
 import 'highlight.js/styles/github.css';
 import ToggleTab from './toggleTab';
 import { displayCommandButtons } from './toolbar';
+
+import firebaseSetting from './firebaseSetting';
+
 import {
   setAttributeToEmojiSelected,
   expandHeight,
@@ -39,9 +41,6 @@ const Exec = (editorId, prop) => {
   let isSelected = false;
 
   const textarea = document.getElementById(`snip-write-${editorId}`);
-
-  const firebaseConfig = extendDefaults(prop).uploadImageConfig;
-  firebase.initializeApp(firebaseConfig);
 
   const syncHighlightCode = (lang, code) => {
     const lang1 = lang === 'html' ? 'xml' : lang;
@@ -543,7 +542,7 @@ const Exec = (editorId, prop) => {
     e.preventDefault();
   };
 
-  const execCommandOnButtons = (textarea, buttonElement) => {
+  const execCommandOnButtons = (buttonElement) => {
     const allButtons = document.querySelectorAll(buttonElement);
     allButtons.forEach((button) => {
       let { id } = button;
@@ -618,7 +617,7 @@ const Exec = (editorId, prop) => {
       id = e.ctrlKey && e.which;
     }
 
-    if (extendDefaults.inlineShortcut) {
+    if (extendDefaults(prop).inlineShortcut) {
       cmdBlock(id, blockStyle, listShortCuts, e);
     }
   };
@@ -631,7 +630,7 @@ const Exec = (editorId, prop) => {
     });
   };
 
-  const displayToolbar = (textarea) => {
+  const displayToolbar = () => {
     const toolbarButtonArea = document.querySelector(`.toolbar-button-area-${editorId}`);
     const suggestorButtons = extendDefaults(prop).inlineToolbar;
     if (suggestorButtons !== '') {
@@ -643,13 +642,13 @@ const Exec = (editorId, prop) => {
           placeAreasByCoord(`.toolbar-button-area-${editorId}`, textarea, 40, false);
           toolbarButtonArea.classList.add('dropdown');
           // eslint-disable-next-line max-len
-          toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, true);
-          execCommandOnButtons(textarea, `.buttons.markdown-button-${editorId}-suggester`);
+          toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, '', true)[0];
+          execCommandOnButtons(`.buttons.markdown-button-${editorId}-suggester`);
 
           const boundArea = toolbarButtonArea.getBoundingClientRect();
           const boundArea1 = textarea.getBoundingClientRect();
           if ((boundArea.right > boundArea1.right) || (yy > 140)) {
-            toolbarButtonArea.style.left = `${yy - 140}px`;
+            toolbarButtonArea.style.left = `${yy - 200}px`;
             toolbarButtonArea.classList.add('adjust-tip');
           } else {
             toolbarButtonArea.style.left = '0';
@@ -713,7 +712,7 @@ const Exec = (editorId, prop) => {
   };
 
   const execAllCommands = () => {
-    execCommandOnButtons(textarea, `.buttons.markdown-button-${editorId}`);
+    execCommandOnButtons(`.buttons.markdown-button-${editorId}`);
 
     buttonTooltip();
   };
@@ -725,7 +724,10 @@ const Exec = (editorId, prop) => {
 
     if (extendDefaults(prop).toolbarEmoji) {
       insertEmojiOnEmojiAreaClick();
+      toggleEmojiArea(editorId);
       document.getElementById(`smiley-${editorId}`).style.display = 'initial';
+    } else {
+      document.getElementById(`smiley-${editorId}`).style.display = 'none';
     }
 
     insertAllTextOnInput();
@@ -736,6 +738,8 @@ const Exec = (editorId, prop) => {
 
     toolbarShortcut();
   };
+
+  const firebase = firebaseSetting(prop);
 
   const uploadImage = () => {
     function callUploaded(fileUpload) {
@@ -807,7 +811,7 @@ const Exec = (editorId, prop) => {
   };
 
   return {
-    outputMarkDown, getMarkdown, uploadImage,
+    outputMarkDown, getMarkdown, uploadImage, execCommandOnButtons,
   };
 };
 

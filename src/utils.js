@@ -1,8 +1,4 @@
-import octicon from '@primer/octicons';
-import { toggleEmojiArea } from './emojis';
-
-const octIcon = octicon.archive;
-const isIcon = octIcon.toSVG({ width: 16, height: 16 });
+import save from './images/save.svg';
 
 const setIntervalTimers = [];
 
@@ -10,7 +6,7 @@ const extendDefaults = (properties) => {
   const defaults = {
     container: 'sniptext',
     autoSave: {
-      enabled: false,
+      enabled: true,
       delay: 10000,
     },
     autoUseFontAwesome: true,
@@ -21,9 +17,6 @@ const extendDefaults = (properties) => {
     },
     frameStyles: {
       fontSize: '1rem',
-      // color: 'red',
-      // padding: '0.375rem 0.75rem',
-      // background: 'red',
     },
     headerColor: '#586069',
     headerToolbar: {
@@ -38,7 +31,7 @@ const extendDefaults = (properties) => {
       emojiPrefix: ':',
     },
     inlineToolbar: 'heading|bold|italic|code|link|unordered-list',
-    inlineShortcut: true,
+    inlineShortcut: false,
     maxHeight: 'auto',
     minHeight: '100px',
     placeholder: 'Leave your comment',
@@ -128,7 +121,8 @@ const containerStyles = (properties) => {
     const allButtons = document.querySelectorAll(`.snip-text-mark-down-${options.container} .buttons svg`);
     allButtons.forEach((button) => {
       button.style.fill = options.headerColor;
-      button.style.width = options.headerToolbar.iconSize;
+      // button.style.width = options.headerToolbar.iconSize;
+      button.style.width = '16';
     });
     [`snip-writearea-tab-${editorId}`, `snip-preview-tab-${editorId}`].forEach(tab => {
       document.getElementById(tab).style.color = options.headerColor;
@@ -152,11 +146,10 @@ const getCurrentTime = () => {
   const autoSaved = new Date();
   const autoSavedToLocal = autoSaved.toLocaleTimeString();
   return autoSavedToLocal;
-  // ${isIcon}
 };
 
 const savedTimer = (editorId) => `
-                <span class="auto-save-icon" id="auto-save-icon-${editorId}">${isIcon}</span>
+                <span class="auto-save-icon" id="auto-save-icon-${editorId}">${save}</span>
                 <div id="auto-saved-${editorId}" class="auto-saved">
                   <span id="timer-pre-${editorId}">Autosaved:</span>
                   <span class="saved-timer" id="saved-timer-${editorId}">${getCurrentTime()}</span>
@@ -285,10 +278,6 @@ const defaultOptionSnippet = (props, editorId, snipUploadImage) => {
     snipUploadImage.append(autoSaveArea);
   }
 
-  if (extendDefaults(props).toolbarEmoji) {
-    toggleEmojiArea(editorId);
-  }
-
   useFontAwesome(props);
 };
 
@@ -304,6 +293,10 @@ const createDOMElement = (tag, className, ...args) => {
     a.style.height = args[2];
     // eslint-disable-next-line prefer-destructuring
     a.style.maxHeight = args[3];
+  }
+
+  if (className.includes('snip-text-body')) {
+    a.setAttribute('aria-toggle', 'false');
   }
   return a;
 };

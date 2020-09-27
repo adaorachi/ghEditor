@@ -1,5 +1,6 @@
 import ToggleTab from './toggleTab';
 import Exec from './execMarkdown';
+import { toggleEmojiArea } from './emojis';
 import {
   extendDefaults,
   containerStyles,
@@ -11,9 +12,9 @@ import {
   appendToDOM,
   createDOMElement,
 } from './utils';
-import { displayButtons, toggleToolbar } from './toolbar';
+import { displayButtons, toggleToolbar, toggleToolbarOnResize } from './toolbar';
 
-const snipDown = (() => {
+const snipDown = () => {
   let options = {};
   let editorId;
   let initialSetVal = '';
@@ -112,10 +113,16 @@ const snipDown = (() => {
 
       const buttonContainer = createDOMElement('div', `snip-text-header snip-text-header-${editorId}`);
 
-      window.addEventListener('load', () => {
+      const aa = (mm = true) => {
         const textarea = document.getElementById(`snip-write-${editorId}`);
 
+        toggleToolbarOnResize(editorId, options);
+        const textAreaHeight = textarea.style.height;
+
         defaultOptionSnippet(options, editorId, snipUploadImage);
+
+        textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
+
         toggleToolbar(editorId);
 
         containerStyles(options, editorId);
@@ -128,9 +135,24 @@ const snipDown = (() => {
         setEditorTextToStore(editorId, options, initialSetVal);
         exec.uploadImage();
         autoSaveOnClicked(editorId, options);
+      };
 
-        const textAreaHeight = textarea.style.height;
-        textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
+      window.addEventListener('load', () => {
+        aa();
+      });
+
+      window.addEventListener('resize', () => {
+        toggleToolbarOnResize(editorId, options);
+
+        toggleToolbar(editorId);
+
+        const exec = Exec(editorId, options);
+        exec.execCommandOnButtons(`.buttons.markdown-button-${editorId}`);
+        toggleEmojiArea(editorId);
+
+        containerStyles(options, editorId);
+        ToggleTab.toggle(`snip-text-tabnav-tabs-${editorId}`, editorId);
+        ToggleTab.togglePreview(editorId, options);
       });
 
       appendToDOM(snipTextContainer, snipMarkDown);
@@ -141,7 +163,8 @@ const snipDown = (() => {
 
       appendToDOM(snipMarkDown, ...[buttonContainer, snipTextBody]);
 
-      displayButtons(options);
+      displayButtons(options, 1, '');
+
       const appended2 = [snipTextAreaContainer, snipPreviewArea, mirrorDiv];
       appendToDOM(snipTextBody, ...appended2);
     }
@@ -156,33 +179,34 @@ const snipDown = (() => {
     getOption,
     getDefaultOptions,
   };
-})();
+};
 
 export default snipDown;
 // module.exports = snipDown;
 
-const opt = {
-  container: 'snip-1',
-  width: '30%',
-  // minHeight: '100px',
-  placeholder: 'A message ...',
-  // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
-  // disallowedTags: ['p'],
-  allowedAttributes: ['style'],
-  // maxHeight: '300px',
-  // buttonBgColor: '#eee'
-  // frameStyles: { color: 'red', borderRadius: '10px' },
-  autoSave: {
-    enabled: false,
-    delay: 3000,
-  },
-  uploadImageConfig: {
-    storageBucket: 'snip-editor.appspot.com',
-  },
-  toolTip: {
-    enabled: true,
-  },
-};
+/// /////////////////////////////////////////////////
+// const opt = {
+//   container: 'snip-1',
+//   width: '30%',
+//   // minHeight: '100px',
+//   placeholder: 'A message ...',
+//   // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
+//   // disallowedTags: ['p'],
+//   allowedAttributes: ['style'],
+//   // maxHeight: '300px',
+//   // buttonBgColor: '#eee'
+//   // frameStyles: { color: 'red', borderRadius: '10px' },
+//   autoSave: {
+//     enabled: false,
+//     delay: 3000,
+//   },
+//   // uploadImageConfig: {
+//   //   storageBucket: 'snip-editor.appspot.com',
+//   // },
+//   toolTip: {
+//     enabled: true,
+//   },
+// };
 
 // // :(?=[a-zA-Z]+)
 

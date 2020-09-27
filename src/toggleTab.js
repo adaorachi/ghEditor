@@ -50,7 +50,6 @@ const ToggleTab = (() => {
           document.querySelector(`.snip-word-count-${editorId}`).classList.remove('remove');
 
           removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
-          displayWordCount(editorId);
         }
 
         const snipTextArea = document.getElementById(`snip-write-${editorId}`);
@@ -64,15 +63,22 @@ const ToggleTab = (() => {
   };
 
   const togglePreview = (editorId, args) => {
+    const previewBut = document.querySelector(`.snip-preview-button-${editorId}`);
     if (extendDefaults(args).splitScreen.enabled) {
       const snipContainers2 = [
         `snip-write-${editorId}`,
         `snip-preview-${editorId}`,
       ];
-      const previewBut = document.querySelector(`.snip-preview-button-${editorId}`);
       previewBut.style.display = 'initial';
 
       previewBut.addEventListener('click', () => {
+        const header = document.querySelector(`.snip-text-body-${editorId}`);
+        const isToggled = header.getAttribute('aria-toggle');
+        if (isToggled === 'false') {
+          header.setAttribute('aria-toggle', 'true');
+        } else {
+          header.setAttribute('aria-toggle', 'false');
+        }
         const snipContainers = [
           `snip-writearea-${editorId}`,
           `snip-preview-${editorId}`,
@@ -82,6 +88,7 @@ const ToggleTab = (() => {
           `snip-text-header-content-${editorId}`,
           `snip-upload-container-${editorId}`,
           `snip-autosave-${editorId}`,
+          `button-container-toggle-${editorId}`,
         ];
         snipContainers.forEach(container => {
           const containerDOM = document.getElementById(container);
@@ -91,7 +98,9 @@ const ToggleTab = (() => {
         });
 
         document.getElementById(`snip-word-count-${editorId}`).classList.toggle('remove');
-        displayWordCount(editorId);
+
+        // const buttonContainer = document.querySelector(`.snip-text-header-content-${editorId}`);
+        // buttonContainer.style.width = '600px';
 
         snipContainers2.forEach(container => {
           const snipWriteHeight = document.getElementById(snipContainers2[0]).style.height;
@@ -118,6 +127,8 @@ const ToggleTab = (() => {
           * ((scrollableDiv.scrollHeight - scrollableDiv.clientHeight)
             / (fixedDiv.scrollHeight - fixedDiv.clientHeight));
       });
+    } else {
+      previewBut.style.display = 'none';
     }
   };
 
