@@ -50,6 +50,7 @@ const ToggleTab = (() => {
           document.querySelector(`.snip-word-count-${editorId}`).classList.remove('remove');
 
           removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
+          displayWordCount(editorId);
         }
 
         const snipTextArea = document.getElementById(`snip-write-${editorId}`);

@@ -14,28 +14,8 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-              implementation: require('sass'),
-              sourceMap: true,
-              sassOptions: {
-                outputStyle: 'compressed',
-              },
-            },
-          },
+          'sass-loader',
         ],
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader',
-        ],
-      },
-      {
-        test: /\.svg$/,
-        loader: 'svg-inline-loader',
       },
     ],
   },

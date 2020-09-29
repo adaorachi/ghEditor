@@ -45,7 +45,7 @@ const snipDown = () => {
   };
 
   const getValue = () => {
-    const exec = Exec(editorId, {});
+    const exec = Exec(editorId, options);
     return exec.getMarkdown();
   };
 
@@ -113,7 +113,7 @@ const snipDown = () => {
 
       const buttonContainer = createDOMElement('div', `snip-text-header snip-text-header-${editorId}`);
 
-      const aa = (mm = true) => {
+      const aa = () => {
         const textarea = document.getElementById(`snip-write-${editorId}`);
 
         toggleToolbarOnResize(editorId, options);
@@ -125,9 +125,9 @@ const snipDown = () => {
 
         toggleToolbar(editorId);
 
-        containerStyles(options, editorId);
         const exec = Exec(editorId, options);
         exec.outputMarkDown();
+        containerStyles(options, editorId);
         ToggleTab.toggle(`snip-text-tabnav-tabs-${editorId}`, editorId);
         ToggleTab.togglePreview(editorId, options);
 
@@ -157,6 +157,7 @@ const snipDown = () => {
 
       appendToDOM(snipTextContainer, snipMarkDown);
       appendToDOM(areaParentEle, snipTextContainer);
+      snipTextContainer.prepend(defaultTextarea);
 
       const appended = [snipTextArea, displayEmoji, displayToolbar, snipUploadImage];
       appendToDOM(snipTextAreaContainer, ...appended);
@@ -182,76 +183,3 @@ const snipDown = () => {
 };
 
 export default snipDown;
-// module.exports = snipDown;
-
-/// /////////////////////////////////////////////////
-// const opt = {
-//   container: 'snip-1',
-//   width: '30%',
-//   // minHeight: '100px',
-//   placeholder: 'A message ...',
-//   // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
-//   // disallowedTags: ['p'],
-//   allowedAttributes: ['style'],
-//   // maxHeight: '300px',
-//   // buttonBgColor: '#eee'
-//   // frameStyles: { color: 'red', borderRadius: '10px' },
-//   autoSave: {
-//     enabled: false,
-//     delay: 3000,
-//   },
-//   // uploadImageConfig: {
-//   //   storageBucket: 'snip-editor.appspot.com',
-//   // },
-//   toolTip: {
-//     enabled: true,
-//   },
-// };
-
-// // :(?=[a-zA-Z]+)
-
-// const snipdown = snipDown;
-// snipdown.markDown(opt);
-// snipdown.setValue('# This is me');
-// snipdown.getValue('snip1');
-// console.log(snipdown.getOptions());
-// console.log(snipdown.getDefaultOptions());
-
-// console.log(snipdown.getOption('minHeight'));
-
-// document.getElementById('button').addEventListener('click', (e) => {
-//   console.log(sniptext.syncValue());
-//   // e.preventDefault();
-// });
-
-// const sniptext2 = snipDown;
-// sniptext2.markDown({container: 'snip2'});
-// document.getElementById('button').addEventListener('click', (e) => {
-//   console.log(sniptext2.syncValue());
-//   // e.preventDefault();
-// });
-
-// const sniptext3 = snipText();
-// sniptext3.markDown({ id: 'snip3' });
-
-// document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">');
-
-// module.exports = {
-//   sayHello: () => {
-//     console.log('I am here');
-//   },
-// };
-
-// const snipDown = () => {
-//   // console.log('this is me')
-//   const sayHello = () => {
-//     console.log('I am here');
-//   }
-
-//   return {sayHello}
-// }
-
-// export default snipDown;
-
-// export default snipDown;
-// console.log('meme')

@@ -1,5 +1,5 @@
 import { extendDefaults } from './utils';
-import toggle from './images/more.svg';
+// import toggle from './images/more.svg';
 
 const headerTabs = (editorId, isToggled) => {
   const content = `<div class="snip-text-tabnav-tabs-${editorId} snip-text-tabnav-tabs ${isToggled}" id="snip-text-tabnav-tabs-${editorId}">
@@ -22,18 +22,18 @@ const toggleToolbar = (editorId) => {
 };
 
 const toggleToolbarButton = (editorId) => {
-  const toggleT = `<button type="button" class="buttons toggle-toolbar-button toggle-toolbar-${editorId}">${toggle}</button>`;
+  const toggleT = `<button type="button" class="buttons toggle-toolbar-button toggle-toolbar-${editorId}"><img src="https://adaorachi.github.io/snipdown_emojis/toolbar/more.svg" /></button>`;
   return toggleT;
 };
 
-const importAll = (r) => {
-  const svg = {};
-  // eslint-disable-next-line array-callback-return
-  r.keys().map((item) => { svg[item.replace('./', '')] = r(item); });
-  return svg;
-};
+// const importAll = (r) => {
+//   const svg = {};
+//   // eslint-disable-next-line array-callback-return
+//   r.keys().map((item) => { svg[item.replace('./', '')] = r(item); });
+//   return svg;
+// };
 
-const bb = (mainButtons2, editorId, addClass, limiter, prop, no) => {
+const commandButtons = (mainButtons2, editorId, addClass, limiter, prop, no, suggestBtn) => {
   // eslint-disable-next-line one-var
   let div1 = '',
     div2 = '',
@@ -46,8 +46,9 @@ const bb = (mainButtons2, editorId, addClass, limiter, prop, no) => {
   mainButtons2.forEach((button, index) => {
     if (buttonIconNames.includes(button)) {
       const iconName = button.trim();
-      const svg = importAll(require.context('./images', false, /\.(svg)$/));
-      let isIcon = svg[`${iconName}.svg`];
+      // const svg = importAll(require.context('./images', false, /\.(svg)$/));
+      // let isIcon = svg[`${iconName}.svg`];
+      let isIcon = `<img class="snipdown-toolbar-buttons" src="https://adaorachi.github.io/snipdown_emojis/toolbar/${iconName}${suggestBtn}.svg" />`;
 
       const buttonId = `${iconName}-${editorId}${addClass}`;
       let className;
@@ -103,20 +104,23 @@ const displayCommandButtons = (editorId, prop, mainButtons, no, toolSuggester = 
   let content = '',
     addClass,
     limiter,
-    mainButtons2;
+    mainButtons2,
+    suggestBtn;
 
   if (toolSuggester) {
     addClass = '-suggester';
     limiter = '';
+    suggestBtn = 'White';
     mainButtons2 = mainButtons.split('|').slice(0, 6);
   } else {
     addClass = '';
     limiter = '<span class="limiter">|</span>';
+    suggestBtn = '';
     mainButtons2 = `smiley|split-screen|${mainButtons}|guide`.split('|');
   }
 
   // eslint-disable-next-line prefer-destructuring
-  content = bb(mainButtons2, editorId, addClass, limiter, prop, no);
+  content = commandButtons(mainButtons2, editorId, addClass, limiter, prop, no, suggestBtn);
   return content;
 };
 
@@ -161,8 +165,6 @@ const displayButtons = (properties, index, no) => {
   if (extendDefaults(properties).hideToolBar) {
     document.querySelector(`.snip-text-header-${editorId}`).classList.add('hide');
   }
-
-  // return 'docFrag';
 };
 
 const toggleToolbarOnResize = (editorId, options) => {

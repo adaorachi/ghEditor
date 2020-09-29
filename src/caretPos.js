@@ -4,7 +4,10 @@ const properties = [
   'overflowY',
 
   'border',
-  'padding',
+  'paddingLeft',
+  'paddingRight',
+  'paddingTop',
+  'paddingBottom',
 
   'fontStyle',
   'fontVariant',
@@ -37,9 +40,9 @@ export default function getCaretCoordinates(element, position1, position2, edito
   style.whiteSpace = 'pre-wrap';
   if (element.nodeName !== 'INPUT') style.wordWrap = 'break-word'; // only for textarea-s
 
-  // position off-screen
   properties.forEach((prop) => {
-    if (prop === 'padding') {
+    const p = 'padding';
+    if (prop === `${p}Left` || prop === `${p}Right` || prop === `${p}Top` || prop === `${p}Bottom`) {
       style[prop] = `calc(${computed[prop]} + 6px)`;
     } else {
       style[prop] = computed[prop];

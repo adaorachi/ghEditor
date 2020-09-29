@@ -1,5 +1,5 @@
-import snipDown from 'snipdown';
-// import snipDown from '../../src/index';
+// import snipDown from 'snipdown';
+import snipDown from '../../src/index';
 import '../../scss/style.scss';
 
 const opt = {
@@ -7,7 +7,7 @@ const opt = {
   // width: '30%',
   // minHeight: '100px',
   // maxHeight: '300px',
-  placeholder: 'A message ...',
+  placeholder: "What's on your mind ...",
   // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
   // disallowedTags: ['p'],
   allowedAttributes: ['style'],
@@ -21,8 +21,8 @@ const opt = {
     // icons: 'heading|bold|italic|',
     iconSize: '16',
   },
-  uploadImageConfig: {
-    storageBucket: 'snip-editor.appspot.com',
+  uploadImage: {
+    config: { storageBucket: 'snip-editor.appspot.com' },
   },
   toolTip: {
     enabled: true,
@@ -32,10 +32,10 @@ const opt = {
 const sniptext1 = snipDown();
 sniptext1.markDown(opt);
 // sniptext1.setValue('# This is me');
-// sniptext1.getValue('snip1');
+// console.log(sniptext1.getValue());
 
 const sniptext2 = snipDown();
-sniptext2.markDown({container: 'snip2'});
+sniptext2.markDown({ container: 'snip2' });
 
 // const sniptext3 = snipDown;
 // sniptext3.markDown({container: 'snip3'});

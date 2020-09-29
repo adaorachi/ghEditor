@@ -1,5 +1,3 @@
-import save from './images/save.svg';
-
 const setIntervalTimers = [];
 
 const extendDefaults = (properties) => {
@@ -9,7 +7,11 @@ const extendDefaults = (properties) => {
       enabled: true,
       delay: 10000,
     },
-    autoUseFontAwesome: true,
+    autoUseFontAwesome: false,
+    allowedAttributes: [],
+    allowedTags: [],
+    disallowedAttributes: [],
+    disallowedTags: [],
     blockStyles: {
       bold: '**',
       italic: '_',
@@ -20,12 +22,12 @@ const extendDefaults = (properties) => {
     },
     headerColor: '#586069',
     headerToolbar: {
-      icons: 'heading|bold|italic|blockquote|strikethrough|horizontal-rule|code|link|code-block|unordered-list|ordered-list|tasklist|mention|image|table|',
-      iconSize: '16',
+      icons: 'heading|bold|italic|blockquote|strikethrough|code|link|code-block|unordered-list|ordered-list|tasklist|',
     },
     hideToolBar: false,
     highlightCode: true,
     indentWithTab: false,
+    inlineAttributes: true,
     inlineEmoji: {
       enabled: true,
       emojiPrefix: ':',
@@ -36,10 +38,10 @@ const extendDefaults = (properties) => {
     minHeight: '100px',
     placeholder: 'Leave your comment',
     splitScreen: {
-      enabled: true,
+      enabled: false,
       shortcut: true,
     },
-    toolbarEmoji: true,
+    toolbarEmoji: false,
     toolTip: {
       enabled: true,
       toolTipText: {
@@ -63,8 +65,10 @@ const extendDefaults = (properties) => {
         guide: 'Help?',
       },
     },
-    uploadImage: true,
-    uploadImageConfig: {},
+    uploadImage: {
+      enabled: true,
+      config: {},
+    },
     width: '100%',
   };
 
@@ -76,7 +80,7 @@ const extendDefaults = (properties) => {
   };
 
   Object.keys(properties).forEach((property) => {
-    const parentProps = ['frameStyles', 'autoSave', 'headerToolbar', 'blockStyles', 'inlineEmoji', 'toolTip'];
+    const parentProps = ['frameStyles', 'autoSave', 'headerToolbar', 'blockStyles', 'inlineEmoji', 'toolTip', 'splitScreen', 'uploadImage'];
 
     // eslint-disable-next-line no-prototype-builtins
     if (defaults.hasOwnProperty(property)) {
@@ -124,12 +128,13 @@ const containerStyles = (properties) => {
       // button.style.width = options.headerToolbar.iconSize;
       button.style.width = '16';
     });
-    [`snip-writearea-tab-${editorId}`, `snip-preview-tab-${editorId}`].forEach(tab => {
-      document.getElementById(tab).style.color = options.headerColor;
-      document.getElementById(tab).style.fontFamily = defaultFrameStyles.fontFamily;
-      document.querySelector(`.filter-emoji-area-${editorId}`).style.fontFamily = defaultFrameStyles.fontFamily;
-    });
   }
+
+  [`snip-writearea-tab-${editorId}`, `snip-preview-tab-${editorId}`].forEach(tab => {
+    // document.getElementById(tab).style.color = options.headerColor;
+    document.getElementById(tab).style.fontFamily = defaultFrameStyles.fontFamily;
+    document.querySelector(`.filter-emoji-area-${editorId}`).style.fontFamily = defaultFrameStyles.fontFamily;
+  });
 };
 
 const expandHeight = (textArea, defaultHeight) => {
@@ -149,7 +154,7 @@ const getCurrentTime = () => {
 };
 
 const savedTimer = (editorId) => `
-                <span class="auto-save-icon" id="auto-save-icon-${editorId}">${save}</span>
+                <span class="auto-save-icon" id="auto-save-icon-${editorId}"><img src="https://adaorachi.github.io/snipdown_emojis/toolbar/save.svg" /></span>
                 <div id="auto-saved-${editorId}" class="auto-saved">
                   <span id="timer-pre-${editorId}">Autosaved:</span>
                   <span class="saved-timer" id="saved-timer-${editorId}">${getCurrentTime()}</span>
@@ -260,7 +265,7 @@ const useFontAwesome = (options) => {
 };
 
 const defaultOptionSnippet = (props, editorId, snipUploadImage) => {
-  if (extendDefaults(props).uploadImage) {
+  if (extendDefaults(props).uploadImage.enabled) {
     const uploadProgress = document.createElement('div');
     uploadProgress.id = `snip-upload-container-${editorId}`;
     uploadProgress.className = 'snip-upload-container';
@@ -276,6 +281,13 @@ const defaultOptionSnippet = (props, editorId, snipUploadImage) => {
     autoSaveArea.id = `snip-autosave-${editorId}`;
     autoSaveArea.className = 'snip-autosave';
     snipUploadImage.append(autoSaveArea);
+  }
+
+  const fileInputContainer = document.querySelector(`.snip-footer-${editorId}`);
+  if (extendDefaults(props).uploadImage.enabled || extendDefaults(props).autoSave.enabled) {
+    fileInputContainer.classList.add('enabled');
+  } else {
+    fileInputContainer.classList.remove('enabled');
   }
 
   useFontAwesome(props);

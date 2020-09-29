@@ -17,7 +17,6 @@ import {
   extendDefaults,
   setStorageInterval,
 } from './utils';
-import loader from './images/loader.svg';
 
 const Exec = (editorId, prop) => {
   const converter = new showdown.Converter();
@@ -92,15 +91,17 @@ const Exec = (editorId, prop) => {
   };
 
   const replaceSnippet = (text) => {
-    text = text.replace(/((<br \/>\n)*)({::\s+comment})([\s\S]*?)({:\/comment})((<br \/>\n)*)/g, ' ');
+    if (extendDefaults(prop).inlineAttributes) {
+      text = text.replace(/((<br \/>\n)*)({::\s+comment})([\s\S]*?)({:\/comment})((<br \/>\n)*)/g, ' ');
 
-    text = text.replace(/(<p>)(.*)(<br \/>\n)({:\s+)(.+?)(}=?)(<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7) => p1.replace(p1, `<p ${coupleClass(p5, '')}>`) + p2 + p7);
+      text = text.replace(/(<p>)(.*)(<br \/>\n)({:\s+)(.+?)(}=?)(<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7) => p1.replace(p1, `<p ${coupleClass(p5, '')}>`) + p2 + p7);
 
-    text = text.replace(/(<p>)({:\s+)(.+?)(}=?)(<br \/>)([\s\S]*?)({:\s+\/})(<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => p1.replace(p1, `<p ${coupleClass(p3, '')}>`) + p6 + p8);
+      text = text.replace(/(<p>)({:\s+)(.+?)(}=?)(<br \/>)([\s\S]*?)({:\s+\/})(<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => p1.replace(p1, `<p ${coupleClass(p3, '')}>`) + p6 + p8);
 
-    text = text.replace(/(<a|h1|h2|h3|h4|h5|h6|img)([^>]*)(>.*?)(<\/(h1|h2|h3|h4|h5|h6|a|img)>)(\n<p>|.*)({:\s+)(.+?)(})((.*?)<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p8, p2)}${p3}${p4}`);
+      text = text.replace(/(<a|h1|h2|h3|h4|h5|h6|img)([^>]*)(>.*?)(<\/(h1|h2|h3|h4|h5|h6|a|img)>)(\n<p>|.*)({:\s+)(.+?)(})((.*?)<\/p>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p8, p2)}${p3}${p4}`);
 
-    text = text.replace(/(<li|h1|h2|h3|h4|h5|h6|img|p)([^>]*)(>.*?)({:\s+)(.+?)(})(.*?)(<\/(li|h1|h2|h3|h4|h5|h6|img|p)>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p5, p2)} ${p3}${p7}${p8}`);
+      text = text.replace(/(<li|h1|h2|h3|h4|h5|h6|img|p)([^>]*)(>.*?)({:\s+)(.+?)(})(.*?)(<\/(li|h1|h2|h3|h4|h5|h6|img|p)>)/g, (_, p1, p2, p3, p4, p5, p6, p7, p8) => `${p1} ${coupleClass(p5, p2)} ${p3}${p7}${p8}`);
+    }
 
     return text;
   };
@@ -360,7 +361,7 @@ const Exec = (editorId, prop) => {
     }
   };
 
-  const placeAreasByCoord = (area, textarea, leftCoord = 0, isEmojiArea = true) => {
+  const placeAreasByCoord = (area, leftCoord = 0, isEmojiArea = true) => {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const coordinates = getCaretCoordinates(textarea, start, end, editorId);
@@ -633,27 +634,36 @@ const Exec = (editorId, prop) => {
   const displayToolbar = () => {
     const toolbarButtonArea = document.querySelector(`.toolbar-button-area-${editorId}`);
     const suggestorButtons = extendDefaults(prop).inlineToolbar;
+    const toolbarTooltip = document.createElement('span');
+    toolbarTooltip.className = `toolbar-tooltip toolbar-tooltip-${editorId}`;
+
     if (suggestorButtons !== '') {
       textarea.addEventListener('select', () => {
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const selected = textarea.value.slice(start, end).length;
         if (selected > 0) {
-          placeAreasByCoord(`.toolbar-button-area-${editorId}`, textarea, 40, false);
+          placeAreasByCoord(`.toolbar-button-area-${editorId}`, 40, false);
           toolbarButtonArea.classList.add('dropdown');
+          toolbarTooltip.classList.add('dropdown');
           // eslint-disable-next-line max-len
-          toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, '', true)[0];
+
+          toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, '', true)[1];
           execCommandOnButtons(`.buttons.markdown-button-${editorId}-suggester`);
+
+          const write = document.querySelector(`.snip-writearea-${editorId}`);
+          write.insertBefore(toolbarTooltip, toolbarButtonArea);
 
           const boundArea = toolbarButtonArea.getBoundingClientRect();
           const boundArea1 = textarea.getBoundingClientRect();
-          if ((boundArea.right > boundArea1.right) || (yy > 140)) {
+          if ((boundArea.right > boundArea1.right) || (yy > 200)) {
             toolbarButtonArea.style.left = `${yy - 200}px`;
-            toolbarButtonArea.classList.add('adjust-tip');
           } else {
             toolbarButtonArea.style.left = '0';
-            toolbarButtonArea.classList.remove('adjust-tip');
           }
+
+          toolbarTooltip.style.left = `${yy}px`;
+          toolbarTooltip.style.top = `${xx + 33}px`;
 
           // if (boundArea.bottom > boundArea1.bottom) {
           //   toolbarButtonArea.style.top = `${boundArea1.height - 30}px`;
@@ -664,6 +674,7 @@ const Exec = (editorId, prop) => {
       });
     } else {
       toolbarButtonArea.style.display = 'none';
+      toolbarTooltip.style.display = 'none';
     }
   };
 
@@ -676,14 +687,18 @@ const Exec = (editorId, prop) => {
       const allowedEmojiPrefix = ['-', ':', '/', '!', '#', '$', '&', '*', '=', '+', '^'];
       const { emojiPrefix } = extendDefaults(prop).inlineEmoji;
       if (e.data === emojiPrefix && allowedEmojiPrefix.includes(emojiPrefix)) {
-        placeAreasByCoord(`.filter-emoji-area-${editorId}`, textarea);
+        placeAreasByCoord(`.filter-emoji-area-${editorId}`);
       }
 
       autoUpdatePreviewInput(textarea);
 
       textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
       const toolbarButtonArea = document.querySelector(`.toolbar-button-area-${editorId}`);
+      const toolbarTooltip = document.querySelector(`.toolbar-tooltip-${editorId}`);
       toolbarButtonArea.classList.remove('dropdown');
+      if (toolbarTooltip !== null) {
+        toolbarTooltip.classList.remove('dropdown');
+      }
     });
 
     textarea.addEventListener('focus', () => {
@@ -694,12 +709,16 @@ const Exec = (editorId, prop) => {
       clearInterval(savedInterval);
     });
 
-    textarea.addEventListener('click', () => {
-      const toolbarButtonArea = `.toolbar-button-area-${editorId}`;
-      const filterEmojiArea = `.filter-emoji-area-${editorId}`;
-      [toolbarButtonArea, filterEmojiArea].forEach((area) => {
-        const a = document.querySelector(area);
-        a.classList.remove('dropdown');
+    document.addEventListener('click', (e) => {
+      // const toolbarButtonArea = `.toolbar-button-area-${editorId}`;
+      // const filterEmojiArea = `.filter-emoji-area-${editorId}`;
+      // const toolbarTooltip = `.toolbar-tooltip-${editorId}`;
+      const aa = [`toolbar-button-area-${editorId}`, `filter-emoji-area-${editorId}`, `toolbar-tooltip-${editorId}`];
+      aa.forEach((area) => {
+        const a = document.querySelector(`.${area}`);
+        if (!e.target.classList.contains(area) && a !== null) {
+          a.classList.remove('dropdown');
+        }
       });
 
       insertImage = textarea.selectionEnd;
@@ -757,7 +776,7 @@ const Exec = (editorId, prop) => {
           repl = `${lineBreak}![uploading ${fileUpload.name} ... ]()\n`;
           textVal = `${textVal.slice(0, insertImageSelected)}${repl}${textVal.slice(insertImage)}`;
           insertWriteInput(textVal);
-          progressStatus.innerHTML = `<span class="snip-loader" style="width:100px">${loader}</span> Uploading your files ..`;
+          progressStatus.innerHTML = '<span class="snip-loader"><img src="https://adaorachi.github.io/snipdown_emojis/toolbar/loader.svg" style="width:20px" /></span> Uploading your files ..';
         }
       }, (error) => {
         // eslint-disable-next-line no-console
@@ -780,7 +799,7 @@ const Exec = (editorId, prop) => {
       });
     }
 
-    if (extendDefaults(prop).uploadImage) {
+    if (extendDefaults(prop).uploadImage.enabled) {
       const fileInput = document.getElementById(`snip-uploadimage-${editorId}`);
       const fileInputContainer = document.querySelector(`.snip-footer-${editorId}`);
 

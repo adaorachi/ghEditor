@@ -3,7 +3,7 @@ import 'firebase/firebase-storage';
 import { extendDefaults } from './utils';
 
 const firbaseSetting = (prop) => {
-  const firebaseConfig = extendDefaults(prop).uploadImageConfig;
+  const firebaseConfig = extendDefaults(prop).uploadImage.config;
   return !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 };
 
