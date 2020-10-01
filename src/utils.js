@@ -4,7 +4,7 @@ const extendDefaults = (properties) => {
   const defaults = {
     container: 'sniptext',
     autoSave: {
-      enabled: true,
+      enabled: false,
       delay: 10000,
     },
     autoUseFontAwesome: false,
@@ -27,7 +27,7 @@ const extendDefaults = (properties) => {
     hideToolBar: false,
     highlightCode: true,
     indentWithTab: false,
-    inlineAttributes: true,
+    inlineAttributes: false,
     inlineEmoji: {
       enabled: true,
       emojiPrefix: ':',
@@ -66,7 +66,7 @@ const extendDefaults = (properties) => {
       },
     },
     uploadImage: {
-      enabled: true,
+      enabled: false,
       config: {},
     },
     width: '100%',

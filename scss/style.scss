@@ -79,6 +79,10 @@ $primary_color: #07abcc;
     width: 100%;
   }
 
+  .shadow img {
+    max-width: initial;
+  }
+
   iframe {
     max-height: 500px;
     min-height: 300px;

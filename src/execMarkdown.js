@@ -297,7 +297,6 @@ const Exec = (editorId, prop) => {
 
   const insertEmojiOnEnterKey = () => {
     textarea.addEventListener('keydown', (e) => {
-      indentTab(e, textarea);
       const [match, emoji] = utilValues();
       if (match) {
         emoji.then(data => {
@@ -625,6 +624,7 @@ const Exec = (editorId, prop) => {
 
   const toolbarShortcut = () => {
     textarea.addEventListener('keydown', (e) => {
+      indentTab(e, textarea);
       if (isSelected) {
         execCommandOnShortcut(e);
       }
@@ -758,11 +758,9 @@ const Exec = (editorId, prop) => {
     toolbarShortcut();
   };
 
-  const firebase = firebaseSetting(prop);
-
   const uploadImage = () => {
     function callUploaded(fileUpload) {
-      const storageRef = firebase.storage().ref().child(fileUpload.name);
+      const storageRef = firebaseSetting(prop).storage().ref().child(fileUpload.name);
       const uploadImage = storageRef.put(fileUpload);
       const progressStatus = document.getElementById(`upload-image-progress-${editorId}`);
       let repl;

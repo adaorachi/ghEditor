@@ -19,13 +19,13 @@ const opt = {
   // },
   headerToolbar: {
     // icons: 'heading|bold|italic|',
-    iconSize: '16',
-  },
-  uploadImage: {
-    config: { storageBucket: 'snip-editor.appspot.com' },
   },
   toolTip: {
     enabled: true,
+  },
+  uploadImage: {
+    enabled: true,
+    config: { storageBucket: 'snip-editor.appspot.com' },
   },
 };
 
@@ -35,7 +35,13 @@ sniptext1.markDown(opt);
 // console.log(sniptext1.getValue());
 
 const sniptext2 = snipDown();
-sniptext2.markDown({ container: 'snip2' });
+sniptext2.markDown({
+  container: 'snip2',
+  uploadImage: {
+    // enabled: false,
+    config: { storageBucket: 'snip-editor.appspot.com' },
+  },
+});
 
 // const sniptext3 = snipDown;
 // sniptext3.markDown({container: 'snip3'});

@@ -29,15 +29,17 @@ const snipDown = () => {
   const outputData = (editorId, args) => {
     try {
       const { form } = document.getElementById(editorId);
-      form.addEventListener('submit', (e) => {
-        syncValue();
-        const snipWrite = document.getElementById(`snip-write-${editorId}`);
-        snipWrite.value = '';
-        snipWrite.style.height = extendDefaults(args).minHeight;
-        window.localStorage.removeItem('snipText');
-        stopStorageInterval(editorId);
-        e.preventDefault();
-      });
+      if (form !== null) {
+        form.addEventListener('submit', (e) => {
+          syncValue();
+          const snipWrite = document.getElementById(`snip-write-${editorId}`);
+          snipWrite.value = '';
+          snipWrite.style.height = extendDefaults(args).minHeight;
+          window.localStorage.removeItem('snipText');
+          stopStorageInterval(editorId);
+          e.preventDefault();
+        });
+      }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);

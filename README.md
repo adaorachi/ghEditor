@@ -50,25 +50,29 @@ Add the SASS module into your module configuration.
   module.exports = {
     module: {
       rules: [
-        {
-          test: /\.s[ac]ss$/i,
-          use: [
-            // Creates `style` nodes from JS strings
-            'style-loader',
-            // Translates CSS into CommonJS
-            'css-loader',
-            // Compiles Sass to CSS
-            'sass-loader',
-          ],
-        },
-      ],
+      {
+        test: /\.s[ac]ss|.css$/i,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+          },
+        ],
+      },
+    ],
     },
   };
   ```
 
 After installing and defining the above dependencies, you can initialize SnipDown by the following ways;
 
-1. On the first textarea on a page
+1. Define a textarea element in an HTML page. A `class` of `snip-markdown` must be added to the textarea element. Add an `id` attribute of your choice (this is optional if there is only one textarea to apply).
+``` 
+<textarea class="snip-markdown" id="textarea-1"></textarea>
+```
+
+2. On the first textarea on a page
 
 - **Node**
 
@@ -89,7 +93,7 @@ After installing and defining the above dependencies, you can initialize SnipDow
         sniptext.markDown();
       </script>
 
-2. On a specific textarea or for mutiple textarea containers in a page.
+3. On a specific textarea or for mutiple textarea containers in a page.
     _Note that an object is needed to be passed in and set the 'container' value to the 'id' of the textarea container. This can be applied with the initialize methods stated above._
     For example:
 
@@ -138,8 +142,8 @@ You can get snipDown's default options with:
 
 The following are the set of valid options that can be used in SnipDown. When the SnipDown editor is loaded, it inherit the following computed styles from the default textarea - 'fontSize, color, fontFamily, margin, padding'. These styles can be overwritten and more styling properties can be added with the **frameStyles** option.
 
-- **autoUseFontAwesome:** (Boolean) This defaults to `false` which intelligently check whether Font Awesome (used for icons) has already been included in a web app, and if not, it installs it accordingly. If set to `false`, prevents installation. When set to `true`, Font Awesome icons can be added in the textarea input just like you would in an HTML markup, e.g - `<i class="fa fas-smiley"></i>`.
-- **autoSave:** (Object) This saves the textarea content that is being written and will load it back in the future or when the page is refreshed. The saved input or text is automatically cleared when the form it's contained in is submitted. SnipText automatically uses the textarea `id` as the unique string identifier for its saved content. Do ensure that each textarea has a unique `id`.
+- **autoUseFontAwesome:** (Boolean) This defaults to `false` which intelligently check whether [Font Awesome](https://fontawesome.com/) (used for icons) has already been included in a web app, and if not, it installs it accordingly. If set to `false`, prevents installation. When set to `true`, Font Awesome icons can be added in the textarea input just like you would in an HTML markup, e.g - `<i class="fa fas-smiley"></i>`.
+- **autoSave:** (Object) This saves the textarea content that is being written and will load it back in the future or when the page is refreshed. The saved input or text is automatically cleared when the form it's contained in is submitted. SnipDown automatically uses the textarea `id` as the unique string identifier for its saved content. Do ensure that each textarea has a unique `id`.
   - **enabled:** (Boolean) If set to `true`, autosaves the text and also provides a save button which when clicked saves content instantly. It also shows the saved timestamp. Defaults to `false`.
   - **delay:** (Number) Delay between saves, in milliseconds. Defaults to 10000 (10s).
 - **allowedAttributes:** (Array) This receives a list of HTML attribute that should be allowed to be parsed into HTML markup for sanitizing. Here is the default array - `['class', 'id', 'href', 'align', 'alt', 'target', 'src']`
@@ -262,8 +266,6 @@ Below are the custom-designed built-in toolbar icons (only some of which are ena
 
 
 Shortcuts are automatically converted between platforms. If you define a shortcut as "Cmd-B", on PC that shortcut will be changed to "Ctrl-B". Conversely, a shortcut defined as "Ctrl-B" will become "Cmd-B" for Mac users.
-
-
 
 
 
