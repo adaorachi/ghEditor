@@ -10,7 +10,9 @@ See [**Live Demo**](https://adaorachi.github.io/snipdown-demo/)
 
 ### Why use SnipDown Editor?
 
-SnipDown is one of the first markdown editors to feature an all-in-one built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow, split-screen-preview and file upload and storage WYSIWYG-style. It is also designed to mimic Github markdown editor features and implements most Github flavoured markdown syntax and much more. In other words, SnipDown uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github-flavored markdown editor embedded in your web application just by a simple installation, plus SnipDown can be rendered natively on more than one textarea container in a web page. Previews are rendered by Marked using GFM.
+SnipDown is one of the first markdown editors to implement an all-in-one built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow, split-screen-preview and file upload and storage WYSIWYG-style features. It is also designed to mimic [github.com](https://github.com) markdown editor features and implements most Github flavoured markdown syntax and much more.
+In other words, SnipDown uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github-flavored markdown editor embedded in your web application just by a simple installation; plus SnipDown can be rendered natively on more than one textarea container in a web page.
+SnipDown Editor has been written using vanilla JavaScript, no additional frameworks required.
 
 ### Table of Contents
 
@@ -38,13 +40,18 @@ SnipDown is one of the first markdown editors to feature an all-in-one built-in 
 ### Quick Start
 In order to import the stylesheet for this module and use the module from within JavaScript, you need to install and add the [style-loader](https://webpack.js.org/loaders/style-loader) and [css-loader](https://webpack.js.org/loaders/css-loader) to your module configuration.
 
-`npm install --save-dev style-loader css-loader`
+`npm install style-loader css-loader --save-dev`
 
-Also you need to install and add the sass-loader.
+Also you need to install and add the sass-loader and sass.
 
-`npm install sass-loader sass webpack --save-dev`
+`npm install sass-loader sass --save-dev`
 
-Add the SASS module into your module configuration.
+
+And then, webpack is also needed to configure the SASS settings.
+
+`npm install webpack --save-dev`
+
+Add the SASS module into your module configuration, which is usually in the `webpack.config.js` file.
 
   ```
   module.exports = {
@@ -72,7 +79,13 @@ After installing and defining the above dependencies, you can initialize SnipDow
 <textarea class="snip-markdown" id="textarea-1"></textarea>
 ```
 
-2. On the first textarea on a page
+2. Import the scss file that is bundled with the snipdown module into your index.js file. This file add all required and pre-defined styles needed for any Snipdown editor. Depending on where you index.js file is located, you have to specify the path of the scss module file. In this case we assume that the index.js file is inside the src folder.
+
+```
+import '../node_modules/snipdown/scss/style.scss';
+```
+
+3. To initialize snipdown for the first textarea on a page
 
 - **Node**
 
@@ -93,7 +106,7 @@ After installing and defining the above dependencies, you can initialize SnipDow
         sniptext.markDown();
       </script>
 
-3. On a specific textarea or for mutiple textarea containers in a page.
+4. To initialize for a specific textarea or for mutiple textarea containers in a page.
     _Note that an object is needed to be passed in and set the 'container' value to the 'id' of the textarea container. This can be applied with the initialize methods stated above._
     For example:
 
