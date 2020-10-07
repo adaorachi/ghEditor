@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 const setIntervalTimers = [];
 
 const extendDefaults = (properties) => {
@@ -22,23 +23,23 @@ const extendDefaults = (properties) => {
     },
     headerColor: '#586069',
     headerToolbar: {
-      icons: 'heading|bold|italic|blockquote|strikethrough|code|link|code-block|unordered-list|ordered-list|tasklist|',
+      icons: 'heading|bold|italic|blockquote|strikethrough|code|link|code-block|unordered-list|ordered-list|tasklist',
     },
     hideToolBar: false,
     highlightCode: true,
     indentWithTab: false,
-    inlineAttributes: false,
+    inlineAttributes: true,
     inlineEmoji: {
       enabled: true,
       emojiPrefix: ':',
     },
     inlineToolbar: 'heading|bold|italic|code|link|unordered-list',
     inlineShortcut: false,
-    maxHeight: 'auto',
+    maxHeight: 'max-content',
     minHeight: '100px',
     placeholder: 'Leave your comment',
     splitScreen: {
-      enabled: false,
+      enabled: true,
       shortcut: true,
     },
     toolbarEmoji: false,
@@ -297,18 +298,10 @@ const createDOMElement = (tag, className, ...args) => {
   const a = document.createElement(tag);
   a.className = className;
   if (args.length > 0) {
-    // eslint-disable-next-line prefer-destructuring
     a.id = args[0];
-    // eslint-disable-next-line prefer-destructuring
     a.placeholder = args[1];
-    // eslint-disable-next-line prefer-destructuring
     a.style.height = args[2];
-    // eslint-disable-next-line prefer-destructuring
     a.style.maxHeight = args[3];
-  }
-
-  if (className.includes('snip-text-body')) {
-    a.setAttribute('aria-toggle', 'false');
   }
   return a;
 };

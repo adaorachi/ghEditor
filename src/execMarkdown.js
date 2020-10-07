@@ -646,9 +646,9 @@ const Exec = (editorId, prop) => {
           placeAreasByCoord(`.toolbar-button-area-${editorId}`, 40, false);
           toolbarButtonArea.classList.add('dropdown');
           toolbarTooltip.classList.add('dropdown');
-          // eslint-disable-next-line max-len
 
-          toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, '', true)[1];
+          // eslint-disable-next-line max-len
+          toolbarButtonArea.innerHTML = displayCommandButtons(editorId, prop, suggestorButtons, true)[1];
           execCommandOnButtons(`.buttons.markdown-button-${editorId}-suggester`);
 
           const write = document.querySelector(`.snip-writearea-${editorId}`);

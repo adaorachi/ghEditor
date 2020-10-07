@@ -2,6 +2,8 @@ import {
   expandHeight, extendDefaults,
 } from './utils';
 
+import { toggleToolbarOnResize } from './toolbar';
+
 const ToggleTab = (() => {
   const hideAndDisplayNav = (ele, arrayList) => {
     const array = document.querySelectorAll(arrayList);
@@ -30,6 +32,15 @@ const ToggleTab = (() => {
     });
   };
 
+  const nothingToPreviewDisplay = (editorId) => {
+    const snipTextArea = document.getElementById(`snip-write-${editorId}`);
+    const snipPreviewArea = document.getElementById(`snip-preview-${editorId}`);
+    snipPreviewArea.style.height = 'auto';
+    if (snipTextArea.value === '') {
+      snipPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
+    }
+  };
+
   const toggle = (nav, editorId) => {
     const navTab = document.getElementById(nav);
     const parentId = `snip-text-mark-down-${editorId}`;
@@ -52,13 +63,7 @@ const ToggleTab = (() => {
           removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
           displayWordCount(editorId);
         }
-
-        const snipTextArea = document.getElementById(`snip-write-${editorId}`);
-        const snipPreviewArea = document.getElementById(`snip-preview-${editorId}`);
-        snipPreviewArea.style.height = 'auto';
-        if (snipTextArea.value === '') {
-          snipPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
-        }
+        nothingToPreviewDisplay(editorId);
       }
     });
   };
@@ -73,18 +78,14 @@ const ToggleTab = (() => {
       previewBut.style.display = 'initial';
 
       previewBut.addEventListener('click', () => {
-        const header = document.querySelector(`.snip-text-body-${editorId}`);
-        const isToggled = header.getAttribute('aria-toggle');
-        if (isToggled === 'false') {
-          header.setAttribute('aria-toggle', 'true');
-        } else {
-          header.setAttribute('aria-toggle', 'false');
-        }
+        displayWordCount(editorId);
+        nothingToPreviewDisplay(editorId);
+
         const snipContainers = [
           `snip-writearea-${editorId}`,
           `snip-preview-${editorId}`,
           `snip-text-body-${editorId}`,
-          `snip-text-tabnav-tabs-${editorId}`,
+          `snip-text-tabnav-buttons-${editorId}`,
           `${editorId}--mirror-div`,
           `snip-text-header-content-${editorId}`,
           `snip-upload-container-${editorId}`,
@@ -100,9 +101,6 @@ const ToggleTab = (() => {
 
         document.getElementById(`snip-word-count-${editorId}`).classList.toggle('remove');
 
-        // const buttonContainer = document.querySelector(`.snip-text-header-content-${editorId}`);
-        // buttonContainer.style.width = '600px';
-
         snipContainers2.forEach(container => {
           const snipWriteHeight = document.getElementById(snipContainers2[0]).style.height;
           const containerArea = document.getElementById(container);
@@ -111,6 +109,7 @@ const ToggleTab = (() => {
           const snipPreview = document.querySelector(`#snip-preview-${editorId}.preview`);
           if (snipPreview !== null) {
             const snipPreviewStyle = {
+              height: snipWriteHeight,
               minHeight: extendDefaults(args).minHeight,
               maxHeight: extendDefaults(args).maxHeight,
               padding: '6px 20px',
@@ -118,6 +117,7 @@ const ToggleTab = (() => {
             Object.assign(snipPreview.style, snipPreviewStyle);
           }
         });
+        toggleToolbarOnResize(editorId);
       });
 
       const fixedDiv = document.getElementById(snipContainers2[0]);

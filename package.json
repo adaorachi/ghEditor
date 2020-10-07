@@ -1,6 +1,6 @@
 {
   "name": "snipdown",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "A markdown text editor plugin built with JavaScript",
   "main": "src/index.js",
   "scripts": {

@@ -3,6 +3,7 @@ $primary_color: #07abcc;
 .snip-text-body {
   border-radius: 0 0 0.25rem 0.25rem;
   border: 1px solid #ced4da;
+  border-top: none;
   padding: 6px;
   position: relative;
 
@@ -244,7 +245,7 @@ $primary_color: #07abcc;
   visibility: hidden;
 
   &.preview {
-    width: 47%;
+    width: 50%;
   }
 }
 
@@ -265,8 +266,6 @@ $primary_color: #07abcc;
   }
 
   .snip-upload-container {
-    // width: 80%;
-    // border-right: 1px dashed #aaa;
     flex: 1;
     position: relative;
   }
@@ -307,7 +306,6 @@ $primary_color: #07abcc;
   }
 
   .snip-autosave {
-    // width: 16%;
     display: flex;
     margin-left: 10px;
     position: relative;
@@ -354,14 +352,10 @@ $primary_color: #07abcc;
 .snip-text-tabnav-tabs {
   padding: 8px 0 0;
   margin: 0 10px;
-
-  &.preview {
-    display: none;
-  }
+  margin-bottom: -1px;
 
   .btn-nav {
-    border: 1px solid #f6f8fa;
-    border-bottom-color: #f6f8fa;
+    border: 1px solid transparent;
     outline: none;
     background-color: transparent;
     padding: 8px 12px;
@@ -382,17 +376,25 @@ $primary_color: #07abcc;
 .snip-text-tabnav-buttons {
   display: flex;
   height: 100%;
+
+  &.preview {
+    display: none;
+  }
 }
 
 .snip-text-header {
   border: 1px solid #d1d5da;
-  border-bottom: none;
+  // border-bottom: none;
   background-color: #f6f8fa;
   display: flex;
   justify-content: space-between;
   border-radius: 0.25rem 0.25rem 0 0;
   font-family: inherit;
   position: relative;
+
+  &.toggle {
+    flex-direction: column;
+  }
 
   &::before,
   &::after {
@@ -431,16 +433,21 @@ $primary_color: #07abcc;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 100%;
-  // min-width: 250px;
+
+  &.toggle {
+    background-color: #fff;
+    display: flex;
+    justify-content: flex-start;
+  }
 
   &.preview {
     width: 100%;
     justify-content: space-between;
+    background-color: initial;
 
     .snip-text-button-container {
       justify-content: flex-start;
-      width: auto;
+      width: 48%;
     }
   }
 }
@@ -457,10 +464,14 @@ $primary_color: #07abcc;
     &:hover {
       border-radius: 3px;
       background-color: #e6e6e6;
-      // transform: scale(1.1);
       svg {
         fill: $primary_color !important;
       }
+    }
+
+    &.toggle-btn.toggle,
+    &.toggle-btn.toggle + .limiter {
+      display: none;
     }
 
     svg {
@@ -474,11 +485,7 @@ $primary_color: #07abcc;
   }
 
   .toggle-toolbar-button {
-    display: none;
-
-    &:hover svg {
-      fill: $primary_color !important;
-    }
+    margin-right: 10rem;
 
     .snipdown-more {
       width: 10px !important;
@@ -488,13 +495,12 @@ $primary_color: #07abcc;
 
 .snip-text-button-container {
   position: relative;
-  // display: flex;
-  // justify-content: flex-end;
-  // width: 100%;
+  width: 100%;
 
   .button-container-untoggle {
     display: flex;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .tooltip-button.active::after {
@@ -522,22 +528,15 @@ $primary_color: #07abcc;
   .limiter {
     display: inline-block;
     width: 0;
-    border-left: 1px solid #d9d9d9;
+    border-left: 1px solid #ebe8e8;
     border-right: 1px solid #fff;
     color: transparent;
-    margin: 0 6px;
-  }
+    margin: 0 3px;
+  }  
 
   .button-container-toggle {
-    position: absolute;
-    top: 2.2rem;
-    right: 10px;
-    background: #f6f8fa;
-    z-index: 1000;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    box-shadow: 2px 2px 3px #ccc7c7;
     width: 0;
+    height: 0;
     padding: 0;
     opacity: 0;
 
@@ -547,9 +546,10 @@ $primary_color: #07abcc;
 
     &.open {
       width: max-content;
-      padding: 0.6rem;
+      height: max-content;
       opacity: 1;
       transition: opacity 300ms linear;
+      padding: 0.6rem 0;
 
       & > * {
         display: inline-block;
@@ -585,12 +585,6 @@ $primary_color: #07abcc;
 .snip-word-count.remove {
   display: none;
 }
-
-// .snip-emoji-button,
-// .snip-preview-button {
-//   position: relative;
-//   display: none;
-// }
 
 .snip-emoji-area {
   width: 220px;
@@ -693,6 +687,11 @@ $primary_color: #07abcc;
   }
 }
 
+.display-none,
+.display {
+  display: none !important;
+}
+
 .snip-write,
 .snip-preview.preview,
 .snip-mirror-div {
@@ -757,12 +756,6 @@ $primary_color: #07abcc;
   }
 }
 
-@media only screen and (max-width: 992px) {
-  .toggle-toolbar-button {
-    display: initial !important;
-  }
-}
-
 @media only screen and (max-width: 767px) {
   .snip-text-tabnav-buttons .btn-nav {
     width: 100%;
@@ -772,31 +765,9 @@ $primary_color: #07abcc;
     text-align: center;
     width: 100%;
   }
-
-  // .snip-text-button-container .toggle-toolbar-button svg {
-  //   fill: $primary_color;
-  // }
 }
 
 @media only screen and (max-width: 479px) {
-  .snip-text-header {
-    flex-direction: column;
-  }
-
-  .snip-text-header-content {
-    justify-content: center;
-  }
-
-  .button-container-toggle {
-    flex-wrap: wrap;
-    width: 100% !important;
-  }
-
-  .button-container-untoggle,
-  .snip-text-button-container {
-    justify-content: center !important;
-  }
-
   .snip-footer {
     .snip-upload-container,
     .snip-upload-container .snip-uploadimage-input {

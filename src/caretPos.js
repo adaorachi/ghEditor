@@ -36,9 +36,8 @@ export default function getCaretCoordinates(element, position1, position2, edito
   style = mirrorDiv.style;
   computed = getComputedStyle(element);
 
-  // default textarea styles
   style.whiteSpace = 'pre-wrap';
-  if (element.nodeName !== 'INPUT') style.wordWrap = 'break-word'; // only for textarea-s
+  if (element.nodeName !== 'INPUT') style.wordWrap = 'break-word';
 
   properties.forEach((prop) => {
     const p = 'padding';

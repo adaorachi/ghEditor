@@ -1,6 +1,5 @@
 import ToggleTab from './toggleTab';
 import Exec from './execMarkdown';
-import { toggleEmojiArea } from './emojis';
 import {
   extendDefaults,
   containerStyles,
@@ -117,8 +116,9 @@ const snipDown = () => {
 
       const aa = () => {
         const textarea = document.getElementById(`snip-write-${editorId}`);
+        document.querySelector(`.snip-text-button-container-${editorId}`).classList.remove('remove');
 
-        toggleToolbarOnResize(editorId, options);
+        toggleToolbarOnResize(editorId);
         const textAreaHeight = textarea.style.height;
 
         defaultOptionSnippet(options, editorId, snipUploadImage);
@@ -144,17 +144,7 @@ const snipDown = () => {
       });
 
       window.addEventListener('resize', () => {
-        toggleToolbarOnResize(editorId, options);
-
-        toggleToolbar(editorId);
-
-        const exec = Exec(editorId, options);
-        exec.execCommandOnButtons(`.buttons.markdown-button-${editorId}`);
-        toggleEmojiArea(editorId);
-
-        containerStyles(options, editorId);
-        ToggleTab.toggle(`snip-text-tabnav-tabs-${editorId}`, editorId);
-        ToggleTab.togglePreview(editorId, options);
+        toggleToolbarOnResize(editorId);
       });
 
       appendToDOM(snipTextContainer, snipMarkDown);
@@ -166,7 +156,7 @@ const snipDown = () => {
 
       appendToDOM(snipMarkDown, ...[buttonContainer, snipTextBody]);
 
-      displayButtons(options, 1, '');
+      displayButtons(options);
 
       const appended2 = [snipTextAreaContainer, snipPreviewArea, mirrorDiv];
       appendToDOM(snipTextBody, ...appended2);
