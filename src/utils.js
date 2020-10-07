@@ -39,7 +39,7 @@ const extendDefaults = (properties) => {
     minHeight: '100px',
     placeholder: 'Leave your comment',
     splitScreen: {
-      enabled: true,
+      enabled: false,
       shortcut: true,
     },
     toolbarEmoji: false,

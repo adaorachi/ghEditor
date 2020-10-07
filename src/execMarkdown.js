@@ -741,12 +741,14 @@ const Exec = (editorId, prop) => {
       insertEmojijiOnKeyEvent();
     }
 
+    const smiley = document.getElementById(`smiley-${editorId}`);
     if (extendDefaults(prop).toolbarEmoji) {
       insertEmojiOnEmojiAreaClick();
       toggleEmojiArea(editorId);
-      document.getElementById(`smiley-${editorId}`).style.display = 'initial';
+      smiley.style.display = 'initial';
     } else {
-      document.getElementById(`smiley-${editorId}`).style.display = 'none';
+      smiley.style.display = 'none';
+      smiley.nextSibling.style.display = 'none';
     }
 
     insertAllTextOnInput();

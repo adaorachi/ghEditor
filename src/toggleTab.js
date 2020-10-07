@@ -130,6 +130,7 @@ const ToggleTab = (() => {
       });
     } else {
       previewBut.style.display = 'none';
+      previewBut.nextSibling.style.display = 'none';
     }
   };
 
