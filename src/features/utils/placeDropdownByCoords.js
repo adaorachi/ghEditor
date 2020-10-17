@@ -31,7 +31,7 @@ const placeAreasByCoord = (area, textarea, editorId, cont1 = '', cont2 = '', isE
       inputArea.style.left = `${yy - 150}px`;
     }
   } else {
-    const write = document.querySelector(`.snip-writearea-${editorId}`);
+    const write = document.querySelector(`.gheditor-writearea-${editorId}`);
     write.insertBefore(cont2, cont1);
     if ((boundArea.right > boundArea1.right) || (yy > 200)) {
       inputArea.style.left = `${yy - 200}px`;

@@ -1,5 +1,5 @@
 const defaultOptions = () => ({
-  container: 'sniptext',
+  container: 'ghEditortext',
   autoSave: {
     enabled: true,
     delay: 10000,

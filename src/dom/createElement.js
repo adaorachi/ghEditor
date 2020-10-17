@@ -1,32 +1,31 @@
-import extendDefaults from '../settings/customOptionSetting';
 import { createDOMElement } from '../helpers/helpers';
 
 const createElement = (editorId, options) => {
-  const snipMarkDown = createDOMElement('div', `snip-text-mark-down snip-text-mark-down-${editorId}`, `snip-text-mark-down-${editorId}`);
+  const gheditorMarkDown = createDOMElement('div', `gheditor-text-mark-down gheditor-text-mark-down-${editorId}`, `gheditor-text-mark-down-${editorId}`);
 
-  const snipTextContainer = createDOMElement('div', `snip-text-container snip-text-container-${editorId}`);
+  const gheditorTextContainer = createDOMElement('div', `gheditor-text-container gheditor-text-container-${editorId}`);
 
-  const snipTextBody = createDOMElement('div', `snip-text-body snip-text-body-${editorId}`, `snip-text-body-${editorId}`);
+  const gheditorTextBody = createDOMElement('div', `gheditor-text-body gheditor-text-body-${editorId}`, `gheditor-text-body-${editorId}`);
 
-  const snipTextAreaContainer = createDOMElement('div', `snip-writearea snip-writearea-${editorId} snip-tab-content snip-tab-content-${editorId} tab-content active`, `snip-writearea-${editorId}`);
+  const gheditorTextAreaContainer = createDOMElement('div', `gheditor-writearea gheditor-writearea-${editorId} gheditor-tab-content gheditor-tab-content-${editorId} tab-content active`, `gheditor-writearea-${editorId}`);
 
-  const snipTextAreaParams = [`snip-write-${editorId}`, extendDefaults(options).placeholder, options.minHeight, options.maxHeight];
-  const snipTextArea = createDOMElement('textarea', `snip-write snip-write-${editorId}`, ...snipTextAreaParams);
+  const gheditorTextAreaParams = [`gheditor-write-${editorId}`, options.placeholder, options.minHeight, options.maxHeight];
+  const gheditorTextArea = createDOMElement('textarea', `gheditor-write gheditor-write-${editorId}`, ...gheditorTextAreaParams);
 
-  const snipPreviewArea = createDOMElement('div', `snip-preview snip-preview-${editorId} snip-tab-content-${editorId} snip-tab-content tab-content`, `snip-preview-${editorId}`);
+  const gheditorPreviewArea = createDOMElement('div', `gheditor-preview gheditor-preview-${editorId} gheditor-tab-content-${editorId} gheditor-tab-content tab-content`, `gheditor-preview-${editorId}`);
 
   const displayEmoji = createDOMElement('div', `filter-emoji-area filter-emoji-area-${editorId}`);
 
   const displayToolbar = createDOMElement('div', `toolbar-button-area toolbar-button-area-${editorId}`);
 
-  const snipUploadImage = createDOMElement('div', `snip-footer snip-footer-${editorId}`);
+  const gheditorUploadImage = createDOMElement('div', `gheditor-footer gheditor-footer-${editorId}`);
 
-  const mirrorDiv = createDOMElement('div', `${editorId}--mirror-div snip-mirror-div`, `${editorId}--mirror-div`);
+  const mirrorDiv = createDOMElement('div', `${editorId}--mirror-div gheditor-mirror-div`, `${editorId}--mirror-div`);
 
-  const buttonContainer = createDOMElement('div', `snip-text-header snip-text-header-${editorId}`);
+  const buttonContainer = createDOMElement('div', `gheditor-text-header gheditor-text-header-${editorId}`);
 
   // eslint-disable-next-line max-len
-  return [snipMarkDown, snipTextContainer, snipTextBody, snipTextAreaContainer, snipTextArea, snipPreviewArea, displayEmoji, displayToolbar, snipUploadImage, mirrorDiv, buttonContainer];
+  return [gheditorMarkDown, gheditorTextContainer, gheditorTextBody, gheditorTextAreaContainer, gheditorTextArea, gheditorPreviewArea, displayEmoji, displayToolbar, gheditorUploadImage, mirrorDiv, buttonContainer];
 };
 
 export default createElement;

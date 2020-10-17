@@ -35,13 +35,13 @@ const hideAndDisplayNav = (ele, arrayList, active) => {
 };
 
 const displayWordCount = (editorId) => {
-  const text = document.getElementById(`snip-preview-${editorId}`).innerText.trim();
+  const text = document.getElementById(`gheditor-preview-${editorId}`).innerText.trim();
   const charactersLength = text.length;
   const wordSplit = text.replace(/\r?\n/g, ' ').split(' ');
   const wordLength = text === '' ? 0 : wordSplit.length;
 
-  const snipWord = document.querySelector(`.snip-word-count-${editorId}`);
-  snipWord.innerHTML = `${charactersLength} characters ${wordLength} words`;
+  const gheditorWord = document.querySelector(`.gheditor-word-count-${editorId}`);
+  gheditorWord.innerHTML = `${charactersLength} characters ${wordLength} words`;
 };
 
 const removeDropdowns = (args, className) => {
@@ -56,11 +56,11 @@ const mutateContent = (content1, content2) => {
 };
 
 const nothingToPreviewDisplay = (editorId) => {
-  const snipTextArea = document.getElementById(`snip-write-${editorId}`);
-  const snipPreviewArea = document.getElementById(`snip-preview-${editorId}`);
-  snipPreviewArea.style.height = 'auto';
-  if (snipTextArea.value === '') {
-    snipPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
+  const gheditorTextArea = document.getElementById(`gheditor-write-${editorId}`);
+  const gheditorPreviewArea = document.getElementById(`gheditor-preview-${editorId}`);
+  gheditorPreviewArea.style.height = 'auto';
+  if (gheditorTextArea.value === '') {
+    gheditorPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
   }
 };
 

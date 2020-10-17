@@ -16,11 +16,11 @@ const containerStyles = (options, editorId) => {
 
   const defaultFrameStyles = { ...computedFrameStyles, ...options.frameStyles };
 
-  [`.snip-write-${options.container}`, `.snip-preview-${options.container}`].forEach(ele => {
+  [`.gheditor-write-${options.container}`, `.gheditor-preview-${options.container}`].forEach(ele => {
     Object.assign(document.querySelector(ele).style, defaultFrameStyles);
   });
 
-  [`snip-writearea-tab-${editorId}`, `snip-preview-tab-${editorId}`].forEach(tab => {
+  [`gheditor-writearea-tab-${editorId}`, `gheditor-preview-tab-${editorId}`].forEach(tab => {
     document.getElementById(tab).style.fontFamily = defaultFrameStyles.fontFamily;
   });
 

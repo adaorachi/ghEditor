@@ -5,12 +5,12 @@ const textareaVal = (args) => {
   let options;
   if (args[0] && typeof args[0] === 'object') {
     options = extendDefaults(args[0]);
-    defaultTextarea = document.querySelector(`textarea.snip-markdown#${options.container}`);
+    defaultTextarea = document.querySelector(`textarea.ghEditor#${options.container}`);
   } else {
     options = extendDefaults({});
 
     // eslint-disable-next-line prefer-destructuring
-    defaultTextarea = document.querySelectorAll('textarea.snip-markdown')[0];
+    defaultTextarea = document.querySelectorAll('textarea.ghEditor')[0];
   }
   return [defaultTextarea, options];
 };

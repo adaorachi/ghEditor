@@ -36,7 +36,7 @@ const coupleClass = (attr, prevAttr) => {
   return `${attribute}${otherAtt}${concatPrevAttr}`;
 };
 
-const replaceSnippet = (text, prop) => {
+const replacegheditorpet = (text, prop) => {
   if (extendDefaults(prop).inlineAttributes) {
     text = text.replace(/((<br \/>\n)*)({::\s+comment})([\s\S]*?)({:\/comment})((<br \/>\n)*)/g, ' ');
 
@@ -60,6 +60,6 @@ const insertQuote = (text) => {
 
 export {
   coupleClass,
-  replaceSnippet,
+  replacegheditorpet,
   insertQuote,
 };

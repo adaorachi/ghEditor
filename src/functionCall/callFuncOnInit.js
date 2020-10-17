@@ -6,8 +6,8 @@ import setAutoSave from '../features/autoSave';
 import outputMarkDown from '../features/outputMarkdown';
 
 const callFuncOnInit = (editorId, options, initialSetVal) => {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
-  document.querySelector(`.snip-text-button-container-${editorId}`).classList.remove('remove');
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
+  document.querySelector(`.gheditor-text-button-container-${editorId}`).classList.remove('remove');
 
   const textAreaHeight = textarea.style.height;
 
@@ -18,7 +18,7 @@ const callFuncOnInit = (editorId, options, initialSetVal) => {
   outputMarkDown(editorId, options);
 
   containerStyles(options, editorId);
-  togglePreviewOnClick(`snip-text-tabnav-tabs-${editorId}`, editorId);
+  togglePreviewOnClick(`gheditor-text-tabnav-tabs-${editorId}`, editorId);
   splitScreen(editorId, options);
 
   setAutoSave(editorId, options, initialSetVal);

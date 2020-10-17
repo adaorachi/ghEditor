@@ -11,9 +11,9 @@ const syncValueFunc = (editorId) => {
 const setValueFunc = (data, editorId) => {
   const allText = {};
   allText[editorId] = data;
-  localStorage.setItem('snipText', JSON.stringify(allText));
-  const snipWrite = document.getElementById(`snip-write-${editorId}`);
-  snipWrite.value = data;
+  localStorage.setItem('gheditorText', JSON.stringify(allText));
+  const gheditorWrite = document.getElementById(`gheditor-write-${editorId}`);
+  gheditorWrite.value = data;
 };
 
 const getOptionFunc = (key, options) => {
@@ -31,10 +31,10 @@ const outputDataFunc = (editorId, args) => {
     if (form !== null) {
       form.addEventListener('submit', (e) => {
         syncValueFunc();
-        const snipWrite = document.getElementById(`snip-write-${editorId}`);
-        snipWrite.value = '';
-        snipWrite.style.height = extendDefaults(args).minHeight;
-        window.localStorage.removeItem('snipText');
+        const gheditorWrite = document.getElementById(`gheditor-write-${editorId}`);
+        gheditorWrite.value = '';
+        gheditorWrite.style.height = extendDefaults(args).minHeight;
+        window.localStorage.removeItem('gheditorText');
         stopStorageInterval(editorId);
         e.preventDefault();
       });

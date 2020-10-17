@@ -1,7 +1,7 @@
 const getEmojiIcons = (editorId, emoji) => {
   let emojiIcons = '';
   const allEmojis = Object.values(emoji)[0];
-  emojiIcons += `<div class="snip-emoji-area-content snip-emoji-area-content-${editorId}">`;
+  emojiIcons += `<div class="gheditor-emoji-area-content gheditor-emoji-area-content-${editorId}">`;
   Object.entries(allEmojis).forEach((icon) => {
     const key = icon[0];
     const value = icon[1];
@@ -41,7 +41,7 @@ const filterEmojiIcons = (ele, editorId, emoji) => {
 
 const emojis = async (editorId, ele) => {
   try {
-    const fetchEmoji = await fetch('https://adaorachi.github.io/snipdown_emojis/emoji.json');
+    const fetchEmoji = await fetch('https://adaorachi.github.io/gheditor_emojis/emoji.json');
     const emoji = await fetchEmoji.json();
     const getEmojiIcon = getEmojiIcons(editorId, emoji);
     const filterEmojiIcon = filterEmojiIcons(ele, editorId, emoji);
@@ -57,10 +57,10 @@ const emojis = async (editorId, ele) => {
 };
 
 const toggleEmojiArea = (editorId) => {
-  const emojiBut = document.querySelector(`.snip-emoji-button-${editorId}`);
+  const emojiBut = document.querySelector(`.gheditor-emoji-button-${editorId}`);
 
   const emojiArea = document.createElement('div');
-  emojiArea.className = `snip-emoji-area snip-emoji-area-${editorId}`;
+  emojiArea.className = `gheditor-emoji-area gheditor-emoji-area-${editorId}`;
   emojiBut.append(emojiArea);
 
   const emoji = emojis(editorId, '');

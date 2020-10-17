@@ -3,16 +3,16 @@ import { getCurrentTime } from '../../helpers/helpers';
 const setEditorTextToStore = (editorId, textarea) => {
   let allText;
 
-  if (localStorage.getItem('snipText') === null) {
+  if (localStorage.getItem('gheditorText') === null) {
     allText = {};
     allText[editorId] = textarea.value;
-    localStorage.setItem('snipText', JSON.stringify(allText));
+    localStorage.setItem('gheditorText', JSON.stringify(allText));
   } else {
-    const allText1 = JSON.parse(localStorage.getItem('snipText'));
+    const allText1 = JSON.parse(localStorage.getItem('gheditorText'));
     // eslint-disable-next-line no-prototype-builtins
     if (!(allText1.hasOwnProperty(editorId))) {
       allText1[editorId] = '';
-      localStorage.setItem('snipText', JSON.stringify(allText1));
+      localStorage.setItem('gheditorText', JSON.stringify(allText1));
     }
     allText = allText1[editorId] === undefined ? '' : allText1[editorId];
     textarea.value = allText;
@@ -20,17 +20,17 @@ const setEditorTextToStore = (editorId, textarea) => {
 };
 
 const setDataToStorage = (editorId) => {
-  const textEditorValue = document.getElementById(`snip-write-${editorId}`).value;
+  const textEditorValue = document.getElementById(`gheditor-write-${editorId}`).value;
   let allText;
   if (textEditorValue !== '') {
-    if (localStorage.getItem('snipText') === null) {
+    if (localStorage.getItem('gheditorText') === null) {
       allText = {};
     } else {
-      allText = JSON.parse(localStorage.getItem('snipText'));
+      allText = JSON.parse(localStorage.getItem('gheditorText'));
       document.getElementById(`saved-timer-${editorId}`).innerText = `${getCurrentTime()}`;
     }
     allText[editorId] = textEditorValue;
-    localStorage.setItem('snipText', JSON.stringify(allText));
+    localStorage.setItem('gheditorText', JSON.stringify(allText));
   }
 };
 

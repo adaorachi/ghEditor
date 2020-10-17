@@ -5,7 +5,7 @@ let startSelection = 0;
 let endSelection = 0;
 
 function setCaretOnEmojiInsert(editorId) {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
   textarea.addEventListener('input', () => {
     startSelection = textarea.selectionStart;
     endSelection = textarea.selectionEnd;
@@ -17,7 +17,7 @@ function setCaretOnEmojiInsert(editorId) {
 }
 
 const toolbarEmoji = (editorId, prop) => {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
   setCaretOnEmojiInsert(editorId);
   const startEmo = endSelection;
 

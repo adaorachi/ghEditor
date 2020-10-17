@@ -11,7 +11,7 @@ import callFuncOnInit from './functionCall/callFuncOnInit';
 import textareaVal from './functionCall/textareaVal';
 import getMarkdown from './features/getMarkdown';
 
-const snip = () => {
+const ghEditor = () => {
   let optionVal = {};
   let editorId;
   let initialSetVal = '';
@@ -71,4 +71,4 @@ const snip = () => {
   };
 };
 
-export default snip;
+export default ghEditor;

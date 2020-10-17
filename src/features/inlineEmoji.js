@@ -20,7 +20,7 @@ const insertEmoji = (repl, textVal) => {
 };
 
 const insertEmojiOnClick = (editorId, prop) => {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains(`display-emoji-${editorId}`)) {
       const { id } = e.target;
@@ -109,7 +109,7 @@ const insertEmojiOnEnterKey = (textarea, editorId, prop) => {
 
     if (prop.splitScreen.shortcut) {
       if (e.ctrlKey && e.altKey && e.which === 80) {
-        const previewBut = document.querySelector(`.snip-preview-button-${editorId}`);
+        const previewBut = document.querySelector(`.gheditor-preview-button-${editorId}`);
         previewBut.click();
       }
     }

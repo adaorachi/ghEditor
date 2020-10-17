@@ -8,23 +8,23 @@ import {
 
 const togglePreviewOnClick = (nav, editorId) => {
   const navTab = document.getElementById(nav);
-  const parentId = `snip-text-mark-down-${editorId}`;
+  const parentId = `gheditor-text-mark-down-${editorId}`;
   navTab.addEventListener('click', (e) => {
     if (e.target.classList.contains('tabnav')) {
       const { id } = e.target;
       let eleTab = id.split('-');
       eleTab = `${eleTab[0]}-${eleTab[1]}-${editorId}`;
-      const con = [`.snip-tab-content-${editorId}.tab-content`, `.btn-nav-${editorId}.tabnav`];
+      const con = [`.gheditor-tab-content-${editorId}.tab-content`, `.btn-nav-${editorId}.tabnav`];
       [eleTab, id].forEach((ele, ind) => {
         hideAndDisplayNav(ele, `.${parentId} ${con[ind]}`, 'active');
       });
 
-      if (id === `snip-writearea-tab-${editorId}`) {
-        mutateContent(`.snip-text-button-container-${editorId}`, `.snip-word-count-${editorId}`);
+      if (id === `gheditor-writearea-tab-${editorId}`) {
+        mutateContent(`.gheditor-text-button-container-${editorId}`, `.gheditor-word-count-${editorId}`);
 
         document.getElementById(eleTab).focus();
-      } else if (id === `snip-preview-tab-${editorId}`) {
-        mutateContent(`.snip-word-count-${editorId}`, `.snip-text-button-container-${editorId}`);
+      } else if (id === `gheditor-preview-tab-${editorId}`) {
+        mutateContent(`.gheditor-word-count-${editorId}`, `.gheditor-text-button-container-${editorId}`);
 
         removeDropdowns([`.filter-emoji-area-${editorId}`, `.toolbar-button-area-${editorId}`], 'dropdown');
         displayWordCount(editorId);

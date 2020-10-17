@@ -1,6 +1,6 @@
 {
-  "name": "snipdown",
-  "version": "1.0.10",
+  "name": "gheditor",
+  "version": "1.0.0",
   "description": "A markdown text editor plugin built with JavaScript",
   "main": "src/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adaorachi/SnipDown.git"
+    "url": "git+https://github.com/adaorachi/ghEditor.git"
   },
   "keywords": [
     "editor",
@@ -21,16 +21,16 @@
     "mark-down",
     "marked",
     "text",
-    "sniptext",
+    "gheditor",
     "npm",
     "plugin"
   ],
   "author": "MaryAnn Chukwuka",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/adaorachi/SnipDown/issues"
+    "url": "https://github.com/adaorachi/ghEditor/issues"
   },
-  "homepage": "https://github.com/adaorachi/SnipDown#readme",
+  "homepage": "https://github.com/adaorachi/ghEditor#readme",
   "devDependencies": {
     "css-loader": "^3.5.3",
     "eslint": "^6.8.0",

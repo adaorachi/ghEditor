@@ -3,10 +3,10 @@ import { setEditorTextToStore, setDataToStorage } from './utils/setStorage';
 import { savedTimer } from '../dom/insertDomSnippet';
 
 const autoSaveAttr = (editorId) => {
-  const footer = document.querySelector(`.snip-footer-${editorId}`);
+  const footer = document.querySelector(`.gheditor-footer-${editorId}`);
   const autoSaveArea = document.createElement('div');
-  autoSaveArea.id = `snip-autosave-${editorId}`;
-  autoSaveArea.className = 'snip-autosave';
+  autoSaveArea.id = `gheditor-autosave-${editorId}`;
+  autoSaveArea.className = 'gheditor-autosave';
   footer.append(autoSaveArea);
 };
 
@@ -25,16 +25,16 @@ const autoSaveOnClicked = (editorId) => {
 };
 
 const setAutoSave = (editorId, props, value) => {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
 
   if (extendDefaults(props).autoSave.enabled) {
     autoSaveAttr(editorId);
-    document.getElementById(`snip-autosave-${editorId}`).innerHTML = `${savedTimer(editorId)}`;
+    document.getElementById(`gheditor-autosave-${editorId}`).innerHTML = `${savedTimer(editorId)}`;
     autoSaveOnClicked(editorId);
     setEditorTextToStore(editorId, textarea);
   } else {
     textarea.value = value;
-    window.localStorage.removeItem('snipText');
+    window.localStorage.removeItem('gheditorText');
   }
 };
 

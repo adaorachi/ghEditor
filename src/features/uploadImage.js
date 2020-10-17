@@ -5,7 +5,7 @@ import { fileInput, progressStatusText } from '../dom/insertDomSnippet';
 
 let insertImage = 0;
 const setCaret = (editorId) => {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
 
   textarea.addEventListener('input', () => {
     insertImage = textarea.selectionEnd;
@@ -13,7 +13,7 @@ const setCaret = (editorId) => {
 };
 
 const callUploaded = (fileUpload, editorId, prop) => {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
 
   const storageRef = firebaseSetting(prop).storage().ref().child(fileUpload.name);
   const uploadedImage = storageRef.put(fileUpload);
@@ -45,7 +45,7 @@ const callUploaded = (fileUpload, editorId, prop) => {
         textVal = textVal.replace(repl, uploadedImage);
         insertWriteInput(textVal, editorId, prop);
         progressStatus.innerHTML = 'Attach files by draggng and dropping or selecting them';
-        const uploadInput = document.getElementById(`snip-uploadimage-${editorId}`);
+        const uploadInput = document.getElementById(`gheditor-uploadimage-${editorId}`);
         uploadInput.value = '';
       }
     });
@@ -53,7 +53,7 @@ const callUploaded = (fileUpload, editorId, prop) => {
 };
 
 const dragImageHighlight = (editorId, fileInput) => {
-  const fileInputContainer = document.querySelector(`.snip-footer-${editorId}`);
+  const fileInputContainer = document.querySelector(`.gheditor-footer-${editorId}`);
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
     fileInput.addEventListener(eventName, () => {
       if (['dragenter', 'dragover'].includes(eventName)) {
@@ -67,8 +67,8 @@ const dragImageHighlight = (editorId, fileInput) => {
 
 const imageInputAttr = (fileInputContainer, editorId) => {
   const uploadProgress = document.createElement('div');
-  uploadProgress.id = `snip-upload-container-${editorId}`;
-  uploadProgress.className = 'snip-upload-container';
+  uploadProgress.id = `gheditor-upload-container-${editorId}`;
+  uploadProgress.className = 'gheditor-upload-container';
   uploadProgress.innerHTML = fileInput(editorId);
   fileInputContainer.append(uploadProgress);
 };
@@ -83,12 +83,12 @@ const removeImageBorder = (fileInputContainer, prop) => {
 
 const uploadImage = (editorId, prop) => {
   setCaret(editorId);
-  const fileInputContainer = document.querySelector(`.snip-footer-${editorId}`);
+  const fileInputContainer = document.querySelector(`.gheditor-footer-${editorId}`);
 
   imageInputAttr(fileInputContainer, editorId);
 
   if (extendDefaults(prop).uploadImage.enabled) {
-    const fileInput = document.getElementById(`snip-uploadimage-${editorId}`);
+    const fileInput = document.getElementById(`gheditor-uploadimage-${editorId}`);
 
     fileInput.addEventListener('change', (e) => {
       const fileUpload = e.target.files[0];

@@ -23,19 +23,19 @@ const createToolbarBtns = (allButtons, editorId, addClass, prop, suggestBtn, lim
   iconNames.headerToolbar.forEach((button) => {
     if (allButtons.map(s => s.trim()).includes(button)) {
       const iconName = button.trim();
-      let isIcon = `<img class="snipdown-toolbar-buttons" src="https://adaorachi.github.io/snipdown_emojis/toolbar/${iconName}${suggestBtn}.svg" />`;
+      let isIcon = `<img class="gheditor-toolbar-buttons" src="https://adaorachi.github.io/gheditor_emojis/toolbar/${iconName}${suggestBtn}.svg" />`;
 
       const buttonId = `${iconName}-${editorId}${addClass}`;
       let className;
 
       if (button === 'smiley') {
-        className = `snip-emoji-button-${editorId} snip-emoji-button`;
+        className = `gheditor-emoji-button-${editorId} gheditor-emoji-button`;
       } else if (button === 'split-screen') {
-        className = `snip-preview-button-${editorId} snip-preview-button`;
+        className = `gheditor-preview-button-${editorId} gheditor-preview-button`;
       } else if (button === 'guide') {
-        className = 'snip-help';
+        className = 'gheditor-help';
         const isIconGuide = isIcon;
-        isIcon = `<a href="https://github.com/adaorachi/SnipDown/wiki/Markdown_cheat_sheet" target="_blank">${isIconGuide}</a>`;
+        isIcon = `<a href="https://github.com/adaorachi/ghEditor/wiki/Markdown_cheat_sheet" target="_blank">${isIconGuide}</a>`;
       } else {
         className = `markdown-button-${editorId}${addClass} button-${iconName}`;
       }
@@ -84,7 +84,7 @@ const disbandToolbarBtnFeature = (editorId, prop, mainButtons, toolSuggester = f
 
 const appendHeaderToDOM = (properties) => {
   const editorId = extendDefaults(properties).container;
-  const docFrag = document.querySelector(`.snip-text-header-${editorId}`);
+  const docFrag = document.querySelector(`.gheditor-text-header-${editorId}`);
 
   const mainButtons = extendDefaults(properties).headerToolbar.icons;
   const displayCmdBtns = disbandToolbarBtnFeature(editorId, properties, mainButtons);
@@ -103,13 +103,14 @@ const appendHeaderToDOM = (properties) => {
   docFrag.innerHTML = content;
 
   if (extendDefaults(properties).hideToolBar) {
-    document.querySelector(`.snip-text-header-${editorId}`).classList.add('hide');
+    document.querySelector(`.gheditor-text-header-${editorId}`).classList.add('hide');
+    document.querySelector(`.gheditor-text-body-${editorId}`).classList.add('bordered');
   }
 };
 
 const toggleToolbarOnResize = (editorId) => {
-  const allContainer = document.querySelector(`.snip-write-${editorId}`).getBoundingClientRect().width;
-  const header = [`.snip-text-header-content-${editorId}`, `.snip-text-header-${editorId}`];
+  const allContainer = document.querySelector(`.gheditor-write-${editorId}`).getBoundingClientRect().width;
+  const header = [`.gheditor-text-header-content-${editorId}`, `.gheditor-text-header-${editorId}`];
   const toggleCon = [`.button-container-toggle-${editorId}`, `.toggle-toolbar-${editorId}`];
   const toggleButtons = document.querySelectorAll(`.buttons.toggle-btn.markdown-button-${editorId}`);
   const toggleLimiters = document.querySelectorAll('.limiter.toggle-btn');

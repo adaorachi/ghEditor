@@ -1,6 +1,6 @@
 $primary_color: #07abcc;
 
-.snip-text-body {
+.gheditor-text-body {
   border-radius: 0 0 0.25rem 0.25rem;
   border: 1px solid #ced4da;
   border-top: none;
@@ -9,6 +9,11 @@ $primary_color: #07abcc;
 
   &.preview {
     display: flex;
+  }
+
+  &.bordered {
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
   }
 
   blockquote,
@@ -75,7 +80,7 @@ $primary_color: #07abcc;
     border-bottom: 1px solid #eaecef;
   }
 
-  img:not(.snipdown-toolbar-buttons) {
+  img:not(.gheditor-toolbar-buttons) {
     max-width: 200px;
     width: 100%;
   }
@@ -183,7 +188,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-tab-content.tab-content {
+.gheditor-tab-content.tab-content {
   display: none;
   height: 100%;
   border: none;
@@ -193,21 +198,21 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-text-body,
-.snip-writearea.tab-content,
-.snip-write {
+.gheditor-text-body,
+.gheditor-writearea.tab-content,
+.gheditor-write {
   width: 100%;
   outline: none;
   box-sizing: border-box;
 }
 
-.snip-writearea.tab-content,
-.snip-write {
+.gheditor-writearea.tab-content,
+.gheditor-write {
   border-radius: 6px;
   background-color: #fafbfc;
 }
 
-.snip-writearea.tab-content {
+.gheditor-writearea.tab-content {
   border: 1px solid #d1d5da;
 
   &:focus-within {
@@ -216,18 +221,18 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-write {
+.gheditor-write {
   white-space: pre-wrap;
   overflow-wrap: break-word;
   border: none;
 }
 
-.snip-preview.tab-content {
+.gheditor-preview.tab-content {
   min-height: 100px;
 }
 
-.snip-writearea.tab-content,
-.snip-preview.tab-content {
+.gheditor-writearea.tab-content,
+.gheditor-preview.tab-content {
   &.preview {
     display: block;
     flex: 1;
@@ -235,7 +240,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-mirror-div {
+.gheditor-mirror-div {
   position: absolute;
   top: 0;
   left: 0;
@@ -249,7 +254,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-footer {
+.gheditor-footer {
   &.enabled {
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
@@ -265,13 +270,13 @@ $primary_color: #07abcc;
     color: #888;
   }
 
-  .snip-upload-container {
+  .gheditor-upload-container {
     flex: 1;
     position: relative;
   }
 
-  .snip-upload-container.preview,
-  .snip-upload-container.preview .snip-uploadimage-input {
+  .gheditor-upload-container.preview,
+  .gheditor-upload-container.preview .gheditor-uploadimage-input {
     width: 55%;
   }
 
@@ -288,7 +293,7 @@ $primary_color: #07abcc;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
 
-  .snip-uploadimage-input {
+  .gheditor-uploadimage-input {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -301,11 +306,11 @@ $primary_color: #07abcc;
     z-index: 2;
   }
 
-  .snip-loader {
+  .gheditor-loader {
     width: 25px !important;
   }
 
-  .snip-autosave {
+  .gheditor-autosave {
     display: flex;
     margin-left: 10px;
     position: relative;
@@ -325,7 +330,7 @@ $primary_color: #07abcc;
         fill: $primary_color;
       }
 
-      .snipdown-save {
+      .gheditor-save {
         width: 1rem;
       }
     }
@@ -342,14 +347,14 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-write::placeholder,
-.snip-preview .placeholder,
-.snip-word-count {
+.gheditor-write::placeholder,
+.gheditor-preview .placeholder,
+.gheditor-word-count {
   font-size: 90%;
   color: #ccc;
 }
 
-.snip-text-tabnav-tabs {
+.gheditor-text-tabnav-tabs {
   padding: 8px 0 0;
   margin: 0 10px;
   margin-bottom: -1px;
@@ -373,7 +378,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-text-tabnav-buttons {
+.gheditor-text-tabnav-buttons {
   display: flex;
   height: 100%;
 
@@ -382,7 +387,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-text-header {
+.gheditor-text-header {
   border: 1px solid #d1d5da;
   // border-bottom: none;
   background-color: #f6f8fa;
@@ -428,7 +433,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-text-header-content {
+.gheditor-text-header-content {
   padding: 8px;
   display: flex;
   align-items: center;
@@ -445,14 +450,14 @@ $primary_color: #07abcc;
     justify-content: space-between;
     background-color: initial;
 
-    .snip-text-button-container {
+    .gheditor-text-button-container {
       justify-content: flex-start;
       width: 48%;
     }
   }
 }
 
-.snip-text-button-container,
+.gheditor-text-button-container,
 .toolbar-button-area {
   .buttons {
     border: none;
@@ -493,7 +498,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-text-button-container {
+.gheditor-text-button-container {
   position: relative;
   width: 100%;
 
@@ -532,7 +537,7 @@ $primary_color: #07abcc;
     border-right: 1px solid #fff;
     color: transparent;
     margin: 0 3px;
-  }  
+  }
 
   .button-container-toggle {
     width: 0;
@@ -563,7 +568,7 @@ $primary_color: #07abcc;
   }
 }
 
-.snip-text-button-container .buttons.active::before,
+.gheditor-text-button-container .buttons.active::before,
 .toolbar-tooltip.dropdown {
   position: absolute;
   content: "";
@@ -581,12 +586,12 @@ $primary_color: #07abcc;
   z-index: 100;
 }
 
-.snip-text-button-container.remove,
-.snip-word-count.remove {
+.gheditor-text-button-container.remove,
+.gheditor-word-count.remove {
   display: none;
 }
 
-.snip-emoji-area {
+.gheditor-emoji-area {
   width: 220px;
   height: 150px;
   position: absolute;
@@ -597,7 +602,7 @@ $primary_color: #07abcc;
   z-index: 10;
 }
 
-.snip-emoji-area-content {
+.gheditor-emoji-area-content {
   width: 100%;
   height: 100%;
   background: #fff;
@@ -624,7 +629,7 @@ $primary_color: #07abcc;
 }
 
 .filter-emoji-area.dropdown,
-.snip-emoji-area.show-emoji {
+.gheditor-emoji-area.show-emoji {
   display: block;
 }
 
@@ -692,9 +697,9 @@ $primary_color: #07abcc;
   display: none !important;
 }
 
-.snip-write,
-.snip-preview.preview,
-.snip-mirror-div {
+.gheditor-write,
+.gheditor-preview.preview,
+.gheditor-mirror-div {
   &::-webkit-scrollbar {
     width: 12px;
     background-color: #f5f5f5;
@@ -757,24 +762,24 @@ $primary_color: #07abcc;
 }
 
 @media only screen and (max-width: 767px) {
-  .snip-text-tabnav-buttons .btn-nav {
+  .gheditor-text-tabnav-buttons .btn-nav {
     width: 100%;
   }
 
-  .snip-word-count {
+  .gheditor-word-count {
     text-align: center;
     width: 100%;
   }
 }
 
 @media only screen and (max-width: 479px) {
-  .snip-footer {
-    .snip-upload-container,
-    .snip-upload-container .snip-uploadimage-input {
+  .gheditor-footer {
+    .gheditor-upload-container,
+    .gheditor-upload-container .gheditor-uploadimage-input {
       width: 55%;
     }
 
-    .snip-autosave {
+    .gheditor-autosave {
       width: 45%;
     }
   }

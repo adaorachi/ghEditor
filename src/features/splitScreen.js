@@ -5,26 +5,26 @@ import {
   nothingToPreviewDisplay,
 } from '../helpers/helpers';
 
-const snipMinorContainers = (editorId) => ([
-  `snip-writearea-${editorId}`,
-  `snip-preview-${editorId}`,
-  `snip-text-body-${editorId}`,
-  `snip-text-tabnav-buttons-${editorId}`,
+const gheditorMinorContainers = (editorId) => ([
+  `gheditor-writearea-${editorId}`,
+  `gheditor-preview-${editorId}`,
+  `gheditor-text-body-${editorId}`,
+  `gheditor-text-tabnav-buttons-${editorId}`,
   `${editorId}--mirror-div`,
-  `snip-text-header-content-${editorId}`,
-  `snip-upload-container-${editorId}`,
-  `snip-autosave-${editorId}`,
+  `gheditor-text-header-content-${editorId}`,
+  `gheditor-upload-container-${editorId}`,
+  `gheditor-autosave-${editorId}`,
   `button-container-toggle-${editorId}`,
 ]);
 
-const snipMainContainers = (editorId) => ([
-  `snip-write-${editorId}`,
-  `snip-preview-${editorId}`,
+const gheditorMainContainers = (editorId) => ([
+  `gheditor-write-${editorId}`,
+  `gheditor-preview-${editorId}`,
 ]);
 
 const scrollSync = (editorId) => {
-  const fixedDiv = document.getElementById(snipMainContainers(editorId)[0]);
-  const scrollableDiv = document.getElementById(snipMainContainers(editorId)[1]);
+  const fixedDiv = document.getElementById(gheditorMainContainers(editorId)[0]);
+  const scrollableDiv = document.getElementById(gheditorMainContainers(editorId)[1]);
 
   fixedDiv.addEventListener('scroll', () => {
     scrollableDiv.scrollTop = fixedDiv.scrollTop
@@ -33,51 +33,52 @@ const scrollSync = (editorId) => {
   });
 };
 
-const heightSync = (editorId, prop, snipWriteHeight) => {
-  const snipPreview = document.querySelector(`#snip-preview-${editorId}.preview`);
-  if (snipPreview !== null) {
-    const snipPreviewStyle = {
-      height: snipWriteHeight,
+const heightSync = (editorId, prop, gheditorWriteHeight) => {
+  const gheditorPreview = document.querySelector(`#gheditor-preview-${editorId}.preview`);
+  if (gheditorPreview !== null) {
+    const gheditorPreviewStyle = {
+      height: gheditorWriteHeight,
       minHeight: prop.minHeight,
       maxHeight: prop.maxHeight,
       padding: '6px 20px',
     };
-    Object.assign(snipPreview.style, snipPreviewStyle);
+    Object.assign(gheditorPreview.style, gheditorPreviewStyle);
   }
 };
 
-const mutateTextFeaturesOnToggle = (editorId, snipWriteHeight) => {
-  const snipMiContainers = snipMinorContainers(editorId);
-  snipMiContainers.forEach(container => {
+const mutateTextFeaturesOnToggle = (editorId, gheditorWriteHeight) => {
+  const gheditorMiContainers = gheditorMinorContainers(editorId);
+  gheditorMiContainers.forEach(container => {
     const containerDOM = document.getElementById(container);
     if (containerDOM !== null) {
       containerDOM.classList.toggle('preview');
     }
   });
 
-  const snipMaContainers = snipMainContainers(editorId);
+  const gheditorMaContainers = gheditorMainContainers(editorId);
 
-  snipMaContainers.forEach(container => {
+  gheditorMaContainers.forEach(container => {
     const containerArea = document.getElementById(container);
-    containerArea.style.height = `${expandHeight(containerArea, snipWriteHeight)}px`;
+    containerArea.style.height = `${expandHeight(containerArea, gheditorWriteHeight)}px`;
   });
 };
 
 const splitScreen = (editorId, prop) => {
-  const previewBut = document.querySelector(`.snip-preview-button-${editorId}`);
+  const previewBut = document.querySelector(`.gheditor-preview-button-${editorId}`);
   if (prop.splitScreen.enabled) {
     previewBut.style.display = 'initial';
 
     previewBut.addEventListener('click', () => {
       displayWordCount(editorId);
       nothingToPreviewDisplay(editorId);
-      document.getElementById(`snip-word-count-${editorId}`).classList.toggle('remove');
+      document.getElementById(`gheditor-word-count-${editorId}`).classList.toggle('remove');
 
-      const snipWriteHeight = document.getElementById(snipMainContainers(editorId)[0]).style.height;
+      // eslint-disable-next-line max-len
+      const gheditorWriteHeight = document.getElementById(gheditorMainContainers(editorId)[0]).style.height;
 
-      mutateTextFeaturesOnToggle(editorId, snipWriteHeight);
+      mutateTextFeaturesOnToggle(editorId, gheditorWriteHeight);
 
-      heightSync(editorId, prop, snipWriteHeight);
+      heightSync(editorId, prop, gheditorWriteHeight);
 
       toggleToolbarOnResize(editorId);
     });

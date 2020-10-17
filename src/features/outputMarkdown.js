@@ -10,7 +10,7 @@ import autoUseFontAwesome from './autoUseFontAwesome';
 import uploadImage from './uploadImage';
 
 const outputMarkDown = (editorId, prop) => {
-  const textarea = document.getElementById(`snip-write-${editorId}`);
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
 
   if (prop.inlineEmoji.enabled) {
     inlineEmoji(textarea, editorId, prop);

@@ -1,10 +1,10 @@
-// import snipDown from 'snipdown';
-import snip from '../../src/index';
-// import snip from '../../src/index';
+// import gheditorDown from 'gheditordown';
+import ghEditor from '../../src/index';
+// import gheditor from '../../src/index';
 import '../../scss/style.scss';
 
 const opt = {
-  container: 'snip1',
+  container: 'gheditor1',
   // width: '30%',
   // minHeight: '100px',
   // maxHeight: '300px',
@@ -30,23 +30,23 @@ const opt = {
   },
 };
 
-const textarea1 = snip();
+const textarea1 = ghEditor();
 textarea1.markDown(opt);
-// sniptext1.setValue('# This is me');
+textarea1.setValue('# This is me');
 
-// console.log(sniptext1.getValue());
-// console.log(sniptext1.getOptions());
-// console.log(sniptext1.getDefaultOptions());
-// console.log(sniptext1.getOption('autoSave'));
+// console.log(textarea1.getValue());
+// console.log(textarea1.getOptions());
+// console.log(textarea1.getDefaultOptions());
+// console.log(textarea1.getOption('autoSave'));
 
-const sniptext2 = snip();
-sniptext2.markDown({
-  container: 'snip2',
+const gheditortext2 = ghEditor();
+gheditortext2.markDown({
+  container: 'gheditor2',
   uploadImage: {
     // enabled: false,
     config: { storageBucket: 'snip-editor.appspot.com' },
   },
 });
 
-// const sniptext3 = snipDown;
-// sniptext3.markDown({container: 'snip3'});
+// const gheditortext3 = gheditorDown;
+// gheditortext3.markDown({container: 'gheditor3'});
