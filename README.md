@@ -1,18 +1,19 @@
-## SnipDown - MarkDown Editor
+## snip - MarkDown Editor
 
-SnipDown is a lightweight, flexible, highly customizable WYSIGWG for your web applications. It is a drop-in JavaScript textarea replacement for writing beautiful and understandable Markdown. The WYSIWYG-esque editor allows users who may be less experienced with Markdown to use familiar toolbar buttons and shortcuts. If you never have written a single line in markdown markup, don't worry, it's easy to learn and even easier to use. You'll probably be surprised how handy it is once you get used to it. And you'll miss it whenever the tech you're using doesn't support markdown.
+snip is a lightweight, flexible, highly customizable WYSIGWG for your web applications. It is a drop-in JavaScript textarea replacement for writing beautiful and understandable Markdown. The WYSIWYG-esque editor allows users who may be less experienced with Markdown to use familiar toolbar buttons and shortcuts. If you never have written a single line in markdown markup, don't worry, it's easy to learn and even easier to use. You'll probably be surprised how handy it is once you get used to it. And you'll miss it whenever the tech you're using doesn't support markdown.
 
 
 ### Demo
-See [**Live Demo**](https://adaorachi.github.io/snipdown-demo/)
+See [**Live Demo**](https://adaorachi.github.io/snip-demo/)
 
-<img src="https://adaorachi.github.io/snipdown_emojis/demo/snipdown-demo.gif" alt="snipdown-demo">
+<img src="https://adaorachi.github.io/ghEditor_emojis/demo/snip-demo.gif" alt="snip-demo">
 
-### Why use SnipDown Editor?
+### Why use snip?
 
-SnipDown is one of the first markdown editors to implement an all-in-one built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow, split-screen-preview and file upload and storage WYSIWYG-style features. It is also designed to mimic [github.com](https://github.com) markdown editor features and implements most Github flavoured markdown syntax and much more.
-In other words, SnipDown uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github-flavored markdown editor embedded in your web application just by a simple installation; plus SnipDown can be rendered natively on more than one textarea container in a web page.
-SnipDown Editor has been written using vanilla JavaScript, no additional frameworks required.
+snip is one of the first markdown editors to implement an all-in-one built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow, split-screen-preview and file upload and storage WYSIWYG-style features. It is also designed to mimic [github.com](https://github.com) markdown editor features and implements most Github flavoured markdown syntax and much more.
+In other words, snip uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github-flavored markdown editor embedded in your web application just by a simple installation.
+Plus, snip can be rendered natively on more than one textarea container in a web page. It also uses a simple HTML-sanitizer to produce safe tags.
+snip Editor has been written using vanilla JavaScript, no additional frameworks required.
 
 ### Table of Contents
 
@@ -28,13 +29,13 @@ SnipDown Editor has been written using vanilla JavaScript, no additional framewo
 
 ##### Via npm.
 
-    npm install snipDown
+    npm install snip
 
 
 ##### Via jsDelivr. Please note, jsDelivr may take a few days to update to the latest release.
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/snipdown/latest/snipdown.min.css">
-    <script src="https://cdn.jsdelivr.net/snipdown/latest/snipdown.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/snip/latest/snip.min.css">
+    <script src="https://cdn.jsdelivr.net/snip/latest/snip.min.js"></script>
 
 
 ### Quick Start
@@ -72,7 +73,7 @@ Add the SASS module into your module configuration, which is usually in the `web
   };
   ```
 
-After installing and defining the above dependencies, you can initialize SnipDown by the following ways;
+After installing and defining the above dependencies, you can initialize snip by the following ways;
 
 1. Define a textarea element in an HTML page. A `class` of `snip-markdown` must be added to the textarea element. Add an `id` attribute of your choice (this is optional if there is only one textarea to apply).
 ``` 
@@ -202,8 +203,6 @@ The following are the set of valid options that can be used in SnipDown. When th
 - **uploadImage:** (Object) This defines the upload image feature. This is configured to use the [google firebase](https://firebase.google.com/) storage bucket. In order to make this feature work, you must create a [firebase](https://firebase.google.com/) storage bucket for your app and have access to its configurtion.
    - **enabled:** (Boolean) If set to `true`, enables the upload image feature.Defaults to `false`.
     - **config:** (Object) This includes the firebase configuration which can be copied from your firebase app console. The only detail needed is the `storageBucket` value.
-- **width:** (String) This set the width of the snipDown editor in any available CSS width values, e.g - `px, rem, %, initial`. It defaults to `100%`.
-
 
 ```
 const snipdown = snipDown();
@@ -249,7 +248,6 @@ snipdown.markDown({
          storageBucket: '<your-firebase-app-name>.appspot.com',
       },
     },
-    width: '100%',
 });
 ```
 

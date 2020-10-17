@@ -1,0 +1,70 @@
+const defaultOptions = () => ({
+  container: 'sniptext',
+  autoSave: {
+    enabled: true,
+    delay: 10000,
+  },
+  autoUseFontAwesome: false,
+  allowedAttributes: [],
+  allowedTags: [],
+  disallowedAttributes: [],
+  disallowedTags: [],
+  blockStyles: {
+    bold: '**',
+    italic: '_',
+    'code-block': '```',
+  },
+  frameStyles: {
+    fontSize: '1rem',
+  },
+  headerToolbar: {
+    icons: 'heading|bold|italic|blockquote|strikethrough|code|link|code-block|unordered-list|ordered-list|tasklist',
+  },
+  hideToolBar: false,
+  highlightCode: true,
+  indentWithTab: false,
+  inlineAttributes: false,
+  inlineEmoji: {
+    enabled: true,
+    emojiPrefix: ':',
+  },
+  inlineToolbar: 'heading|bold|italic|code|link|unordered-list',
+  inlineShortcut: false,
+  maxHeight: '400px',
+  minHeight: '100px',
+  placeholder: 'Leave your comment',
+  splitScreen: {
+    enabled: true,
+    shortcut: true,
+  },
+  toolbarEmoji: true,
+  toolTip: {
+    enabled: true,
+    toolTipText: {
+      smiley: 'Insert an emoji',
+      'split-screen': 'Toggle Preview',
+      heading: 'Add header text',
+      bold: 'Add bold text',
+      italic: 'Add italic text',
+      blockquote: 'Insert a quote',
+      strikethrough: 'Add a strikethrough text',
+      'horizontal-rule': 'Add an horizontal rule',
+      code: 'Insert code',
+      link: 'Add a link',
+      'code-block': 'Insert code block',
+      'unordered-list': 'Add a bulleted list',
+      'ordered-list': 'Add a numbered list',
+      tasklist: 'Add a tasklist',
+      mention: 'Directly mention a Github user',
+      table: 'Insert a table',
+      image: 'Add an image',
+      guide: 'Help?',
+    },
+  },
+  uploadImage: {
+    enabled: false,
+    config: {},
+  },
+});
+
+export default defaultOptions;

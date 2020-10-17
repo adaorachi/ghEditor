@@ -487,8 +487,8 @@ $primary_color: #07abcc;
   .toggle-toolbar-button {
     margin-right: 10rem;
 
-    .snipdown-more {
-      width: 10px !important;
+    .chevron-up.rotate {
+      transform: rotateX(180deg);
     }
   }
 }

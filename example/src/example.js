@@ -1,5 +1,6 @@
 // import snipDown from 'snipdown';
-import snipDown from '../../src/index';
+import snip from '../../src/index';
+// import snip from '../../src/index';
 import '../../scss/style.scss';
 
 const opt = {
@@ -12,7 +13,7 @@ const opt = {
   // disallowedTags: ['p'],
   allowedAttributes: ['style'],
   // buttonBgColor: '#eee'
-  // frameStyles: { color: 'red', borderRadius: '10px' },
+  // frameStyles: { color: 'red', fontSize: '10rem' },
   // autoSave: {
   //   enabled: true,
   //   delay: 3000,
@@ -29,12 +30,16 @@ const opt = {
   },
 };
 
-const sniptext1 = snipDown();
-sniptext1.markDown(opt);
+const textarea1 = snip();
+textarea1.markDown(opt);
 // sniptext1.setValue('# This is me');
-// console.log(sniptext1.getValue());
 
-const sniptext2 = snipDown();
+// console.log(sniptext1.getValue());
+// console.log(sniptext1.getOptions());
+// console.log(sniptext1.getDefaultOptions());
+// console.log(sniptext1.getOption('autoSave'));
+
+const sniptext2 = snip();
 sniptext2.markDown({
   container: 'snip2',
   uploadImage: {
