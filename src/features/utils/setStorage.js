@@ -11,7 +11,7 @@ const setEditorTextToStore = (editorId, textarea) => {
     const allText1 = JSON.parse(localStorage.getItem('gheditorText'));
     // eslint-disable-next-line no-prototype-builtins
     if (!(allText1.hasOwnProperty(editorId))) {
-      allText1[editorId] = '';
+      allText1[editorId] = textarea.value;
       localStorage.setItem('gheditorText', JSON.stringify(allText1));
     }
     allText = allText1[editorId] === undefined ? '' : allText1[editorId];

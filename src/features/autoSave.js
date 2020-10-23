@@ -1,4 +1,3 @@
-import extendDefaults from '../settings/customOptionSetting';
 import { setEditorTextToStore, setDataToStorage } from './utils/setStorage';
 import { savedTimer } from '../dom/insertDomSnippet';
 
@@ -27,7 +26,7 @@ const autoSaveOnClicked = (editorId) => {
 const setAutoSave = (editorId, props, value) => {
   const textarea = document.getElementById(`gheditor-write-${editorId}`);
 
-  if (extendDefaults(props).autoSave.enabled) {
+  if (props.autoSave.enabled) {
     autoSaveAttr(editorId);
     document.getElementById(`gheditor-autosave-${editorId}`).innerHTML = `${savedTimer(editorId)}`;
     autoSaveOnClicked(editorId);

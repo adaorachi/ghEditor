@@ -13,7 +13,9 @@ const setValueFunc = (data, editorId) => {
   allText[editorId] = data;
   localStorage.setItem('gheditorText', JSON.stringify(allText));
   const gheditorWrite = document.getElementById(`gheditor-write-${editorId}`);
-  gheditorWrite.value = data;
+  if (gheditorWrite !== null) {
+    gheditorWrite.value = data;
+  }
 };
 
 const getOptionFunc = (key, options) => {

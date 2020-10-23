@@ -35,7 +35,7 @@ const createToolbarBtns = (allButtons, editorId, addClass, prop, suggestBtn, lim
       } else if (button === 'guide') {
         className = 'gheditor-help';
         const isIconGuide = isIcon;
-        isIcon = `<a href="https://github.com/adaorachi/ghEditor/wiki/Markdown_cheat_sheet" target="_blank">${isIconGuide}</a>`;
+        isIcon = `<a href="https://github.com/adaorachi/ghEditor/wiki/markdown_cheat_sheet" target="_blank">${isIconGuide}</a>`;
       } else {
         className = `markdown-button-${editorId}${addClass} button-${iconName}`;
       }

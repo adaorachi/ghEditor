@@ -2,13 +2,19 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './example/src/example.js',
+  mode: 'production',
+  entry: './src/index.js',
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'example/dist'),
+    path: path.resolve(__dirname, '@gheditor/dist'),
   },
   module: {
     rules: [
+      {
+        test: /\.js?$/,
+        exclude: /(node_modules)/,
+        use: 'babel-loader',
+      },
       {
         test: /\.s[ac]ss|.css$/i,
         use: [

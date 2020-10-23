@@ -1,6 +1,6 @@
 node_modules
-index.html
-example
-.eslintrc.json
-webpack.config.js
 wiki.md
+@gheditor/src
+@gheditor/dist/index.html
+index.html
+.npmignore

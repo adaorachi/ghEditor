@@ -80,7 +80,7 @@
 }
 
 .gheditor-text-body img:not(.gheditor-toolbar-buttons) {
-  max-width: 200px;
+  max-width: 600px;
   width: 100%;
 }
 

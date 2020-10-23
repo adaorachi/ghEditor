@@ -29,7 +29,7 @@ GHEditor Editor has been written using vanilla JavaScript, no additional framewo
 
 ##### Via npm.
 
-    npm install ghEditor
+    npm install gheditor
 
 
 ##### Via jsDelivr. Please note, jsDelivr may take a few days to update to the latest release.

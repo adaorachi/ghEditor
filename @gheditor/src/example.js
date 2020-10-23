@@ -43,10 +43,17 @@ const gheditortext2 = ghEditor();
 gheditortext2.markDown({
   container: 'gheditor2',
   uploadImage: {
-    // enabled: false,
+    enabled: true,
     config: { storageBucket: 'snip-editor.appspot.com' },
   },
 });
+
+gheditortext2.setValue('# This is me oooo');
+
+// console.log(gheditortext2.getValue());
+// console.log(gheditortext2.getOptions());
+// console.log(gheditortext2.getDefaultOptions());
+// console.log(gheditortext2.getOption('autoSave'));
 
 // const gheditortext3 = gheditorDown;
 // gheditortext3.markDown({container: 'gheditor3'});
