@@ -1,7 +1,7 @@
 const defaultOptions = () => ({
   container: 'ghEditortext',
   autoSave: {
-    enabled: true,
+    enabled: false,
     delay: 10000,
   },
   autoUseFontAwesome: false,
@@ -30,14 +30,14 @@ const defaultOptions = () => ({
   },
   inlineToolbar: 'heading|bold|italic|code|link|unordered-list',
   inlineShortcut: false,
-  maxHeight: '400px',
+  maxHeight: 'max-content',
   minHeight: '100px',
   placeholder: 'Leave your comment',
   splitScreen: {
-    enabled: true,
+    enabled: false,
     shortcut: true,
   },
-  toolbarEmoji: true,
+  toolbarEmoji: false,
   toolTip: {
     enabled: true,
     toolTipText: {

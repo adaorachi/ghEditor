@@ -34,8 +34,8 @@ GHEditor Editor has been written using vanilla JavaScript, no additional framewo
 
 ##### Via jsDelivr. Please note, jsDelivr may take a few days to update to the latest release.
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/ghEditor/latest/ghEditor.min.css">
-    <script src="https://cdn.jsdelivr.net/ghEditor/latest/ghEditor.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor/@gheditor/dist/style.css">
+    <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor/@gheditor/dist/main.js"></script>
 
 
 ### Quick Start
@@ -90,7 +90,7 @@ import '../node_modules/gheditor/scss/style.scss';
 
 - **Node**
 
-      var ghEditor  = require('gheditor');
+      const ghEditor  = require('gheditor');
       const ghEditorText = ghEditor();
       ghEditorText.markDown();
 
@@ -103,7 +103,7 @@ import '../node_modules/gheditor/scss/style.scss';
 - **Browser**
 
       <script>
-        var ghEditorText = gheditor();
+        const ghEditorText = gheditor();
         ghEditorText.markDown();
       </script>
 
@@ -197,7 +197,7 @@ The following are the set of valid options that can be used in GHEditor. When th
   - **emojiPrefix:** (String) This sets a character that is inputted followed by the name of the emoji. When inputted, GHEditor recognizes it as the emoji prefix and the emoji suggester dropdown is made visible. The emoji prefix must be picked from the following set of prefixes - `[':', '-', '/', '!', '#', '$', '&', '*', '=', '+', '^']`. It defaults to `:`.
 - **inlineToolbar:** (String) This sets an inline icon names. It defines a handy minature version of the toolbar buttons. The dropdown is made visible by making a selection in the editor textarea. It is usually used to set the most frequently used toolbar buttons and can take a maximum of 6 buttons. To define a subset of icon names, it must be separated with a `|`, e.g - `heading|bold|italic`. To disable this, set the value to an empty string. It default to the subset - `heading|bold|italic|code|link|unordered-list`.
 - **inlineShortcut** (Boolean) When set to `true` defines keyboard shortcuts for the **headerToolbar** buttons. See below for the list of all available keyboard shortcuts and buttons. It defaults to `false`.
-- **maxHeight:** (String) This set the maximum height of the ghEditor editor in any available CSS height values,  e.g - `px, rem, %, initial`. If sets to `auto` will have no max-height and GHEditor editor height elongates on input. Defaults to `auto`.
+- **maxHeight:** (String) This set the maximum height of the ghEditor editor in any available CSS height values,  e.g - `px, rem, %, initial`. If sets to `max-content` will have no max-height and GHEditor editor height elongates on input. Defaults to `max-content`.
 - **minHeight:** (String) This set the minimum height of the ghEditor editor in any available CSS height values, e.g - `px, rem, %, initial`. It defaults to `100px`.
 - **placeholder:** (String) This sets a custom placeholder that should be displayed.
 - **splitScreen:** (Object) This enables a screen split feature.

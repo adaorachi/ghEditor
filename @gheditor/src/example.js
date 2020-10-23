@@ -14,10 +14,10 @@ const opt = {
   allowedAttributes: ['style'],
   // buttonBgColor: '#eee'
   // frameStyles: { color: 'red', fontSize: '10rem' },
-  // autoSave: {
-  //   enabled: true,
-  //   delay: 3000,
-  // },
+  autoSave: {
+    enabled: true,
+    delay: 3000,
+  },
   headerToolbar: {
     // icons: 'heading|bold|italic|',
   },
@@ -43,7 +43,7 @@ const gheditortext2 = ghEditor();
 gheditortext2.markDown({
   container: 'gheditor2',
   uploadImage: {
-    enabled: true,
+    enabled: false,
     config: { storageBucket: 'snip-editor.appspot.com' },
   },
 });

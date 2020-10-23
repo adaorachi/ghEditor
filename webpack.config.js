@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.js',
+  entry: './@gheditor/src/example.js',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, '@gheditor/dist'),

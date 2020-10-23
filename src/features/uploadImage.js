@@ -1,4 +1,4 @@
-import extendDefaults from '../settings/customOptionSetting';
+// import extendDefaults from '../settings/customOptionSetting';
 import firebaseSetting from '../settings/firebaseSetting';
 import { insertWriteInput } from './textArea/updateEditorArea';
 import { fileInput, progressStatusText } from '../dom/insertDomSnippet';
@@ -74,7 +74,7 @@ const imageInputAttr = (fileInputContainer, editorId) => {
 };
 
 const removeImageBorder = (fileInputContainer, prop) => {
-  if (extendDefaults(prop).uploadImage.enabled || extendDefaults(prop).autoSave.enabled) {
+  if (prop.uploadImage.enabled || prop.autoSave.enabled) {
     fileInputContainer.classList.add('enabled');
   } else {
     fileInputContainer.classList.remove('enabled');
@@ -82,12 +82,12 @@ const removeImageBorder = (fileInputContainer, prop) => {
 };
 
 const uploadImage = (editorId, prop) => {
-  setCaret(editorId);
   const fileInputContainer = document.querySelector(`.gheditor-footer-${editorId}`);
 
-  imageInputAttr(fileInputContainer, editorId);
+  if (prop.uploadImage.enabled) {
+    setCaret(editorId);
+    imageInputAttr(fileInputContainer, editorId);
 
-  if (extendDefaults(prop).uploadImage.enabled) {
     const fileInput = document.getElementById(`gheditor-uploadimage-${editorId}`);
 
     fileInput.addEventListener('change', (e) => {
