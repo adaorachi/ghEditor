@@ -9,9 +9,6 @@ const syncValueFunc = (editorId) => {
 };
 
 const setValueFunc = (data, editorId) => {
-  const allText = {};
-  allText[editorId] = data;
-  localStorage.setItem('gheditorText', JSON.stringify(allText));
   const gheditorWrite = document.getElementById(`gheditor-write-${editorId}`);
   if (gheditorWrite !== null) {
     gheditorWrite.value = data;

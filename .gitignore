@@ -1,6 +1,3 @@
 node_modules
 wiki.md
-@gheditor/src
-@gheditor/dist/index.html
-index.html
 .npmignore

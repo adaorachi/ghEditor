@@ -51,7 +51,7 @@ const createToolbarBtns = (allButtons, editorId, addClass, prop, suggestBtn, lim
       if (iconNames.inlineToolbar.includes(iconName)) {
         countAllToggled += 1;
         toggleBtn = 'toggle-btn';
-        inlineBtns += `<span class="limiter">|</span><button type="button" class="${tooltipClass} tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonToolTip[iconName]}">${isIcon}</button>`;
+        inlineBtns += `<button type="button" class="${tooltipClass} tooltip-${editorId} buttons ${className}" id="${buttonId}" aria-label="${buttonToolTip[iconName]}">${isIcon}</button>`;
       }
 
       const button1 = `<button type="button" class="${tooltipClass} tooltip-${editorId} ${toggleBtn} buttons ${className}" id="${buttonId}" aria-label="${buttonToolTip[iconName]}">${isIcon}</button>${limiter}`;
@@ -75,7 +75,7 @@ const disbandToolbarBtnFeature = (editorId, prop, mainButtons, toolSuggester = f
   if (toolSuggester) {
     [addClass, suggestBtn, limiter, allButtons] = ['-suggester', 'White', '', mainButtons.split('|').slice(0, 6)];
   } else {
-    [addClass, suggestBtn, limiter, allButtons] = ['', '', '<span class="limiter">|</span>', `smiley|split-screen|${mainButtons}|guide`.split('|')];
+    [addClass, suggestBtn, limiter, allButtons] = ['', '', '', `smiley|split-screen|${mainButtons}|guide`.split('|')];
   }
 
   content = createToolbarBtns(allButtons, editorId, addClass, prop, suggestBtn, limiter);

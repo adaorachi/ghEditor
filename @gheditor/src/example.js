@@ -1,25 +1,13 @@
-// import gheditorDown from 'gheditordown';
 import ghEditor from '../../src/index';
-// import gheditor from '../../src/index';
 import '../../scss/style.scss';
 
 const opt = {
   container: 'gheditor1',
-  // width: '30%',
-  // minHeight: '100px',
-  // maxHeight: '300px',
   placeholder: "What's on your mind ...",
-  // allowedTags: ['h1', 'h2', 'h3', 'ul', 'li', 'ol'],
-  // disallowedTags: ['p'],
   allowedAttributes: ['style'],
-  // buttonBgColor: '#eee'
-  // frameStyles: { color: 'red', fontSize: '10rem' },
   autoSave: {
     enabled: true,
     delay: 3000,
-  },
-  headerToolbar: {
-    // icons: 'heading|bold|italic|',
   },
   toolTip: {
     enabled: true,
@@ -46,6 +34,10 @@ gheditortext2.markDown({
     enabled: false,
     config: { storageBucket: 'snip-editor.appspot.com' },
   },
+  autoSave: {
+    enabled: false,
+    delay: 3000,
+  },
 });
 
 gheditortext2.setValue('# This is me oooo');
@@ -54,6 +46,3 @@ gheditortext2.setValue('# This is me oooo');
 // console.log(gheditortext2.getOptions());
 // console.log(gheditortext2.getDefaultOptions());
 // console.log(gheditortext2.getOption('autoSave'));
-
-// const gheditortext3 = gheditorDown;
-// gheditortext3.markDown({container: 'gheditor3'});

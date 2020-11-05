@@ -452,6 +452,7 @@
   background-color: transparent;
   color: #586069;
   position: relative;
+  margin: 0 0.2rem;
 }
 
 .gheditor-text-button-container .buttons:hover,
@@ -669,6 +670,7 @@
   width: 40px;
   height: 40px;
   background: linear-gradient(to bottom, #242424, rgba(36, 36, 36, 0.89));
+  margin: 0;
 }
 
 .emoji-suggester .display-emoji {

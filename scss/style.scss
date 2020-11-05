@@ -465,6 +465,7 @@ $primary_color: #07abcc;
     background-color: transparent;
     color: #586069;
     position: relative;
+    margin: 0 0.2rem;
 
     &:hover {
       border-radius: 3px;
@@ -673,6 +674,7 @@ $primary_color: #07abcc;
     width: 40px;
     height: 40px;
     background: linear-gradient(to bottom, #242424, rgba(36, 36, 36, 0.89));
+    margin: 0;
   }
 }
 

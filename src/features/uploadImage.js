@@ -7,8 +7,10 @@ let insertImage = 0;
 const setCaret = (editorId) => {
   const textarea = document.getElementById(`gheditor-write-${editorId}`);
 
-  textarea.addEventListener('input', () => {
-    insertImage = textarea.selectionEnd;
+  ['input', 'click'].forEach(event => {
+    textarea.addEventListener(event, () => {
+      insertImage = textarea.selectionEnd;
+    });
   });
 };
 
@@ -26,7 +28,7 @@ const callUploaded = (fileUpload, editorId, prop) => {
     if (progress === 0) {
       let textVal = textarea.value;
       if (insertImage - 1 < 0) { insertImageSelected = 0; lineBreak = ''; }
-      repl = `${lineBreak}![uploading ${fileUpload.name} ... ]()\n`;
+      repl = `![uploading ${fileUpload.name} ... ]()${lineBreak}`;
       textVal = `${textVal.slice(0, insertImageSelected)}${repl}${textVal.slice(insertImage)}`;
       insertWriteInput(textVal, editorId, prop);
       progressStatus.innerHTML = progressStatusText();
@@ -40,7 +42,7 @@ const callUploaded = (fileUpload, editorId, prop) => {
       let textVal = textarea.value;
       const str = repl.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       const regex = RegExp(str);
-      const uploadedImage = `${lineBreak}![${fileUpload.name}](${downloadURL})\n`;
+      const uploadedImage = `![${fileUpload.name}](${downloadURL})${lineBreak}`;
       if (regex.test(textVal)) {
         textVal = textVal.replace(repl, uploadedImage);
         insertWriteInput(textVal, editorId, prop);

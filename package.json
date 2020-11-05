@@ -1,6 +1,6 @@
 {
   "name": "gheditor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A markdown text editor plugin built with JavaScript",
   "main": "src/index.js",
   "scripts": {
@@ -48,10 +48,10 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "sanitize-html": "^1.27.0",
-    "showdown": "^1.9.1",
-    "firebase": "^7.17.2",
+    "@types/highlight.js": "^9.12.4",
+    "firebase": "^8.0.0",
     "highlight.js": "^10.1.1",
-    "@types/highlight.js": "^9.12.4"
+    "sanitize-html": "^1.27.0",
+    "showdown": "^1.9.1"
   }
 }

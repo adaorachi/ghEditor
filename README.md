@@ -1,19 +1,17 @@
 ## GHEditor - MarkDown Editor
 
-GHEditor is a lightweight, flexible, highly customizable WYSIGWG for your web applications. It is a drop-in JavaScript textarea replacement for writing beautiful and understandable Markdown. The WYSIWYG-esque editor allows users who may be less experienced with Markdown to use familiar toolbar buttons and shortcuts. If you never have written a single line in markdown markup, don't worry, it's easy to learn and even easier to use. You'll probably be surprised how handy it is once you get used to it. And you'll miss it whenever the tech you're using doesn't support markdown.
+GHEditor is a lightweight, flexible, highly customizable markdown editor for your web applications. It is a drop-in JavaScript textarea replacement for writing beautiful and understandable Markdown. <br><br>GHEditor allows users who may be less experienced with Markdown to use familiar toolbar buttons and shortcuts. If you never have written a single line in markdown markup, don't worry, it's easy to learn and even easier to use. You'll probably be surprised how handy it is once you get used to it. And you'll miss it whenever the tech you're using doesn't support markdown.
+
+
+### Why use GHEditor?
+
+GHEditor is one of the first markdown editors to implement an all-in-one cloud-based file-storage, built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow and split-screen-preview features.<br>It is also designed to clone [Github](https://github.com)'s markdown editor features and implements most Github flavoured markdown syntax and much more.<br>In other words, GHEditor uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github-flavored markdown editor embedded in your web application just by a simple installation.<br>Plus, GHEditor can be rendered natively on more than one textarea elements in a web page. It also uses a simple HTML-sanitizer to produce safe tags.<br>GHEditor Editor has been written using vanilla JavaScript, no additional frameworks required.
 
 
 ### Demo
 See [**Live Demo**](https://adaorachi.github.io/ghEditor-demo/)
 
 <img src="https://adaorachi.github.io/gheditor_emojis/demo/ghEditor-demo.gif" alt="ghEditor-demo">
-
-### Why use GHEditor?
-
-GHEditor is one of the first markdown editors to implement an all-in-one built-in autosaving, custom-designed-icons, code-highlighting, emoji-integrated, height-auto-grow, split-screen-preview and file upload and storage WYSIWYG-style features. It is also designed to mimic [github.com](https://github.com) markdown editor features and implements most Github flavoured markdown syntax and much more.
-In other words, GHEditor uses and produces almost all Github markdowns and their equivalent HTML markups and solves the problem of having a Github-flavored markdown editor embedded in your web application just by a simple installation.
-Plus, GHEditor can be rendered natively on more than one textarea container in a web page. It also uses a simple HTML-sanitizer to produce safe tags.
-GHEditor Editor has been written using vanilla JavaScript, no additional frameworks required.
 
 ### Table of Contents
 
@@ -127,12 +125,12 @@ The following self-explanatory methods may be of use while developing with GHEdi
       ghEditorText.getValue()
       
 #### Set the textarea value
-
+###### *Note: When autosave option is set to true, the content of the editor will be overwritten when a change is made and saved.*
       const ghEditorText = ghEditor();
       ghEditorText.setValue('This text will appear in the editor')
 
 #### Sync gheditor editor value to default textarea
-This is considered useful when it is called in an action takes place like an event listener. Note that this is automatically called when the form which has the default textarea is submitted.
+###### *This is automatically called when the form which has the default textarea is submitted. It can also be fired manually if it is called when an action takes place; like an event listener.*
 
       const ghEditorText = ghEditor();
       ghEditorText.syncValue()
@@ -207,9 +205,9 @@ The following are the set of valid options that can be used in GHEditor. When th
 - **toolTip:** (Object) This displays icon tooltips, an informational text box when a toolbar icon is hovered on.
   - **enabled:** (Boolean) If set to `false`, disable toolbar button tooltips. Defaults to `true`.
   - **toolTipText:** (Object) This defines a key-pair-value of icon names and their respective tooltip text. A list of the tooltip texts is seen in the **Toolbar** section.
-- **uploadImage:** (Object) This defines the upload image feature. This is configured to use the [google firebase](https://firebase.google.com/) storage bucket. In order to make this feature work, you must create a [firebase](https://firebase.google.com/) storage bucket for your app and have access to its configurtion.
-   - **enabled:** (Boolean) If set to `true`, enables the upload image feature.Defaults to `false`.
-    - **config:** (Object) This includes the firebase configuration which can be copied from your firebase app console. The only detail needed is the `storageBucket` value.
+- **uploadImage:** (Object) This defines the upload image feature. This is configured to use the [google firebase](https://firebase.google.com/) storage bucket. In order to make this feature work, you must create a [firebase](https://firebase.google.com/) storage bucket for your app and have access to its configuration.
+   - **enabled:** (Boolean) If set to `true`, enables the upload image feature. Defaults to `false`.
+    - **config:** (Object) This includes the firebase configuration which can be copied from your firebase app console. The only detail needed is the `storageBucket` option.
 
 ```
 const gheditor = ghEditor();

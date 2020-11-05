@@ -1,4 +1,4 @@
-import { setEditorTextToStore, setDataToStorage } from './utils/setStorage';
+import { getDataFromStore, setDataToStorage, removeDataFromStore } from './utils/setStorage';
 import { savedTimer } from '../dom/insertDomSnippet';
 
 const autoSaveAttr = (editorId) => {
@@ -30,10 +30,10 @@ const setAutoSave = (editorId, props, value) => {
     autoSaveAttr(editorId);
     document.getElementById(`gheditor-autosave-${editorId}`).innerHTML = `${savedTimer(editorId)}`;
     autoSaveOnClicked(editorId);
-    setEditorTextToStore(editorId, textarea);
+    getDataFromStore(editorId, textarea);
   } else {
     textarea.value = value;
-    window.localStorage.removeItem('gheditorText');
+    removeDataFromStore(editorId);
   }
 };
 

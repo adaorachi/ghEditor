@@ -8,7 +8,7 @@ const savedTimer = (editorId) => `
   </div>`;
 
 const fileInput = (editorId) => `<input type="file"
-id="gheditor-uploadimage-${editorId}" class="gheditor-uploadimage-input" name="gheditor-uploadimage-${editorId}">
+id="gheditor-uploadimage-${editorId}" class="gheditor-uploadimage-input" name="gheditor-uploadimage-${editorId}" accept="image/*">
 <span id="upload-image-progress-${editorId}" class="upload-image-progress">Attach files by draggng and dropping or selecting them</span>`;
 
 const progressStatusText = () => '<span class="gheditor-loader"><img src="https://adaorachi.github.io/gheditor_emojis/toolbar/loader.svg" style="width:20px" /></span> Uploading your files ..';
