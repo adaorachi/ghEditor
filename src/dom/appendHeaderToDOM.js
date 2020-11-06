@@ -108,6 +108,20 @@ const appendHeaderToDOM = (properties) => {
   }
 };
 
+const removeSplitScreenOnResize = (editorId) => {
+  const headerContainer = document.querySelector(`.gheditor-text-header-${editorId}`).getBoundingClientRect().width;
+  const textBody = document.querySelector(`.gheditor-text-body-${editorId}`);
+  const previewBut = document.querySelector(`.gheditor-preview-button-${editorId}`);
+  if (headerContainer <= 550) {
+    if (textBody.classList.contains('preview')) {
+      previewBut.click();
+      previewBut.style.display = 'none';
+    }
+  } else {
+    previewBut.style.display = 'initial';
+  }
+};
+
 const toggleToolbarOnResize = (editorId) => {
   const allContainer = document.querySelector(`.gheditor-write-${editorId}`).getBoundingClientRect().width;
   const header = [`.gheditor-text-header-content-${editorId}`, `.gheditor-text-header-${editorId}`];
@@ -146,4 +160,5 @@ export {
   appendHeaderToDOM,
   disbandToolbarBtnFeature,
   toggleToolbarOnResize,
+  removeSplitScreenOnResize,
 };

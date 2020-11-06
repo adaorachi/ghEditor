@@ -80,12 +80,8 @@
 }
 
 .gheditor-text-body img:not(.gheditor-toolbar-buttons) {
-  max-width: 600px;
-  width: 100%;
-}
-
-.gheditor-text-body .shadow img {
-  max-width: initial;
+  height: auto;
+  max-width: 100%;
 }
 
 .gheditor-text-body iframe {
@@ -125,19 +121,20 @@
 
 .gheditor-text-body code,
 .gheditor-text-body pre {
-  font-size: 90%;
   border-radius: 6px;
-}
-
-.gheditor-text-body pre code {
-  padding: 0;
-  background-color: transparent;
 }
 
 .gheditor-text-body code {
   padding: 0.2em 0.4em;
   margin: 0;
   background-color: rgba(27, 31, 35, 0.05);
+  font-size: 80%;
+}
+
+.gheditor-text-body pre code {
+  padding: 0;
+  background-color: transparent;
+  font-size: 90%;
 }
 
 .gheditor-text-body pre {
@@ -442,7 +439,7 @@
 
 .gheditor-text-header-content.preview .gheditor-text-button-container {
   justify-content: flex-start;
-  width: 48%;
+  width: 50%;
 }
 
 .gheditor-text-button-container .buttons,
@@ -482,11 +479,6 @@
 .gheditor-text-button-container .buttons svg:hover,
 .toolbar-button-area .buttons svg:hover {
   fill: #07abcc;
-}
-
-.gheditor-text-button-container .toggle-toolbar-button,
-.toolbar-button-area .toggle-toolbar-button {
-  margin-right: 10rem;
 }
 
 .gheditor-text-button-container .toggle-toolbar-button .chevron-up.rotate,
@@ -763,9 +755,11 @@
   .gheditor-text-tabnav-buttons .btn-nav {
     width: 100%;
   }
-  .gheditor-word-count {
-    text-align: center;
-    width: 100%;
+}
+
+@media only screen and (max-width: 550px) {
+  .buttons.gheditor-preview-button {
+    display: none !important;
   }
 }
 

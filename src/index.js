@@ -1,5 +1,5 @@
 import extendDefaults from './settings/customOptionSetting';
-import { toggleToolbarOnResize } from './dom/appendHeaderToDOM';
+import { toggleToolbarOnResize, removeSplitScreenOnResize } from './dom/appendHeaderToDOM';
 import {
   syncValueFunc,
   setValueFunc,
@@ -56,6 +56,7 @@ const ghEditor = () => {
 
       window.addEventListener('resize', () => {
         toggleToolbarOnResize(editorId);
+        removeSplitScreenOnResize(editorId);
       });
     }
   };

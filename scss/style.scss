@@ -81,12 +81,13 @@ $primary_color: #07abcc;
   }
 
   img:not(.gheditor-toolbar-buttons) {
-    max-width: 600px;
-  }
-
-  .shadow img {
+    height: auto;
     max-width: 100%;
   }
+
+  // .shadow img {
+  //   max-width: 100%;
+  // }
 
   iframe {
     max-height: 500px;
@@ -451,7 +452,7 @@ $primary_color: #07abcc;
 
     .gheditor-text-button-container {
       justify-content: flex-start;
-      width: 48%;
+      width: 50%;
     }
   }
 }
@@ -490,7 +491,7 @@ $primary_color: #07abcc;
   }
 
   .toggle-toolbar-button {
-    margin-right: 10rem;
+    // margin-right: 10rem;
 
     .chevron-up.rotate {
       transform: rotateX(180deg);
@@ -767,9 +768,15 @@ $primary_color: #07abcc;
     width: 100%;
   }
 
-  .gheditor-word-count {
-    text-align: center;
-    width: 100%;
+  // .gheditor-word-count {
+  //   text-align: center;
+  //   width: 100%;
+  // }
+}
+
+@media only screen and (max-width: 550px) {
+  .buttons.gheditor-preview-button {
+    display: none !important;
   }
 }
 

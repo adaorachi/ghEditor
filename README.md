@@ -198,7 +198,7 @@ The following are the set of valid options that can be used in GHEditor. When th
 - **maxHeight:** (String) This set the maximum height of the ghEditor editor in any available CSS height values,  e.g - `px, rem, %, initial`. If sets to `max-content` will have no max-height and GHEditor editor height elongates on input. Defaults to `max-content`.
 - **minHeight:** (String) This set the minimum height of the ghEditor editor in any available CSS height values, e.g - `px, rem, %, initial`. It defaults to `100px`.
 - **placeholder:** (String) This sets a custom placeholder that should be displayed.
-- **splitScreen:** (Object) This enables a screen split feature.
+- **splitScreen:** (Object) This enables a screen split feature. Note that this feature is automatically disabled on small viewports (>= 550px).
   - **enabled:** (Boolean) If set to `true`, includes a split-screen button in the toolbar. When the split-screen button is clicked, splits the GHEditor editor into GHEditor textarea and GHEditor preview screens. This enables a real time WYSIWYG-style. It defaults to `false`.
   - **shortcut:** (Boolean) If set to `true` sets the following keyboard shortcut (ctrl/cmd + alt + P ) to toggle into the split screen feature and out. It defaults to `false`.
 - **toolbarEmoji:** (Boolean) If set to `true`, includes a emoji button in the toolbar. When the emoji button is clicked, it displays a dropdown of all available emojis. This is an alternative to the **inlineEmoji** feature. It defaults to `false`.
