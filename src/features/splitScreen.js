@@ -74,11 +74,11 @@ const splitScreen = (editorId, prop) => {
       document.getElementById(`gheditor-word-count-${editorId}`).classList.toggle('remove');
 
       // eslint-disable-next-line max-len
-      const gheditorWriteHeight = document.getElementById(gheditorMainContainers(editorId)[0]).style.height;
+      const gheditorWriteHeight = document.getElementById(`gheditor-write-${editorId}`);
 
-      mutateTextFeaturesOnToggle(editorId, gheditorWriteHeight);
+      mutateTextFeaturesOnToggle(editorId, gheditorWriteHeight.style.height);
 
-      heightSync(editorId, prop, gheditorWriteHeight);
+      heightSync(editorId, prop, gheditorWriteHeight.style.height);
 
       toggleToolbarOnResize(editorId);
     });

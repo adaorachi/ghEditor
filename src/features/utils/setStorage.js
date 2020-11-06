@@ -3,8 +3,13 @@ import { getCurrentTime } from '../../helpers/helpers';
 let allText = JSON.parse(localStorage.getItem('gheditorText'));
 
 const removeDataFromStore = (editorId) => {
-  delete allText[editorId];
-  localStorage.setItem('gheditorText', JSON.stringify(allText));
+  if (allText !== null) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (allText.hasOwnProperty(editorId)) {
+      delete allText[editorId];
+      localStorage.setItem('gheditorText', JSON.stringify(allText));
+    }
+  }
 };
 
 const setDataToStorage = (editorId) => {
@@ -20,9 +25,14 @@ const setDataToStorage = (editorId) => {
 };
 
 const getDataFromStore = (editorId, textarea) => {
-  const allTextRef = allText[editorId] === undefined ? '' : allText[editorId];
-  textarea.value = allTextRef;
-  setDataToStorage(editorId);
+  if (allText !== null) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (allText.hasOwnProperty(editorId)) {
+      const allTextRef = allText[editorId] === undefined ? '' : allText[editorId];
+      textarea.value = allTextRef;
+      setDataToStorage(editorId);
+    }
+  }
 };
 
 export { getDataFromStore, setDataToStorage, removeDataFromStore };
