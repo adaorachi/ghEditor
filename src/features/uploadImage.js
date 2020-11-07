@@ -21,13 +21,12 @@ const callUploaded = (fileUpload, editorId, prop) => {
   const uploadedImage = storageRef.put(fileUpload);
   const progressStatus = document.getElementById(`upload-image-progress-${editorId}`);
   let repl;
-  let insertImageSelected = insertImage;
-  let lineBreak = '\n';
+  const insertImageSelected = insertImage;
+  const lineBreak = '\n';
   uploadedImage.on('state_changed', (snapshot) => {
     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     if (progress === 0) {
       let textVal = textarea.value;
-      if (insertImage - 1 < 0) { insertImageSelected = 0; lineBreak = ''; }
       repl = `![uploading ${fileUpload.name} ... ]()${lineBreak}`;
       textVal = `${textVal.slice(0, insertImageSelected)}${repl}${textVal.slice(insertImage)}`;
       insertWriteInput(textVal, editorId, prop);
@@ -46,7 +45,7 @@ const callUploaded = (fileUpload, editorId, prop) => {
       if (regex.test(textVal)) {
         textVal = textVal.replace(repl, uploadedImage);
         insertWriteInput(textVal, editorId, prop);
-        progressStatus.innerHTML = 'Attach files by draggng and dropping or selecting them';
+        progressStatus.innerHTML = 'Attach files by dragging and dropping or selecting them';
         const uploadInput = document.getElementById(`gheditor-uploadimage-${editorId}`);
         uploadInput.value = '';
       }

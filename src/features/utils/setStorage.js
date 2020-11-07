@@ -1,4 +1,5 @@
 import { getCurrentTime } from '../../helpers/helpers';
+import { expandHeight } from './computedProps';
 
 let allText = JSON.parse(localStorage.getItem('gheditorText'));
 
@@ -31,6 +32,9 @@ const getDataFromStore = (editorId, textarea) => {
       const allTextRef = allText[editorId] === undefined ? '' : allText[editorId];
       textarea.value = allTextRef;
       setDataToStorage(editorId);
+
+      const textAreaHeight = textarea.style.height;
+      textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
     }
   }
 };

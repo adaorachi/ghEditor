@@ -15,6 +15,7 @@ const ghEditor = () => {
   let optionVal = {};
   let editorId;
   let initialSetVal = '';
+
   const syncValue = () => {
     syncValueFunc(editorId);
   };
@@ -56,7 +57,7 @@ const ghEditor = () => {
 
       window.addEventListener('resize', () => {
         toggleToolbarOnResize(editorId);
-        removeSplitScreenOnResize(editorId);
+        removeSplitScreenOnResize(editorId, options);
       });
     }
   };

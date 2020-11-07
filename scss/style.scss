@@ -226,18 +226,22 @@ $primary_color: #07abcc;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   border: none;
+  overflow-y: auto;
 }
 
 .gheditor-preview.tab-content {
   min-height: 100px;
+  &.preview {
+    overflow-y: scroll;
+  }
 }
 
 .gheditor-writearea.tab-content,
 .gheditor-preview.tab-content {
+  position: relative;
   &.preview {
     display: block;
     flex: 1;
-    overflow-y: scroll;
   }
 }
 
@@ -269,16 +273,13 @@ $primary_color: #07abcc;
     justify-content: space-between;
     font-size: 0.85rem;
     color: #888;
+    bottom: 0;
+    width: 100%;
   }
 
   .gheditor-upload-container {
     flex: 1;
     position: relative;
-  }
-
-  .gheditor-upload-container.preview,
-  .gheditor-upload-container.preview .gheditor-uploadimage-input {
-    width: 55%;
   }
 
   .upload-image-progress {
@@ -314,10 +315,6 @@ $primary_color: #07abcc;
     display: flex;
     margin-left: 10px;
     position: relative;
-
-    &.preview {
-      width: 45%;
-    }
 
     .auto-save-icon {
       position: absolute;
@@ -781,14 +778,10 @@ $primary_color: #07abcc;
 }
 
 @media only screen and (max-width: 479px) {
-  .gheditor-footer {
-    .gheditor-upload-container,
-    .gheditor-upload-container .gheditor-uploadimage-input {
-      width: 55%;
-    }
-
+  .gheditor-footer.enabled {
+    flex-direction: column;
     .gheditor-autosave {
-      width: 45%;
+      margin-left: 0;
     }
   }
 }

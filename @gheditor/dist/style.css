@@ -218,17 +218,26 @@
   white-space: pre-wrap;
   overflow-wrap: break-word;
   border: none;
+  overflow-y: auto;
 }
 
 .gheditor-preview.tab-content {
   min-height: 100px;
 }
 
+.gheditor-preview.tab-content.preview {
+  overflow-y: scroll;
+}
+
+.gheditor-writearea.tab-content,
+.gheditor-preview.tab-content {
+  position: relative;
+}
+
 .gheditor-writearea.tab-content.preview,
 .gheditor-preview.tab-content.preview {
   display: block;
   flex: 1;
-  overflow-y: scroll;
 }
 
 .gheditor-mirror-div {
@@ -258,16 +267,13 @@
   justify-content: space-between;
   font-size: 0.85rem;
   color: #888;
+  bottom: 0;
+  width: 100%;
 }
 
 .gheditor-footer .gheditor-upload-container {
   flex: 1;
   position: relative;
-}
-
-.gheditor-footer .gheditor-upload-container.preview,
-.gheditor-footer .gheditor-upload-container.preview .gheditor-uploadimage-input {
-  width: 55%;
 }
 
 .gheditor-footer .upload-image-progress {
@@ -302,10 +308,6 @@
   display: flex;
   margin-left: 10px;
   position: relative;
-}
-
-.gheditor-footer .gheditor-autosave.preview {
-  width: 45%;
 }
 
 .gheditor-footer .gheditor-autosave .auto-save-icon {
@@ -764,12 +766,11 @@
 }
 
 @media only screen and (max-width: 479px) {
-  .gheditor-footer .gheditor-upload-container,
-  .gheditor-footer .gheditor-upload-container .gheditor-uploadimage-input {
-    width: 55%;
+  .gheditor-footer.enabled {
+    flex-direction: column;
   }
-  .gheditor-footer .gheditor-autosave {
-    width: 45%;
+  .gheditor-footer.enabled .gheditor-autosave {
+    margin-left: 0;
   }
 }
 /*# sourceMappingURL=style.css.map */

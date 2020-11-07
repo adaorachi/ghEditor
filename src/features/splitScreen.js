@@ -1,4 +1,4 @@
-import { expandHeight } from './utils/computedProps';
+// import { expandHeight } from './utils/computedProps';
 import { toggleToolbarOnResize } from '../dom/appendHeaderToDOM';
 import {
   displayWordCount,
@@ -33,11 +33,11 @@ const scrollSync = (editorId) => {
   });
 };
 
-const heightSync = (editorId, prop, gheditorWriteHeight) => {
+const heightSync = (editorId, prop) => {
   const gheditorPreview = document.querySelector(`#gheditor-preview-${editorId}.preview`);
   if (gheditorPreview !== null) {
     const gheditorPreviewStyle = {
-      height: gheditorWriteHeight,
+      // height: gheditorWriteHeight.clientHeight,
       minHeight: prop.minHeight,
       maxHeight: prop.maxHeight,
       padding: '6px 20px',
@@ -55,12 +55,16 @@ const mutateTextFeaturesOnToggle = (editorId, gheditorWriteHeight) => {
     }
   });
 
+  const textarea = document.getElementById(`gheditor-write-${editorId}`);
+
   const gheditorMaContainers = gheditorMainContainers(editorId);
 
-  gheditorMaContainers.forEach(container => {
-    const containerArea = document.getElementById(container);
-    containerArea.style.height = `${expandHeight(containerArea, gheditorWriteHeight)}px`;
-  });
+  document.getElementById(gheditorMaContainers[1]).style.height = `${textarea.clientHeight}px`;
+
+  const body = document.getElementById(`gheditor-text-body-${editorId}`);
+  if (![...body.classList].includes('preview')) {
+    gheditorWriteHeight.focus();
+  }
 };
 
 const splitScreen = (editorId, prop) => {
@@ -68,17 +72,15 @@ const splitScreen = (editorId, prop) => {
   if (prop.splitScreen.enabled) {
     previewBut.style.display = 'initial';
 
+    const gheditorWriteHeight = document.getElementById(`gheditor-write-${editorId}`);
     previewBut.addEventListener('click', () => {
       displayWordCount(editorId);
       nothingToPreviewDisplay(editorId);
       document.getElementById(`gheditor-word-count-${editorId}`).classList.toggle('remove');
 
-      // eslint-disable-next-line max-len
-      const gheditorWriteHeight = document.getElementById(`gheditor-write-${editorId}`);
+      mutateTextFeaturesOnToggle(editorId, gheditorWriteHeight);
 
-      mutateTextFeaturesOnToggle(editorId, gheditorWriteHeight.style.height);
-
-      heightSync(editorId, prop, gheditorWriteHeight.style.height);
+      heightSync(editorId, prop);
 
       toggleToolbarOnResize(editorId);
     });
@@ -86,7 +88,6 @@ const splitScreen = (editorId, prop) => {
     scrollSync(editorId);
   } else {
     previewBut.style.display = 'none';
-    previewBut.nextSibling.style.display = 'none';
   }
 };
 

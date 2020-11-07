@@ -33,7 +33,6 @@ const expandHeight = (textArea, defaultHeight) => {
   const height = parseInt(computed.getPropertyValue('border-top-width'), 10)
     + textArea.scrollHeight
     + parseInt(computed.getPropertyValue('border-bottom-width'), 10);
-
   return height;
 };
 

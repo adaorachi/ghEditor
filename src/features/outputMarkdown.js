@@ -23,7 +23,6 @@ const outputMarkDown = (editorId, prop) => {
     smiley.style.display = 'initial';
   } else {
     smiley.style.display = 'none';
-    smiley.nextSibling.style.display = 'none';
   }
 
   autoUseFontAwesome(prop);
