@@ -1,11 +1,13 @@
 import { expandHeight } from './computedProps';
 import { setStorageInterval } from './saveInterval';
 import { autoUpdatePreviewInput } from '../textArea/updateEditorArea';
-import indentTab from '../indentWithTab';
 import { nothingToPreviewDisplay } from '../../helpers/helpers';
 
-const expandAllContainers = (textarea, textAreaHeight, textpreview, textBodyHeight, footer) => {
+// eslint-disable-next-line max-len
+const expandAllContainers = (textarea, textAreaHeight, textpreview, textBodyHeight, footer, prop) => {
   textarea.style.height = `${expandHeight(textarea, textAreaHeight)}px`;
+  textarea.style.minHeight = prop.minHeight;
+  textarea.style.maxHeight = prop.maxHeight;
   textpreview.style.height = `${textarea.clientHeight}px`;
   textBodyHeight.style.height = `${textarea.clientHeight + footer + 12 - 1}px`;
 };
@@ -19,10 +21,10 @@ const useEvents = (textarea, editorId, prop) => {
 
   const textAreaHeight = textarea.style.height;
 
-  textarea.addEventListener('input', (e) => {
+  textarea.addEventListener('input', () => {
     autoUpdatePreviewInput(editorId, prop);
 
-    expandAllContainers(textarea, textAreaHeight, textpreview, textBodyHeight, footer);
+    expandAllContainers(textarea, textAreaHeight, textpreview, textBodyHeight, footer, prop);
     nothingToPreviewDisplay(editorId);
 
     const toolbarButtonArea = document.querySelector(`.toolbar-button-area-${editorId}`);
@@ -31,15 +33,13 @@ const useEvents = (textarea, editorId, prop) => {
     if (toolbarTooltip !== null) {
       toolbarTooltip.classList.remove('dropdown');
     }
-
-    indentTab(e, textarea, prop);
   });
 
   textarea.addEventListener('focus', () => {
     savedInterval = setStorageInterval(editorId, prop);
     const body = document.getElementById(`gheditor-text-body-${editorId}`);
     if (![...body.classList].includes('preview')) {
-      expandAllContainers(textarea, textAreaHeight, textpreview, textBodyHeight, footer);
+      expandAllContainers(textarea, textAreaHeight, textpreview, textBodyHeight, footer, prop);
     }
   });
 

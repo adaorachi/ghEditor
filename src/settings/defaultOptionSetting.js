@@ -35,7 +35,7 @@ const defaultOptions = () => ({
   placeholder: 'Leave your comment',
   splitScreen: {
     enabled: false,
-    shortcut: true,
+    shortcut: false,
   },
   toolbarEmoji: false,
   toolTip: {

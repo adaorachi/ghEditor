@@ -5,8 +5,7 @@ import getMarkdown from '../features/getMarkdown';
 const syncValueFunc = (editorId) => {
   const defaultTextArea = document.getElementById(editorId);
   defaultTextArea.value = getMarkdown(editorId, {});
-
-  return defaultTextArea.value;
+  return document.getElementById(editorId).value;
 };
 
 const setValueFunc = (data, editorId) => {
@@ -31,6 +30,7 @@ const outputDataFunc = (editorId, args) => {
     if (form !== null) {
       form.addEventListener('submit', (e) => {
         syncValueFunc(editorId);
+
         const gheditorWrite = document.getElementById(`gheditor-write-${editorId}`);
         const gheditorWriteArea = document.getElementById(`gheditor-writearea-${editorId}`);
         const gheditorpreview = document.getElementById(`gheditor-preview-${editorId}`);
@@ -39,6 +39,7 @@ const outputDataFunc = (editorId, args) => {
         gheditorpreview.innerHTML = '';
 
         gheditorWrite.style.height = extendDefaults(args).minHeight;
+        gheditorWrite.style.minHeight = extendDefaults(args).minHeight;
         gheditorWriteArea.style.height = 'auto';
         gheditorpreview.style.height = 'auto';
 

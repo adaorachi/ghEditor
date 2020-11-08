@@ -58,7 +58,6 @@ const mutateContent = (content1, content2) => {
 const nothingToPreviewDisplay = (editorId) => {
   const gheditorTextArea = document.getElementById(`gheditor-write-${editorId}`);
   const gheditorPreviewArea = document.getElementById(`gheditor-preview-${editorId}`);
-  gheditorPreviewArea.style.height = 'auto';
   if (gheditorTextArea.value === '') {
     gheditorPreviewArea.innerHTML = '<p class="placeholder">Nothing to preview<p>';
   }

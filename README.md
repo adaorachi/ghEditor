@@ -119,23 +119,24 @@ import '../node_modules/gheditor/scss/style.scss';
 ### Useful methods
 The following self-explanatory methods may be of use while developing with GHEditor.
 
-#### Get the textarea value
+#### Returns the text content of the editor
+###### *Note that this method should be called when an action takes place; like a submit event listener in order to get the full content.*
 
       const ghEditorText = ghEditor();
       ghEditorText.getValue()
       
-#### Set the textarea value
+#### Set the text content of the editor
 ###### *Note: When autosave option is set to true, the content of the editor will be overwritten when a change is made and saved.*
       const ghEditorText = ghEditor();
       ghEditorText.setValue('This text will appear in the editor')
 
 #### Sync gheditor editor value to default textarea
-###### *This is automatically called when the form which has the default textarea is submitted. It can also be fired manually if it is called when an action takes place; like an event listener.*
+###### *This syncs the text content of the editor to the default textarea and returns the content. Note that this method should be called when an action takes place; like a submit event listener in order to get the full content.*
 
       const ghEditorText = ghEditor();
       ghEditorText.syncValue()
 
-#### Getting an option
+#### Getting option
 
 GHEditor provides a method to retrieve;
 Note: Log the variable to the console to see result. (i.e - console.log(<variable>))
@@ -242,8 +243,8 @@ gheditor.markDown({
     minHeight: '100px',
     placeholder: 'Leave your comment....',
     splitScreen: {
-      enabled: true,
-      shortcut: true,
+      enabled: false,
+      shortcut: false,
     },
     toolbarEmoji: true,
     toolTip: true,

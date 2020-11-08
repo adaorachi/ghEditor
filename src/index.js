@@ -16,9 +16,7 @@ const ghEditor = () => {
   let editorId;
   let initialSetVal = '';
 
-  const syncValue = () => {
-    syncValueFunc(editorId);
-  };
+  const syncValue = () => syncValueFunc(editorId);
 
   const outputData = (editorId, args) => {
     outputDataFunc(editorId, args);

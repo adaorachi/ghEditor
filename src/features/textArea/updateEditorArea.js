@@ -5,8 +5,12 @@ import { displayWordCount } from '../../helpers/helpers';
 
 const updatePreviewInputOnClick = (editorId, prop) => {
   const previewButtons = [`#gheditor-preview-tab-${editorId}`, `.gheditor-preview-button-${editorId}`];
+  const previewArea = document.getElementById(`gheditor-preview-${editorId}`);
   previewButtons.forEach(button => {
     document.querySelector(button).addEventListener('click', () => {
+      if (button === previewButtons[0]) {
+        previewArea.style.height = 'auto';
+      }
       const text = getMarkdown(editorId, prop);
       document.getElementById(`gheditor-preview-${editorId}`).innerHTML = text;
     });

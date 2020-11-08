@@ -3,7 +3,7 @@ import showdown from 'showdown';
 import { getAllAllowedAttributes, getAllAllowedTags } from './allAttributes';
 import highlightCode from './highlightCode';
 import {
-  replacegheditorpet,
+  replaceSnippet,
   insertQuote,
 } from './textArea/insertTextUtils';
 
@@ -30,7 +30,7 @@ const getMarkdown = (editorId, prop) => {
 
   let text1 = insertQuote(sanitizedText);
   text1 = converter.makeHtml(text1);
-  text1 = replacegheditorpet(text1, prop);
+  text1 = replaceSnippet(text1, prop);
   text1 = highlightCode(text1, prop);
 
   return text1;

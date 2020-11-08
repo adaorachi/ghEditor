@@ -4,6 +4,7 @@ import placeAreasByCoord from './utils/placeDropdownByCoords';
 import execCmd from './buttonCommand/execCmd';
 import { disbandToolbarBtnFeature } from '../dom/appendHeaderToDOM';
 import inlineShortcut from './inlineShortcut';
+import indentTab from './indentWithTab';
 
 let isSelected = false;
 const inlineToolbar = (prop, editorId, textarea) => {
@@ -39,6 +40,7 @@ const inlineToolbar = (prop, editorId, textarea) => {
 
 const execInlineShortcut = (textarea, prop) => {
   textarea.addEventListener('keydown', (e) => {
+    indentTab(e, textarea, prop);
     if (isSelected) {
       inlineShortcut(e, prop, textarea);
     }
