@@ -3,9 +3,9 @@ import { stopStorageInterval } from '../features/utils/saveInterval';
 import getMarkdown from '../features/getMarkdown';
 
 const syncValueFunc = (editorId) => {
-  const defaultTextArea = document.getElementById(editorId);
+  const defaultTextArea = document.querySelector(`[data-editor=${editorId}]`);
   defaultTextArea.value = getMarkdown(editorId, {});
-  return document.getElementById(editorId).value;
+  return defaultTextArea.value;
 };
 
 const setValueFunc = (data, editorId) => {
@@ -26,7 +26,7 @@ const getOptionFunc = (key, options) => {
 
 const outputDataFunc = (editorId, args) => {
   try {
-    const { form } = document.getElementById(editorId);
+    const { form } = document.querySelector(`[data-editor=${editorId}]`);
     if (form !== null) {
       form.addEventListener('submit', (e) => {
         syncValueFunc(editorId);
