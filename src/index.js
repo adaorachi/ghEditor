@@ -10,7 +10,7 @@ import appendElementToDOM from './dom/appendElement';
 import callFuncOnInit from './functionCall/callFuncOnInit';
 import textareaVal from './functionCall/textareaVal';
 import getMarkdown from './features/getMarkdown';
-import './scss/style.scss';
+// import './scss/style.scss';
 
 class ghEditor {
   constructor() {
