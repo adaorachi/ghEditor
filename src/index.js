@@ -10,68 +10,68 @@ import appendElementToDOM from './dom/appendElement';
 import callFuncOnInit from './functionCall/callFuncOnInit';
 import textareaVal from './functionCall/textareaVal';
 import getMarkdown from './features/getMarkdown';
-// import './scss/style.scss';
+import './scss/style.scss';
 
-class ghEditor {
-  constructor() {
-    this.optionVal = {};
-    this.editorId;
-    this.initialSetVal = '';
-  }
+const ghEditor = () => {
+  let optionVal = {};
+  let editorId;
+  let initialSetVal = '';
 
-  syncValue() {
-    return syncValueFunc(this.editorId);
-  }
-
-  outputData(editorId, args) {
-    outputDataFunc(editorId, args);
-  }
-
-  getValue() {
-    return getMarkdown(this.editorId, this.optionVal);
-  }
-
-  getOptions() {
-    return extendDefaults(this.optionVal);
-  }
-
-  getDefaultOptions() {
-    return extendDefaults({});
-  }
-
-  getOption(key) {
-    return getOptionFunc(key, this.optionVal);
-  }
-
-  setValue(data) {
-    setValueFunc(data, this.editorId);
-    this.initialSetVal = data;
+  const syncValue = () => {
+    syncValueFunc(editorId);
   };
 
-  markDown(...args) {
+  const outputData = (editorId, args) => {
+    outputDataFunc(editorId, args);
+  };
+
+  const getValue = () => getMarkdown(editorId, optionVal);
+
+  const getOptions = () => extendDefaults(optionVal);
+
+  const getDefaultOptions = () => extendDefaults({});
+
+  const getOption = (key) => getOptionFunc(key, optionVal);
+
+  const setValue = (data) => {
+    setValueFunc(data, editorId);
+    initialSetVal = data;
+  };
+
+  const markDown = (...args) => {
     const val = textareaVal(args);
     // eslint-disable-next-line prefer-destructuring
-    this.optionVal = val[1];
+    optionVal = val[1];
 
     const [defaultTextarea, options] = textareaVal(args);
 
     if (defaultTextarea !== null) {
-      this.editorId = options.container;
+      editorId = options.container;
 
-      appendElementToDOM(this.editorId, options, defaultTextarea);
+      appendElementToDOM(editorId, options, defaultTextarea);
 
       window.addEventListener('load', () => {
-        callFuncOnInit(this.editorId, options, this.initialSetVal);
+        callFuncOnInit(editorId, options, initialSetVal);
 
-        this.outputData(this.editorId, options);
+        outputData(editorId, options);
       });
 
       window.addEventListener('resize', () => {
-        toggleToolbarOnResize(this.editorId);
-        removeSplitScreenOnResize(this.editorId, options);
+        toggleToolbarOnResize(editorId);
+        removeSplitScreenOnResize(editorId, options);
       });
     }
   };
-}
+
+  return {
+    markDown,
+    getValue,
+    syncValue,
+    setValue,
+    getOptions,
+    getOption,
+    getDefaultOptions,
+  };
+};
 
 export default ghEditor;
