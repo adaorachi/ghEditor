@@ -26,7 +26,7 @@ const getOptionFunc = (key, options) => {
 
 const outputDataFunc = (editorId, args) => {
   try {
-    const { form } = document.getElementById(editorId);
+    const { form } = document.querySelector(`[data-editor=${editorId}]`);    
     if (form !== null) {
       form.addEventListener('submit', (e) => {
         syncValueFunc(editorId);

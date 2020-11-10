@@ -12,6 +12,7 @@ const textareaVal = (args) => {
     // eslint-disable-next-line prefer-destructuring
     defaultTextarea = document.querySelectorAll('textarea.ghEditor')[0];
   }
+  defaultTextarea.setAttribute('data-editor', options.container);
   return [defaultTextarea, options];
 };
 

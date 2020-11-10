@@ -1,38 +1,40 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const config = require('config');
 
 module.exports = {
-  mode: 'production',
-  entry: './@gheditor/src/example.js',
+  mode: (process.env.NODE_ENV ? process.env.NODE_ENV : 'development'),
+  entry: './src/index.js',
   output: {
-    filename: 'main.js',
+    library: 'ghEditor',
+    libraryTarget: 'umd',
+    globalObject: '(typeof self !== "undefined" ? self : this)',
+    libraryExport: 'default',
     path: path.resolve(__dirname, '@gheditor/dist'),
+    filename: 'main.js',
+    publicPath: config.get('publicPath'),
   },
   module: {
     rules: [
       {
-        test: /\.js?$/,
-        exclude: /(node_modules)/,
-        use: 'babel-loader',
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
       },
       {
         test: /\.s[ac]ss|.css$/i,
-        use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'sass-loader',
-          },
-        ],
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
       },
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: 'index.html',
+    new HTMLWebpackPlugin({
+      template: path.resolve(__dirname, 'index.html'),
     }),
   ],
-  resolve: {
-    extensions: ['.js'],
+  devServer: {
+    historyApiFallback: true,
+    open: config.get('open'),
   },
+  devtool: (process.env.NODE_ENV === 'production' ? 'source-map' : 'cheap-module-eval-source-map'),
 };
