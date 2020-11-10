@@ -32,11 +32,45 @@ See [**Live Demo**](https://adaorachi.github.io/ghEditor-demo/)
 
 ##### Via jsDelivr. Please note, jsDelivr may take a few days to update to the latest release.
 
-    <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor/@gheditor/dist/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor@1.7/@gheditor/dist/main.js"></script>
 
 
 ### Quick Start
-The stylesheets for this plugin are already pre-loaded using wepback. All you need to do is to initialize ghEditor by the following steps;
+In order to import the stylesheet for this module and use the module from within JavaScript, you need to install and add the [style-loader](https://webpack.js.org/loaders/style-loader) and [css-loader](https://webpack.js.org/loaders/css-loader) to your module configuration.
+
+`npm install style-loader css-loader --save-dev`
+
+Also you need to install and add the sass-loader and sass.
+
+`npm install sass-loader sass --save-dev`
+
+
+And then, webpack is also needed to configure the SASS settings.
+
+`npm install webpack --save-dev`
+
+Add the SASS module into your module configuration, which is usually in the `webpack.config.js` file.
+
+  ```
+  module.exports = {
+    module: {
+      rules: [
+      {
+        test: /\.s[ac]ss|.css$/i,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+          },
+        ],
+      },
+    ],
+    },
+  };
+  ```
+
+After installing and defining the above dependencies, you can initialize ghEditor by the following steps;
 
 1. Define a textarea element in an HTML page. A `class` of `ghEditor` must be added to the textarea element.
 
@@ -64,10 +98,10 @@ The stylesheets for this plugin are already pre-loaded using wepback. All you ne
   - **Browser**
 
         <script>
-           document.addEventListener('DOMContentLoaded', function () {
-            const ghEditorText = new ghEditor();
+          document.addEventListener('DOMContentLoaded', function () {
+            const ghEditorText = ghEditor();
             ghEditorText.markDown();
-           })
+          })
         </script>
 
 - **To initialize ghEditor for a specific textarea or for mutiple textarea elements in a page.**
@@ -85,7 +119,7 @@ The stylesheets for this plugin are already pre-loaded using wepback. All you ne
 ### Useful methods
 The following self-explanatory methods may be of use while developing with GHEditor.
 
-#### Gets the text content of the editor
+#### Get the text content of the editor
 ###### *Note that this method should be called when an action takes place; like a submit event listener in order to get the full content.*
 
       const ghEditorText = ghEditor();
