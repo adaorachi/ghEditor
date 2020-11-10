@@ -1,4 +1,3 @@
-// import extendDefaults from '../settings/customOptionSetting';
 import firebaseSetting from '../settings/firebaseSetting';
 import { insertWriteInput } from './textArea/updateEditorArea';
 import { fileInput, progressStatusText } from '../dom/insertDomSnippet';
@@ -21,7 +20,6 @@ const callUploaded = (fileUpload, editorId, prop) => {
   try {
     const storageRef = firebaseSetting(prop).storage().ref().child(fileUpload.name);
     const uploadedImage = storageRef.put(fileUpload);
-    
     let repl;
     const insertImageSelected = insertImage;
     const lineBreak = '\n';
