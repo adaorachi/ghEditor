@@ -17,11 +17,12 @@ const useEvents = (textarea, editorId, prop) => {
 
   const textBodyHeight = document.querySelector(`.gheditor-writearea-${editorId}`);
   const textpreview = document.getElementById(`gheditor-preview-${editorId}`);
-  const footer = document.querySelector(`.gheditor-footer-${editorId}`).clientHeight;
 
   const textAreaHeight = textarea.style.height;
 
   textarea.addEventListener('input', () => {
+    const footer = document.querySelector(`.gheditor-footer-${editorId}`).clientHeight;
+
     autoUpdatePreviewInput(editorId, prop);
 
     expandAllContainers(textarea, textAreaHeight, textpreview, textBodyHeight, footer, prop);
@@ -36,6 +37,8 @@ const useEvents = (textarea, editorId, prop) => {
   });
 
   textarea.addEventListener('focus', () => {
+    const footer = document.querySelector(`.gheditor-footer-${editorId}`).clientHeight;
+
     savedInterval = setStorageInterval(editorId, prop);
     const body = document.getElementById(`gheditor-text-body-${editorId}`);
     if (![...body.classList].includes('preview')) {

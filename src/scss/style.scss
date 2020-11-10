@@ -277,6 +277,10 @@ $primary_color: #07abcc;
     width: 100%;
   }
 
+  .error-msg {
+    color: #fb0606;
+  }
+
   .gheditor-upload-container {
     flex: 1;
     position: relative;
@@ -463,6 +467,7 @@ $primary_color: #07abcc;
     color: #586069;
     position: relative;
     margin: 0 0.2rem;
+    cursor: pointer;
 
     &:hover {
       border-radius: 3px;

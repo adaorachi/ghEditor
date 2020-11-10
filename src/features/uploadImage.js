@@ -16,41 +16,48 @@ const setCaret = (editorId) => {
 
 const callUploaded = (fileUpload, editorId, prop) => {
   const textarea = document.getElementById(`gheditor-write-${editorId}`);
-
-  const storageRef = firebaseSetting(prop).storage().ref().child(fileUpload.name);
-  const uploadedImage = storageRef.put(fileUpload);
   const progressStatus = document.getElementById(`upload-image-progress-${editorId}`);
-  let repl;
-  const insertImageSelected = insertImage;
-  const lineBreak = '\n';
-  uploadedImage.on('state_changed', (snapshot) => {
-    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    if (progress === 0) {
-      let textVal = textarea.value;
-      repl = `![uploading ${fileUpload.name} ... ]()${lineBreak}`;
-      textVal = `${textVal.slice(0, insertImageSelected)}${repl}${textVal.slice(insertImage)}`;
-      insertWriteInput(textVal, editorId, prop);
-      progressStatus.innerHTML = progressStatusText();
-    }
-  }, (error) => {
-    // eslint-disable-next-line no-console
-    console.log(error.message);
-    progressStatus.innerHTML = 'Error uploading file!';
-  }, () => {
-    uploadedImage.snapshot.ref.getDownloadURL().then((downloadURL) => {
-      let textVal = textarea.value;
-      const str = repl.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-      const regex = RegExp(str);
-      const uploadedImage = `![${fileUpload.name}](${downloadURL})${lineBreak}`;
-      if (regex.test(textVal)) {
-        textVal = textVal.replace(repl, uploadedImage);
+
+  try {
+    const storageRef = firebaseSetting(prop).storage().ref().child(fileUpload.name);
+    const uploadedImage = storageRef.put(fileUpload);
+    
+    let repl;
+    const insertImageSelected = insertImage;
+    const lineBreak = '\n';
+    uploadedImage.on('state_changed', (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      if (progress === 0) {
+        let textVal = textarea.value;
+        repl = `![uploading ${fileUpload.name} ... ]()${lineBreak}`;
+        textVal = `${textVal.slice(0, insertImageSelected)}${repl}${textVal.slice(insertImage)}`;
         insertWriteInput(textVal, editorId, prop);
-        progressStatus.innerHTML = 'Attach files by dragging and dropping or selecting them';
-        const uploadInput = document.getElementById(`gheditor-uploadimage-${editorId}`);
-        uploadInput.value = '';
+        progressStatus.innerHTML = progressStatusText();
       }
+    }, (error) => {
+      // eslint-disable-next-line no-console
+      console.log(error.message);
+      progressStatus.innerHTML = '<span class="error-msg">Error uploading file! Check config settings.</span>';
+    }, () => {
+      uploadedImage.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        let textVal = textarea.value;
+        const str = repl.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = RegExp(str);
+        const uploadedImage = `![${fileUpload.name}](${downloadURL})${lineBreak}`;
+        if (regex.test(textVal)) {
+          textVal = textVal.replace(repl, uploadedImage);
+          insertWriteInput(textVal, editorId, prop);
+          progressStatus.innerHTML = 'Attach files by dragging and dropping or selecting them';
+          const uploadInput = document.getElementById(`gheditor-uploadimage-${editorId}`);
+          uploadInput.value = '';
+        }
+      });
     });
-  });
+  } catch (err) {
+    progressStatus.innerHTML = '<span class="error-msg">Error: No Storage Bucket defined in config settings!</span>';
+    // eslint-disable-next-line no-console
+    console.log(err);
+  }
 };
 
 const dragImageHighlight = (editorId, fileInput) => {

@@ -32,7 +32,13 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
-    <script src="./@gheditor/src/example.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor/@gheditor/dist/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const textarea1 = new ghEditor();
+      textarea1.markDown();
+    })
+  </script>
 </body>
 
 </html>

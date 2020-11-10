@@ -32,81 +32,47 @@ See [**Live Demo**](https://adaorachi.github.io/ghEditor-demo/)
 
 ##### Via jsDelivr. Please note, jsDelivr may take a few days to update to the latest release.
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor/@gheditor/dist/style.css">
     <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor/@gheditor/dist/main.js"></script>
 
 
 ### Quick Start
-In order to import the stylesheet for this module and use the module from within JavaScript, you need to install and add the [style-loader](https://webpack.js.org/loaders/style-loader) and [css-loader](https://webpack.js.org/loaders/css-loader) to your module configuration.
+The stylesheets for this plugin are already pre-loaded using wepback. All you need to do is to initialize ghEditor by the following steps;
 
-`npm install style-loader css-loader --save-dev`
+1. Define a textarea element in an HTML page. A `class` of `ghEditor` must be added to the textarea element.
 
-Also you need to install and add the sass-loader and sass.
+2. Add an `id` attribute of your choice (this is optional). When no `id` attribute is added, ghEditor is initialized on the first textarea in a page and that has a class of `ghEditor`.
 
-`npm install sass-loader sass --save-dev`
-
-
-And then, webpack is also needed to configure the SASS settings.
-
-`npm install webpack --save-dev`
-
-Add the SASS module into your module configuration, which is usually in the `webpack.config.js` file.
-
-  ```
-  module.exports = {
-    module: {
-      rules: [
-      {
-        test: /\.s[ac]ss|.css$/i,
-        use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'sass-loader',
-          },
-        ],
-      },
-    ],
-    },
-  };
-  ```
-
-After installing and defining the above dependencies, you can initialize ghEditor by the following ways;
-
-1. Define a textarea element in an HTML page. A `class` of `ghEditor` must be added to the textarea element. Add an `id` attribute of your choice (this is optional if there is only one textarea to apply).
 ``` 
 <textarea class="ghEditor" id="textarea-1"></textarea>
 ```
 
-2. Import the scss file that is bundled with the gheditor module into your index.js file. This file add all required and pre-defined styles needed for any GHEditor  editor. Depending on where you index.js file is located, you have to specify the path of the scss module file. In this case we assume that the index.js file is inside the src folder.
+3. Initialize ghEditor in a JS file
+- **To initialize ghEditor for the first textarea on a page**
 
-```
-import '../node_modules/gheditor/scss/style.scss';
-```
+  - **Node**
 
-3. To initialize ghEditor for the first textarea on a page
-
-- **Node**
-
-      const ghEditor  = require('gheditor');
-      const ghEditorText = ghEditor();
-      ghEditorText.markDown();
-
-    - **ES6**
-
-          import ghEditor from 'gheditor';
-          const ghEditorText = ghEditor();
-          ghEditorText.markDown();
-
-- **Browser**
-
-      <script>
-        const ghEditorText = gheditor();
+        const ghEditor  = require('gheditor');
+        const ghEditorText = ghEditor();
         ghEditorText.markDown();
-      </script>
 
-4. To initialize for a specific textarea or for mutiple textarea containers in a page.
-    _Note that an object is needed to be passed in and set the 'container' value to the 'id' of the textarea container. This can be applied with the initialize methods stated above._
+      - **ES6**
+
+            import ghEditor from 'gheditor';
+            const ghEditorText = ghEditor();
+            ghEditorText.markDown();
+
+  - **Browser**
+
+        <script>
+           document.addEventListener('DOMContentLoaded', function () {
+            const ghEditorText = new ghEditor();
+            ghEditorText.markDown();
+           })
+        </script>
+
+- **To initialize ghEditor for a specific textarea or for mutiple textarea elements in a page.**
+    _An object is needed to be passed as a param and set the 'container' value to the 'id' of the textarea container. When no container key/value is added, it defaults to the first textarea element in a web page.
+    The above can be applied with the initialize methods stated above._
     For example:
 
     - **ES6**
@@ -119,7 +85,7 @@ import '../node_modules/gheditor/scss/style.scss';
 ### Useful methods
 The following self-explanatory methods may be of use while developing with GHEditor.
 
-#### Returns the text content of the editor
+#### Gets the text content of the editor
 ###### *Note that this method should be called when an action takes place; like a submit event listener in order to get the full content.*
 
       const ghEditorText = ghEditor();
@@ -139,7 +105,7 @@ The following self-explanatory methods may be of use while developing with GHEdi
 #### Getting option
 
 GHEditor provides a method to retrieve;
-Note: Log the variable to the console to see result. (i.e - console.log(<variable>))
+Note: Log the variable to the console to see result.
 
 - a set option
 
