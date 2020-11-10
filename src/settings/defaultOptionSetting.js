@@ -23,7 +23,7 @@ const defaultOptions = () => ({
   hideToolBar: false,
   highlightCode: true,
   indentWithTab: false,
-  inlineAttributes: true,
+  inlineAttributes: false,
   inlineEmoji: {
     enabled: true,
     emojiPrefix: ':',

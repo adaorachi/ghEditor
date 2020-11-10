@@ -11,7 +11,7 @@
 
 <body>
   <div class="container">
-    <form>
+    <form id="form">
       <div class="form-group" style="margin-top: 3rem;">
         <textarea class="form-control ghEditor" id="gheditor1" rows="3"
           style="padding: 6px; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"></textarea>
@@ -35,8 +35,11 @@
   <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor/@gheditor/dist/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const textarea1 = new ghEditor();
+      const textarea1 = new ghEditor({
+        container: 'gheditor1'
+      });
       textarea1.markDown();
+      textarea1.setValue('This is me');
     })
   </script>
 </body>
