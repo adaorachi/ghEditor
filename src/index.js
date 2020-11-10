@@ -17,7 +17,7 @@ const ghEditor = () => {
   let editorId;
   let initialSetVal = '';
 
-  const syncValue = () =>syncValueFunc(editorId);
+  const syncValue = () => syncValueFunc(editorId);
 
   const getValue = () => getMarkdown(editorId, optionVal);
 
