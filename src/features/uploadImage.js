@@ -21,7 +21,7 @@ const callUploaded = (fileUpload, editorId, prop) => {
   try {
     const storageRef = firebaseSetting(prop).storage().ref().child(fileUpload.name);
     const uploadedImage = storageRef.put(fileUpload);
-    
+
     let repl;
     const insertImageSelected = insertImage;
     const lineBreak = '\n';

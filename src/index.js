@@ -17,13 +17,7 @@ const ghEditor = () => {
   let editorId;
   let initialSetVal = '';
 
-  const syncValue = () => {
-    syncValueFunc(editorId);
-  };
-
-  const outputData = (editorId, args) => {
-    outputDataFunc(editorId, args);
-  };
+  const syncValue = () =>syncValueFunc(editorId);
 
   const getValue = () => getMarkdown(editorId, optionVal);
 
@@ -52,8 +46,7 @@ const ghEditor = () => {
 
       window.addEventListener('load', () => {
         callFuncOnInit(editorId, options, initialSetVal);
-
-        outputData(editorId, options);
+        outputDataFunc(editorId, options);
       });
 
       window.addEventListener('resize', () => {
