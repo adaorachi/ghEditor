@@ -1,6 +1,6 @@
 {
   "name": "gheditor",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "A markdown text editor plugin built with JavaScript",
   "main": "src/index.js",
   "scripts": {

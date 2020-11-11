@@ -32,7 +32,7 @@ See [**Live Demo**](https://adaorachi.github.io/ghEditor-demo/)
 
 ##### Via jsDelivr. Please note, jsDelivr may take a few days to update to the latest release.
 
-    <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor@1.7/@gheditor/dist/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adaorachi/ghEditor@1.7.2/@gheditor/dist/main.js"></script>
 
 
 ### Quick Start

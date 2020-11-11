@@ -187,6 +187,10 @@ $primary_color: #07abcc;
     margin-bottom: 20px;
     margin-top: 20px;
   }
+
+  & > * {
+    box-sizing: border-box;
+  }
 }
 
 .gheditor-tab-content.tab-content {
@@ -275,6 +279,7 @@ $primary_color: #07abcc;
     color: #888;
     bottom: 0;
     width: 100%;
+    box-sizing: border-box;
   }
 
   .error-msg {
@@ -439,6 +444,7 @@ $primary_color: #07abcc;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  box-sizing: border-box;
 
   &.toggle {
     background-color: #fff;
